@@ -1,2 +1,466 @@
-// @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,700,900);
+@import url(https://fonts.googleapis.com/css?family=Inconsolata:400,700);
 
+$background: #080808;
+$text: #ffffff;
+$text-light: #d9d9d9;
+$text-medium: #878787;
+$green: #17cf1f;
+$purple: #751e82;
+$blur: #031F20;
+$blur-img: url('/img/bg.png');
+
+$font: 'Inconsolata', sans-serif;
+$font2: 'Roboto', sans-serif;
+$regular: 400;
+$bold: 700;
+$ultrabold: 900;
+$mobile: 8pt;
+$desktop: 10pt;
+
+/* SOME STARTERS */
+input, select, img, button, .reveal-modal {
+    outline: none;
+}
+
+/* HTML & BODY */
+html, body{
+    background: $background;
+    color: $text;
+    font-family: $font;
+    font-size: $mobile;
+    font-weight: $regular;
+    height: 100%;
+    width: 100%;
+}
+
+@media only screen and (min-width: 40.063em) {
+    html, body{
+        font-size: $desktop
+    }
+}
+
+/* JS WARNING & FALLBACKS */
+.modernizr-alert{
+    display: none;
+}
+.no-js .js-alert{
+    display: block;
+}
+.no-svg .browser-alert, .no-flexbox .browser-alert, .no-flexboxlegacy .browser-alert{
+    display: block;
+}
+
+#vis-container, #vis-fallback{
+    display: none;
+}
+
+.svg {
+    #vis-container{
+        display: block;
+    }
+    #vis-fallback{
+        display: none
+    }
+}
+
+.no-svg{
+    #vis-fallback{
+        display: block;
+    }
+    #vis-container{
+        display: none;
+    }
+}
+
+/* TYPOGRAPHY */
+p{
+    font-weight: $regular;
+}
+h1, h2, h3, h4, h5, h6 {
+    font-family: $font2;
+    font-weight: $bold;
+}
+strong{
+    font-weight: $bold;
+}
+h1{
+    line-height: 1;
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 4%;
+    font-weight: $ultrabold;
+}
+
+/* LINKS */
+a, a:hover, a:visited, a:active{
+    color: inherit;
+}
+a:hover {
+    border-bottom: 1px dotted;
+}
+p a, a.emphasis{
+    border-bottom: 1px dotted;
+}
+p a:hover, a.emphasis:hover{
+    border-bottom-style: solid;
+}
+a.close:hover{
+    border: none;
+    opacity: 0.8;
+}
+a.active{
+    border-bottom: 1px solid;
+}
+.light{
+    color: $text-light;
+}
+
+/* BUTTONS */
+.button, button, .button:hover, button:hover{
+    background-color: transparent;
+    font-weight: inherit;
+    font-family: inherit;
+}
+
+button.primary, .button.primary{
+    border: none;
+    margin: 0;
+    padding: 0;
+    color: $green;
+    font-weight: $regular;
+    padding-left: 30px;
+    height: 24px;
+}
+button.plus{
+    background: url(../img/plus.png) no-repeat left center;
+    background-size: contain;
+}
+button.information{
+    background: url(../img/info.png) no-repeat left center;
+    background-size: contain;
+}
+button.eye{
+    background: url(../img/eye.png) no-repeat left center;
+    background-size: contain;
+}
+
+button.secondary, .button.secondary{
+    display: block;
+    color: $text;
+    font-size: 1rem;
+    font-weight: $bold;
+    margin: 0 0 0.5rem 0;
+    padding: 0.5rem;
+    background: none;
+    background: $purple;
+
+    img{
+        height: 2rem;
+        width: auto;
+        margin-right: 0.5rem;
+        vertical-align: middle;
+    }
+}
+
+button.secondary:hover, .button.secondary:hover{
+    background: lighten($purple, 10%);
+    color: inherit;
+}
+
+button.secondary:last-child, .button.secondary:last-child{
+    margin-bottom: 0;
+}
+
+button.tertiary, .button.tertiary{
+    @extend .secondary;
+    background: none;
+}
+
+button.tertiary:hover, .button.tertiary:hover{
+    border-bottom: 1px dotted $text;
+    background: none;
+}
+
+button.tertiary.active, .button.tertiary.active{
+    border-bottom: 1px solid $text;
+}
+
+button.disabled, .button.disabled{
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+button.inline{
+    display: inline;
+    margin: 0 0.5rem 0 0;
+}
+
+button.inline:last-child{
+    margin-right: 0;
+}
+
+button.square{
+    width: 2.3125rem;
+}
+
+button.form-input{
+    @extend .secondary;
+    background-color: $text;
+    color: $background;
+    font-size: 0.8rem;
+    height: 2.3rem;
+    overflow: hidden;
+    top: -1px;
+}
+
+button.form-input:hover{
+    background-color: $text;
+    color: $background;
+    text-decoration: underline;
+}
+
+/* FORMS */
+form{
+    input, textarea, select{
+        border: 1px solid $text;
+        background: none;
+        color: $text;
+    }
+    input:focus, textarea:focus, select:focus{
+        background: inherit;
+        border-width: 2px;
+        border-color: inherit;
+    }
+    label{
+        color: $text;
+        font-size: 0.875rem;
+        padding-right: 0.5rem;
+        font-weight: $regular;
+        text-transform: lowercase;
+    }
+}
+
+.form-inline{
+    width: 100%;
+    display: table;
+
+    label{
+        display: table-cell;
+        vertical-align: middle;
+    }
+
+    .field{
+        display: table-cell;
+        overflow: hidden;
+        width: 100%;
+    }
+
+    .awesomplete{
+        display: inline-block;
+        width: 100%;
+        z-index: 999;
+        ul{
+            background: $blur-img;
+            list-style: none;
+            padding: 1rem;
+            margin: 0;
+            margin-top: 15px;
+            position: absolute;
+            z-index: 9999;
+            border-radius: 10px;
+            min-width: 50%;
+        }
+        /* creates triangle */
+        ul:after {
+          content: "";
+          display: block; /* reduce the damage in FF3.0 */
+          position: absolute;
+          top: -15px;
+          left: 10px;
+          width: 0;
+          border-width: 0 15px 15px;
+          border-style: solid;
+          border-color: #031F20 transparent;
+        }
+        li{
+            cursor: pointer;
+        }
+        li:hover, li[aria-selected="true"]{
+            background: $purple;
+        }
+        .visually-hidden{
+            display: none;
+        }
+        mark{
+            background-color: $purple;
+            color: inherit;
+        }
+    }
+
+    input{
+        margin: 0;
+    }
+}
+
+
+
+/* LISTS */
+ul.inline, ul.block{
+    list-style: none;
+    font-size: inherit;
+    margin: 0;
+    padding: 0;
+}
+ul.inline{
+    display: inline;
+    color: $text-light;
+    text-transform: lowercase;
+}
+ul.block{
+    display: block;
+}
+ul.inline li{
+    display: inline-block;
+}
+ul.slash li:after{
+    content: "\00a0/\00a0";
+    color: $text-medium;
+}
+ul.arrow li:after{
+    font-family: 'Arial', sans-serif;
+    content: "\2192";
+    color: $text-medium;
+    font-size: 1.3rem;
+}
+ul.dash li:after{
+    content: " \2013 ";
+    color: $text-medium;
+}
+ul.inline li:last-child:after{
+    content: none;
+}
+dl dt {
+	font-size: 0.8rem;
+    font-weight: 300;
+    color: $text-medium;
+}
+dl dd{
+    color: $text-light;
+}
+.sort.desc, .sort.asc{
+    @extend a.active;
+}
+.sort.desc:after{
+    content: " \2193";
+}
+.sort.asc:after{
+    content: " \2191";
+}
+.list .row{
+    margin-bottom: 1rem;
+    line-height: 2.8rem;
+}
+
+/* MAIN */
+body {
+    display:table;
+    width:100%;
+}
+
+header{
+    display:table-row;
+    width: 100%;
+    .row{
+        margin: 1rem 0;
+    }
+}
+
+nav{
+    text-transform: lowercase;
+}
+
+.container{
+    display: table-row;
+    height: 100%;
+}
+
+/*
+.flexbox{
+    body{
+        display: flex;
+        min-height: 100%;
+        flex-direction: column;
+    }
+    .container{
+        display: flex;
+        flex: 1;
+    }
+}
+*/
+
+/* GRID */
+.row.full{
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+
+    .columns {
+	    height: 100%;
+    }
+}
+
+/* SVG */
+svg{
+    .vis_zoom{
+        pointer-events: all;
+        cursor: move
+    }
+    .link{
+        fill: none;
+        stroke: $green;
+    }
+    .node{
+        fill: $background;
+        stroke: $green;
+    }
+    text{
+        fill: $text;
+        stroke: none;
+    }
+    rect.filled{
+        fill: none;
+        stroke: none;
+    }
+    text.title{
+        font-size: 1.75rem;
+        font-family: $font2;
+        font-weight: $bold;
+        text-anchor: middle;
+    }
+    text.title.stroke{
+        stroke: $background;
+        stroke-width: 5pt;
+    }
+    .linktext text{
+        font-size: 0.85rem;
+        fill: $green;
+    }
+}
+
+.vis-gui{
+    position: absolute;
+    margin: 1rem;
+}
+
+.vis-gui.zoom{
+    bottom: 0;
+    right: 0;
+}
+
+.row.vis-sort{
+    margin-bottom: 1rem;
+    ul{
+        color: $green;
+    }
+}
