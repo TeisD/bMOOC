@@ -5,4 +5,4 @@ Homestead.yaml
 Homestead.json
 .env
 .DS_Store
-.deploy.ini
+deploy.ini
