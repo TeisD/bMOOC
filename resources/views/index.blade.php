@@ -81,9 +81,9 @@
 
 
 @section('scripts')
-   {!! HTML::script('js/d3.min.js') !!}
-   {!! HTML::script('js/d3plus.min.js') !!}
-   {!! HTML::script('js/list.min.js') !!}
+  <script src="js/d3.min.js"></script>
+  <script src="js/d3plus.min.js"></script>
+  <script src="js/list.min.js"></script>
     <script>
         var data = {};
         data.list = JSON.parse('{!! addslashes(json_encode($topics)) !!}');

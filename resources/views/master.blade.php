@@ -9,17 +9,17 @@
     <link rel="preload" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" as="style" onload="this.rel='stylesheet'">
     <link rel="preload" href="//cdn.quilljs.com/0.20.1/quill.snow.css" as="style" onload="this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="//cdn.quilljs.com/0.20.1/quill.snow.css"></noscript>
-    {!! HTML::script('js/loadCSS.js') !!}
-    {!! HTML::script('js/cssrelpreload.js') !!}
+    <script src="js/loadCSS.js"></script>
+    <script src="js/cssrelpreload.js"></script>
 
     {{-- STYLESHEETS --}}
-    {!! HTML::style('css/normalize.min.css') !!}
-    {!! HTML::style('css/foundation.min.css') !!}
-    {!! HTML::style('css/app.css?v=' . Version::get()) !!}
+    <link rel="stylesheet" href="css/normalize.min.css">
+    <link rel="stylesheet" href="css/foundation.min.css">
+    <link rel="stylesheet" href="css/app.css?v=@version">
 
     {{-- SCRIPTS --}}
-    {!! HTML::script('js/vendor/modernizr.js') !!}
-        {!! HTML::script('js/vendor/jquery.min.js') !!}
+    <script src="js/vendor/modernizr.js"></script>
+    <script src="js/vendor/jquery.min.js"></script>
   </head>
 	<body>
         {{-- JS: Google Analytics --}}
@@ -51,19 +51,19 @@
                     <nav class="main">
                         <ul class="inline slash">
                            <li>
-                                {!! HTML::link('#', 'help', array('help-show' => 'index')) !!}
+                                <a href="#" help-show="index">help</a>
                             </li>
                             <li>
-                                {!! HTML::link('#', 'about', array('data-reveal-id' => 'about')) !!}
+                               <a href="#" data-reveal-id="about">about</a>
                             </li>
                             <li>
-                                {!! HTML::link('#', 'feedback', array('data-reveal-id' => 'feedback')) !!}
+                               <a href="#" data-reveal-id="feedback">feedback</a>
                             </li>
                             <li>
                                 @if (isset($user))
-                                    {!! HTML::link('auth/logout','Sign out (' . $user->name . ')', array('class'=>'logout'))  !!}
+                                   <a href="auth/logout" class="logout">Sign out {{$user->name}}</a>
                                 @else
-                                    {!! HTML::link('auth/login','Sign in', ['class'=>'logout', 'data-reveal-id'=>'signin', 'data-reveal-ajax'=>'true']) !!}
+                                   <a href="auth/login" class="logout" data-reveal-id="signin" data-reveal-ajax>Sign in</a>
                                 @endif
                             </li>
                         </ul>
@@ -72,7 +72,7 @@
             </div>
             <div class="row">
 				<div class="large-5 columns">
-					<h1 class="inline">{!! HTML::link('/','bMOOC') !!}</h1>
+					<h1 class="inline"><a href="/">bMOOC</a></h1>
                     <span id="vis-menu">
                         <button class="tertiary inline" data-vis="list"><img src="/img/vis_list_white.png" />list</button>
                         <button class="tertiary inline" data-vis="tree" data-svg><img src="/img/vis_tree_white.png" />tree</button>
@@ -102,7 +102,7 @@
 
             <p>Topics may have specific instructions. They do not determine the contribution, but ask the contributor to disclose the gaze and to become attentive for (some)thing(s).</p>
 
-            <p>Login/register in order to join. Feel free to contribute to any topic. Click {!! HTML::link('#', 'help', array('class'=>'emphasis', 'help-show' => 'index')) !!} for assistance and {!! HTML::link('#', 'about', array('class'=>'emphasis', 'data-reveal-id' => 'about')) !!} for more information.</p>
+            <p>Login/register in order to join. Feel free to contribute to any topic. Click <a href="#" class="emphasis" help-show="index">help</a> for assistance and <a href="#" class="emphasis" data-reveal-id="about">about</a> for more information.</p>
 
             <div class="deep">
                 <h3>Massive</h3>
@@ -119,7 +119,7 @@
 
                 <p class="small"><em>bMOOC is a OOF- Research project by LUCA School of Arts (Art, Practices &amp; Education) and KU Leuven (Laboratory for Education and Society), commissioned by Association KU Leuven.</em></p>
 
-                <p class="small"><strong>bMOOC is a constant test-run prototype: please {!! HTML::link('#', 'contact us', array('class'=>'emphasis', 'data-reveal-id' => 'feedback')) !!} with your suggestions.</strong></p>
+                <p class="small"><strong>bMOOC is a constant test-run prototype: please <a href="#" class="emphasis" data-reveal-id="feedback">contact us</a> with your suggestions.</strong></p>
             </div>
               <a class="close-reveal-modal close" aria-label="Close">&#215;</a>
         </div>
@@ -133,9 +133,9 @@
         </div>
 
         {{-- SCRIPTS --}}
-        {!! HTML::script('js/foundation.min.js') !!}
-        {!! HTML::script('js/app.js?v=' . Version::get()) !!}
-        {!! HTML::script('js/help.js?v=' . Version::get()) !!}
+        <script src="js/foundation.min.js"></script>
+        <script src="js/app.js?v=@version"></script>
+        <script src="js/help.js?v=@version"></script>
 
         <script>
             $(document).foundation();
