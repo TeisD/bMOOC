@@ -90,6 +90,11 @@ class BmoocController extends Controller {
         return view('index', ['topics' => $topics, 'user' => $user, 'authors' => $authors, 'tags' => $tags, 'aantalAntwoorden' => $aantalAntwoorden, 'links' => $links]);
     }
 
+    public function topic($id){
+        dd($id);
+        return view('topic', ['topic' => $topic]);
+    }
+
     public function feedback(){
         $data = Input::all();
 

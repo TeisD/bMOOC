@@ -3,9 +3,9 @@
 use App\Http\Controllers\BmoocController;
 
 Route::get('/', 'BmoocController@index');
-Route::get('/start', 'BmoocController@index');
+Route::get('topic/{id}', 'BmoocController@topic');
 
-Route::get('topic/{left}/{answer?}', ['uses'=>'BmoocController@showTopic']);
+//Route::get('topic/{left}/{answer?}', ['uses'=>'BmoocController@showTopic']);
 Route::post('topic/new', 'BmoocController@newTopic');
 Route::post('instruction/new', 'BmoocController@newInstruction');
 
