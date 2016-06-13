@@ -39,6 +39,9 @@ Route::get('logout', 'Auth\AuthController@getLogout');
 
 Route::post('feedback', 'BmoocController@feedback');
 
+/**
+ * ADMIN PANEL
+ */
 Route::get('admin', function(){
     return Redirect::to('admin/data/basic');
 });
