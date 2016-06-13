@@ -38,32 +38,22 @@ class BmoocController extends Controller {
     public function index(Request $request) {
         $user = Auth::user();
 
-        $roles = UserRole::with(['users'])->get();
-        dd($roles);
+        $topics = Topic::all();
 
-        $artefacts = User::with(['role', 'artefacts', 'instructions', 'topics'])->limit(3)->get();
-        dd($artefacts);
+        $authors = User::orderBy('name')->get();
+        $tags = Tag::orderBy('tag')->get();
 
-        $topics = Artefact::with(['active_instruction', 'the_author', 'last_modifier'])
-            ->orderBy('updated_at', 'desc')
-            ->whereNull('parent_id')
-            ->get();
-
-        $authors = DB::table('users')->select('id', 'name')->distinct()->get();
-        $tags = Tags::orderBy('tag')->get();
-
-        $aantalAntwoorden = DB::table('artefacts')->select(DB::raw('count(*) as aantal_antwoorden, thread'))
-            ->groupBy('thread')->get();
+        $aantalAntwoorden = Topic::with('artefacts')->count();
 
         // lijst per tag alle threads op, selecteer degene met meerdere threads
         $links_query = DB::select(DB::raw('
-            SELECT tag_id, tag, GROUP_CONCAT(thread ORDER BY thread ASC) as threads, COUNT(*) as count
+            SELECT tag_id, tag, GROUP_CONCAT(topic ORDER BY topic ASC) as topics, COUNT(*) as count
             FROM
             (
-                SELECT DISTINCT tag_id, artefacts.thread, tags.tag
-                FROM artefacts_tags
-                LEFT JOIN artefacts ON artefacts_tags.artefact_id = artefacts.id
-                LEFT JOIN tags ON artefacts_tags.tag_id = tags.id
+                SELECT DISTINCT tag_id, artefacts.topic, tags.tag
+                FROM artefact_tags
+                LEFT JOIN artefacts ON artefact_tags.artefact_id = artefacts.id
+                LEFT JOIN tags ON artefact_tags.tag_id = tags.id
             ) threads_tags
             GROUP BY threads_tags.tag_id
             HAVING count > 1
@@ -72,12 +62,12 @@ class BmoocController extends Controller {
         $links = [];
 
         foreach ($links_query as $link){
-            $link->threads = array_map('intval', explode(',', $link->threads));
+            $link->topics = array_map('intval', explode(',', $link->topics));
 
-            for($i = 0; $i < sizeof($link->threads); $i++){
-                for($j = $i+1; $j < sizeof($link->threads); $j++){
-                    $source = $link->threads[$i];
-                    $target = $link->threads[$j];
+            for($i = 0; $i < sizeof($link->topics); $i++){
+                for($j = $i+1; $j < sizeof($link->topics); $j++){
+                    $source = $link->topics[$i];
+                    $target = $link->topics[$j];
                     // check if source target already exists
                     $sources = array_keys(array_column($links, 'source'), $source);
                     $targets = array_keys(array_column($links, 'target'), $target);

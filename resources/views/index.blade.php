@@ -54,7 +54,7 @@
                 </div>
                 <div class="columns large-2">
                     @foreach ($aantalAntwoorden as $aantal)
-                        @if ($aantal->thread == $topic->thread)
+                        @if ($aantal->topic == $topic->topic)
                          <strong class="additions">{{ $aantal->aantal_antwoorden }}</strong>
                              @if ($aantal->aantal_antwoorden == 1)
                                 <span class="light">addition</span>
