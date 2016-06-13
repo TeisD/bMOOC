@@ -1,6 +1,6 @@
 <h2>Sign in</h2>
 
-<p>Using bMOOC for the first time? {!! HTML::link('auth/register','Create an account', ['class'=>'emphasis', 'data-reveal-id'=>'signup', 'data-reveal-ajax'=>'true']) !!}.</p>
+<p>Using bMOOC for the first time? <a href="auth/register" class="emphasis" data-reveal-id="signup" data-reveal-ajax="true">Create an account</a></p>
 
 {!! Form::open(array('data-abide', 'url'=>'/auth/login','method'=>'POST')) !!}
 <div>
@@ -24,6 +24,6 @@
     <input type="submit" class="full purple" value="Login" />
 {!! Form::close() !!}
 
-<p><small>Problems signing in? {!! HTML::link('#', 'Send us a message', array('class'=>'emphasis', 'data-reveal-id' => 'feedback')) !!}.</small></p>
+<p><small>Problems signing in? <a href="#" class="emphasis" data-reveal-id='feedback'>Send us a message</a></small></p>
 
 <a class="close-reveal-modal" aria-label="Close">&#215;</a>

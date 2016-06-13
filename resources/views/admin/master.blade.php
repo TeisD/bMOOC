@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <title>bMOOC | @yield('title')</title>
 
-    {!! HTML::style('css/foundation.css') !!}
-    {!! HTML::style('css/admin.css') !!}
-    {!! HTML::script('js/vendor/modernizr.js') !!}
-    {!! HTML::style('https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css') !!}
+    <script src="css/foundation.css"></script>
+    <link rel="stylesheet" href="css/admin.css">
+    <script src="js/vendor/modernizr.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 </head>
 <body>
 
@@ -17,11 +17,11 @@
               <h1>bMOOC</h1>
                <nav>
                   <div class="icon-bar two-up">
-                      <a href="/admin/data" class="item {{ Menu::active('data') }}">
+                      <a href="/admin/data" class="item @menu('data')">
                         <i title="video" class="fa fa-area-chart"></i>
                         <label>Data</label>
                       </a>
-                      <a href="/admin/actions" class="item {{ Menu::active('actions') }}">
+                      <a href="/admin/actions" class="item @menu('actions')">
                         <i title="video" class="fa fa-cog"></i>
                         <label>Actions</label>
                       </a>
@@ -45,7 +45,7 @@
             @yield('content')
     </div>
 
-    {!! HTML::script('js/vendor/jquery.js') !!}
+    <script src="js/vendor/jquery.js"></script>
     <script>
         var host = "{{ URL::to('/') }}";
     </script>

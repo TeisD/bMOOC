@@ -3,16 +3,16 @@
 @section('title', 'Data')
 
 @section('nav_secondary')
-    <li class="{{ Menu::active('basic') }}">
+    <li class="@menu('basic')">
         <a href="/admin/data/basic">basic</a>
     </li>
-    <li class="{{ Menu::active('progress') }}">
+    <li class="@menu('progress')">
         <a href="/admin/data/progress">progress</a>
     </li>
-    <li class="{{ Menu::active('tree') }}">
+    <li class="@menu('tree')">
         <a href="/admin/data/tree">tree</a>
     </li>
-    <li class="{{ Menu::active('topics') }}">
+    <li class="@menu('topics')">
         <a href="/admin/data/topics">topics</a>
     </li>
 @endsection

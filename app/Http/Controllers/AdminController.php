@@ -14,6 +14,9 @@ use App\Tags;
 use stdClass;
 use DB;
 use Carbon;
+use App\Http\Controllers\Controller;
+use Schema;
+use Artisan;
 
 class AdminController extends Controller {
 
@@ -21,13 +24,12 @@ class AdminController extends Controller {
         //$this->middleware('auth', ['except' => 'index']);
     }
 
-    public function basic(Request $request) {
+    public function basic($topic = null) {
         // LIST OF TOPICS
         $topics = DB::table('artefacts')
             ->orderBy('updated_at', 'desc')
             ->whereNull('parent_id')
             ->get();
-        $topic = Input::get('topic');
         if(!is_numeric($topic)) $topic = null;
 
         $artefacts = new stdClass();
@@ -401,5 +403,141 @@ class AdminController extends Controller {
         }
 
         return AdminController::getTags($request);
+    }
+
+    public function getMigrate(){
+        $user = Auth::user();
+        if (!($user && $user->role == "editor")) App::abort(401, 'Not authenticated');
+
+        return view('admin.actions.migrate');
+
+    }
+
+    public function postMigrate(){
+        $user = Auth::user();
+        if (!($user && $user->role == "editor")) App::abort(401, 'Not authenticated');
+
+        /**
+         *  artefact_types
+         */
+        if (Schema::hasColumn('artefact_types', 'description')){
+            Schema::table('artefact_types', function($table){
+                $table->renameColumn('description', 'type');
+            });
+        }
+        if (Schema::hasColumn('artefact_types', 'description')){
+            Schema::table('artefact_types', function($table){
+                $table->string('type', 100)->change();
+            });
+        }
+
+        /**
+         *  artefacts
+         */
+        if (Schema::hasColumn('artefacts', 'thread')) {
+            Schema::table('artefacts', function($table){
+                $table->renameColumn('thread', 'topic');
+                $table->renameColumn('artefact_type', 'type');
+                $table->renameColumn('contents', 'content');
+                $table->text('notes')->nullable();
+            });
+        }
+        if (Schema::hasColumn('artefacts', 'topic')) {
+            Schema::table('artefacts', function($table){
+                $table->integer('author')->change();
+                $table->string('title', 100)->change();
+                $table->integer('type')->change();
+                // loop through and copy the contents of the 'url' column to the 'content' column
+                DB::statement('UPDATE artefacts
+                    SET content = url
+                    WHERE url <> \'NULL\'');
+            });
+        }
+
+        /**
+         *  artefact_tags
+         */
+        if (Schema::hasTable('artefacts_tags')){
+            Schema::table('artefacts_tags', function($table){
+                $table->primary('id');
+            });
+            DB::statement('RENAME TABLE artefacts_tags TO artefact_tags');
+        }
+
+        /**
+         *  instructions
+         */
+        if (Schema::hasColumn('instructions', 'thread')){
+            Schema::table('instructions', function($table){
+                $table->renameColumn('thread', 'topic');
+                $table->renameColumn('instruction_type', 'type');
+                $table->renameColumn('contents', 'content');
+            });
+        }
+        if (Schema::hasColumn('instructions', 'topic')){
+            Schema::table('instructions', function($table){
+                $table->integer('author')->change();
+                $table->integer('type')->change();
+                $table->string('title', 100)->change();
+                DB::statement('UPDATE instructions
+                    SET content = url
+                    WHERE url <> \'NULL\'');
+            });
+        }
+
+        /**
+         *  instruction_artefact_types
+         */
+        if (Schema::hasTable('instructions_artefact_types')){
+            DB::statement('RENAME TABLE instructions_artefact_types TO instruction_artefact_types');
+        }
+
+        /**
+         *  tags
+         */
+        Schema::table('tags', function($table){
+            $table->string('tag', 100)->change();
+        });
+
+        /**
+         *  users
+         */
+        Schema::table('users', function($table){
+            $table->integer('role')->change();
+        });
+
+        /**
+         *  add migrations to enable artisan
+         */
+        $batch = DB::table('migrations')
+            ->select('batch')
+            ->orderBy('batch', 'DESC')
+            ->limit(1)
+            ->get();
+        $batch = $batch[0]->batch;
+        $batch++;
+        $migrations = [
+            ['2014_10_12_000000_create_users_table', $batch],
+            ['2014_10_12_100000_create_password_resets_table', $batch],
+            ['2016_06_13_105413_create_user_roles_table', $batch],
+            ['2016_06_13_105547_create_tags_table', $batch],
+            ['2016_06_13_105758_create_instructions_table', $batch],
+            ['2016_06_13_110550_create_artefact_types_table', $batch],
+            ['2016_06_13_110635_create_artefacts_table', $batch],
+            ['2016_06_13_111140_create_artefact_tags_table', $batch],
+            ['2016_06_13_111918_create_instruction_artefact_types_table', $batch]
+        ];
+        foreach($migrations as $migration){
+            DB::insert('insert into migrations (migration, batch) values (?, ?)', $migration);
+        }
+
+        Artisan::call('migrate');
+
+        DB::statement('INSERT INTO topics (author, title, description, goal, start_date, end_date, created_at, updated_at)
+        SELECT author, title, \'no description\', \'no goal\', created_at, \'2016-09-01 12:00:00\', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+        FROM artefacts
+        WHERE parent_id IS NULL');
+
+        return view('admin.actions.migrate');
     }
 }

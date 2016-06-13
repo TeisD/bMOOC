@@ -59,3 +59,5 @@ Route::get('admin/actions/thumbnails', 'AdminController@getThumbnails');
 Route::post('admin/actions/thumbnails', 'AdminController@postThumbnails');
 Route::get('admin/actions/tags', 'AdminController@getTags');
 Route::post('admin/actions/tags', 'AdminController@postTags');
+Route::get('admin/actions/migrate', 'AdminController@getMigrate');
+Route::post('admin/actions/migrate', 'AdminController@postMigrate');

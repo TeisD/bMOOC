@@ -59,9 +59,9 @@
 @section('scripts')
     @parent
 
-    {!! HTML::script('js/foundation.min.js') !!}
-    {!! HTML::script('js/pdf.js') !!}
-    {!! HTML::script('js/app.js') !!}
+    <script src="js/foundation.min.js"></script>
+    <script src="js/pdf.js"></script>
+    <script src="js/app.js"></script>
     <script>
         $(document).ready(function(){
             $('#generate').click(function(){
