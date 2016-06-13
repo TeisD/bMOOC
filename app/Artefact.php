@@ -6,34 +6,30 @@ use Illuminate\Database\Eloquent\Model;
 
 class Artefact extends Model {
 
-    public function the_author() {
-        return $this->belongsTo('App\User', 'author');
-    }
+    protected $fillable = ['parent_id', 'topic', 'author', 'title', 'type', 'content', 'notes', 'copyright'];
 
-    public function last_modifier() {
-        return $this->belongsTo('App\User', 'last_contributor');
+    public function author() {
+        return $this->belongsTo('App\User', 'author');
     }
 
     public function children() {
         return $this->hasMany('App\Artefact', 'parent_id', 'id');
     }
 
-    public function child_of() {
-        return $this->belongsTo('App\Artefact', 'parent_id', 'id');
+    public function parent() {
+        return $this->belongsTo('App\Artefact', 'parent_id');
     }
 
     public function tags() {
-        return $this->belongsToMany('App\Tags', 'artefacts_tags', 'artefact_id', 'tag_id');
+        return $this->belongsToMany('App\Tag', 'artefact_tags', 'artefact_id', 'tag_id');
     }
 
     public function type() {
-        return $this->belongsTo('App\ArtefactType', 'artefact_type');
+        return $this->belongsTo('App\ArtefactType', 'type');
     }
 
-    public function active_instruction() {
-        return $this->belongsTo('App\Instruction', 'thread', 'thread')
-            ->join('users', 'users.id', '=', 'instructions.author');
+    public function topic() {
+        return $this->belongsTo('App\Topic', 'topic');
     }
-
 
 }

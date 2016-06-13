@@ -519,7 +519,6 @@ class AdminController extends Controller {
         $migrations = [
             ['2014_10_12_000000_create_users_table', $batch],
             ['2014_10_12_100000_create_password_resets_table', $batch],
-            ['2016_06_13_105413_create_user_roles_table', $batch],
             ['2016_06_13_105547_create_tags_table', $batch],
             ['2016_06_13_105758_create_instructions_table', $batch],
             ['2016_06_13_110550_create_artefact_types_table', $batch],
@@ -533,8 +532,8 @@ class AdminController extends Controller {
 
         Artisan::call('migrate');
 
-        DB::statement('INSERT INTO topics (author, title, description, goal, start_date, end_date, created_at, updated_at)
-        SELECT author, title, \'no description\', \'no goal\', created_at, \'2016-09-01 12:00:00\', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+        DB::statement('INSERT INTO topics (id, author, title, description, goal, start_date, end_date, created_at, updated_at)
+        SELECT topic, author, title, \'no description\', \'no goal\', created_at, \'2016-09-01 12:00:00\', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
         FROM artefacts
         WHERE parent_id IS NULL');
 

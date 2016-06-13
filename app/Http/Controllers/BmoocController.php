@@ -6,7 +6,9 @@ use App\User;
 use App\Artefact;
 use App\ArtefactType;
 use App\Instruction;
-use App\Tags;
+use App\Tag;
+use App\Topic;
+use App\UserRole;
 use App\Http\Controllers\Controller;
 use Input;
 use Validator;
@@ -35,6 +37,12 @@ class BmoocController extends Controller {
 
     public function index(Request $request) {
         $user = Auth::user();
+
+        $roles = UserRole::with(['users'])->get();
+        dd($roles);
+
+        $artefacts = User::with(['role', 'artefacts', 'instructions', 'topics'])->limit(3)->get();
+        dd($artefacts);
 
         $topics = Artefact::with(['active_instruction', 'the_author', 'last_modifier'])
             ->orderBy('updated_at', 'desc')

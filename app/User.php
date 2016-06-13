@@ -17,23 +17,32 @@ class User extends Model implements AuthenticatableContract,
     use Authenticatable, Authorizable, CanResetPassword;
 
     /**
-     * The database table used by the model.
-     *
-     * @var string
-     */
-    protected $table = 'users';
-
-    /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['name', 'email', 'password', 'avatar', 'provider', 'provider_id', 'role'];
+    protected $fillable = ['name', 'email', 'role'];
 
     /**
      * The attributes excluded from the model's JSON form.
      *
      * @var array
      */
-    protected $hidden = ['password', 'remember_token'];
+    protected $guarded = ['password', 'remember_token'];
+
+    public function role() {
+		return $this->hasOne('App\UserRole', 'role');
+	}
+
+    public function topics(){
+        return $this->hasMany('App\Topic', 'author');
+    }
+
+    public function artefacts() {
+		  return $this->hasMany('App\Artefact', 'author');
+	}
+
+    public function instructions() {
+		  return $this->hasMany('App\Instruction', 'author');
+	}
 }
