@@ -91,6 +91,10 @@ h1{
     margin-right: 4%;
     font-weight: $ultrabold;
 }
+.sub:before{
+    content: "\21aa\00a0";
+    //content: "\21b3\00a0";
+}
 
 /* LINKS */
 a, a:hover, a:visited, a:active{
@@ -445,6 +449,19 @@ svg{
     .linktext text{
         font-size: 0.85rem;
         fill: $green;
+    }
+    .axis {
+        stroke: $text;
+        shape-rendering: crispEdges;
+        cursor: pointer;
+    }
+    .slider{
+        fill: $purple;
+        color: $purple;
+        cursor: pointer;
+        .background{
+            cursor: pointer !important;
+        }
     }
 }
 

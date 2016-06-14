@@ -88,15 +88,13 @@
 
 
 @section('scripts')
-  <script src="js/d3.min.js"></script>
-  <script src="js/d3plus.min.js"></script>
-  <script src="js/list.min.js"></script>
+  <script src="/js/d3.min.js"></script>
+  <script src="/js/d3plus.min.js"></script>
+  <script src="/js/list.min.js"></script>
     <script>
         var data = {};
         data.list = JSON.parse('{!! addslashes(json_encode($topics)) !!}');
-        data.links = JSON.parse('{!! addslashes(json_encode($links)) !!}');;
-
-        console.log(data);
+        data.links = JSON.parse('{!! addslashes(json_encode($links)) !!}');
 
         var vis;
 

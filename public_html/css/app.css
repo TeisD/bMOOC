@@ -58,6 +58,9 @@ h1 {
   margin-right: 4%;
   font-weight: 900; }
 
+.sub:before {
+  content: "\21aa\00a0"; }
+
 /* LINKS */
 a, a:hover, a:visited, a:active {
   color: inherit; }
@@ -196,7 +199,7 @@ form label {
   .form-inline .awesomplete {
     display: inline-block;
     width: 100%;
-    z-index: 999;
+    z-index: 999
     /* creates triangle */ }
     .form-inline .awesomplete ul {
       background: url("/img/bg.png");
@@ -350,6 +353,16 @@ svg text.title.stroke {
 svg .linktext text {
   font-size: 0.85rem;
   fill: #17cf1f; }
+svg .axis {
+  stroke: #ffffff;
+  shape-rendering: crispEdges;
+  cursor: pointer; }
+svg .slider {
+  fill: #751e82;
+  color: #751e82;
+  cursor: pointer; }
+  svg .slider .background {
+    cursor: pointer !important; }
 
 .vis-gui {
   position: absolute;

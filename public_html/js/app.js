@@ -602,7 +602,9 @@ var Vis = (function(){
             mode: 'nodes', // Show nodes, text or all
             background: true, // give a background to text so the links appear behind
             fit: true, // scales the visualisation to fit the container upon render
-            collide: true // let the elements of a force layout overlap
+            collide: true, // let the elements of a force layout overlap
+            resize: true,
+            rotate: false
         };
 
         if(typeof opt !== 'undefined'){
@@ -611,6 +613,8 @@ var Vis = (function(){
             if(typeof opt.background !== 'undefined') this.options.background = opt.background;
             if(typeof opt.fit !== 'undefined') this.options.fit = opt.fit;
             if(typeof opt.collide !== 'undefined') this.options.collide = opt.collide;
+            if(typeof opt.resize !== 'undefined') this.options.resize = opt.resize;
+            if(typeof opt.rotate !== 'undefined') this.options.rotate = opt.rotate;
         }
 
         this.data = data;
@@ -683,8 +687,6 @@ var Vis = (function(){
                 .html('&#10134;&#xfe0e;')
                 .on('click', function(){ pointer.zoom(-0.1) });
         }
-
-        // if(this.options.fit) this.fit();
     }
 
     /**
@@ -694,20 +696,20 @@ var Vis = (function(){
 
         console.log('fit');
 
-        width = this.width()-Vis.MARGIN.left/2;
-        height = this.height()-Vis.MARGIN.top/2;
+        width = this.width();
+        height = this.height();
 
         var t = [0,0],
             s = 1,
-            w = this.g.node().getBBox().width,
-            h = this.g.node().getBBox().height;
+            w = this.g.node().getBBox().width + Vis.MARGIN.left*2,
+            h = this.g.node().getBBox().height + Vis.MARGIN.top*2;
 
         if(w > width) s = width/w;
         if(h > height && height/h < s) s = height/h;
 
         //t_w = width/2 - (w/2)*s;
-        t_w = -this.g.node().getBBox().x*s + (width-w*s)/2 + (Vis.MARGIN.left/4)*s
-        t_h = -this.g.node().getBBox().y*s + (height-h*s)/2 + (Vis.MARGIN.top/4)*s
+        t_w = -this.g.node().getBBox().x*s + (width-w*s)/2 + (Vis.MARGIN.left*s)
+        t_h = -this.g.node().getBBox().y*s + (height-h*s)/2 + + (Vis.MARGIN.top*s)
 
         this.zoomListener
             .scale(s)
@@ -805,12 +807,19 @@ var Vis = (function(){
         var link = this.g.selectAll("path.link")
         .data(links, function(d) { return d.target.id; });
 
-        var diagonal = d3.svg.diagonal()
-            .projection(function(d) { return [d.y, d.x]; });
+        if(this.options.rotate){
+            var diagonal = d3.svg.diagonal()
+                .projection(function(d) { return [d.y, d.x]; });
+        } else {
+            var diagonal = d3.svg.diagonal()
+                .projection(function(d) { return [d.x, d.y]; });
+        }
 
         link.enter().insert("path", "g")
             .attr("class", "link")
             .attr("d", diagonal);
+
+        if(this.options.fit) this.fit();
     }
 
     /**
@@ -843,9 +852,9 @@ var Vis = (function(){
 
         // gebruik de index (gekoppeld aan de thread) in de array ipv id voor Force layout
         links.forEach(function(e) {
-            var sourceNode = nodes.indexOf(nodes.filter(function(n) { return n.thread === e.source; })[0]);
+            var sourceNode = nodes.indexOf(nodes.filter(function(n) { return n.id === e.source; })[0]);
 
-            var targetNode = nodes.indexOf(nodes.filter(function(n) { return n.thread === e.target; })[0]);
+            var targetNode = nodes.indexOf(nodes.filter(function(n) { return n.id === e.target; })[0]);
 
             edges.push({source: sourceNode, target: targetNode, value: e.links});
         });
@@ -1012,10 +1021,17 @@ var Vis = (function(){
         // Enter the nodes.
         var nodeEnter = node.enter().append("g")
             .attr("class", "node")
-            .attr("id",function(d,i){ return d.id = "node"+i; })
-            .attr("transform", function(d) {
+            .attr("id", function(d){ return d.id })
+
+        if(this.options.rotate){
+            nodeEnter.attr("transform", function(d) {
+                return "translate(" + d.y + "," + d.x + ")";
+            });
+        } else {
+            nodeEnter.attr("transform", function(d) {
                 return "translate(" + d.x + "," + d.y + ")";
             });
+        }
 
         if(this.options.mode == 'all'){
             //hidden
@@ -1102,6 +1118,206 @@ var Vis = (function(){
     }
 
     return Vis;
+
+})();
+
+/***********
+* TIMELINE *
+***********/
+
+var Timeline = (function(){
+
+    /**
+     * Create a Timeline.
+     * @param {Vis} vis - The visualisation to be associated with the timeline. Requires  data.list to be set.
+     */
+    function Timeline(vis){
+
+        var pointer = this;
+
+        this.vis = vis;
+
+        /* public vars & functions */
+        this.formatDate = d3.time.format("%d %b %Y");
+
+        this.max = d3.max(this.vis.data.list, function(d){
+                  var date = d3.time.format("%Y-%m-%d %H:%M:%S").parse(d.created_at);
+                  return date;
+              });
+
+        this.min = d3.min(this.vis.data.list, function(d){
+                  var date = d3.time.format("%Y-%m-%d %H:%M:%S").parse(d.created_at);
+                  return date;
+              });
+
+        this.startingValue = this.max;
+
+        this.timeScale = d3.time.scale()
+          .domain([this.min, this.max])
+          .range([100, this.vis.width() - 100])
+          .clamp(true);
+
+        this.brush = d3.svg.brush()
+            .x(this.timeScale)
+            .extent([this.max, this.max])
+            .on("brush", function(){
+                pointer.brushed(this);
+            });
+
+    }
+
+    Timeline.prototype.brushed = function(e){
+        var pointer = this;
+
+        var value = this.brush.extent()[0];
+
+        // put the brush to a new value
+        if (d3.event.sourceEvent) { // not a programmatic event
+            value = this.timeScale.invert(d3.mouse(e)[0]);
+            this.brush.extent([value, value]);
+        }
+
+        d3.select(this.vis.el).select(".handle").attr("transform", "translate(" + this.timeScale(value) + ",0)");
+        d3.select(this.vis.el).select(".handle").select('text').text(this.formatDate(value));
+
+        // show all the nodes
+        this.vis.g.selectAll("g.node").attr("display", "block");
+        this.vis.g.selectAll(".link").attr("display", "block");
+
+        // hide the newest nodes
+        this.vis.g.selectAll("g.node")
+            .filter(function(d) {
+                var date = d3.time.format("%Y-%m-%d %H:%M:%S").parse(d.created_at);
+                return date > pointer.brush.extent()[0];
+            }).attr("display", "none");
+        this.vis.g.selectAll(".link")
+            .filter(function(d) {
+                var date = d3.time.format("%Y-%m-%d %H:%M:%S").parse(d.target.created_at);
+                return date > pointer.brush.extent()[0];
+            })//.attr("opacity", "0.2");
+            .attr("display", "none");
+
+        if(this.vis.options.fit) this.vis.fit();
+    }
+
+    /**
+     *  Show the timeline
+     */
+    Timeline.prototype.show = function(){
+
+        var pointer = this;
+
+        // AXIS
+
+        // define the axis
+        var axis = d3.svg.axis()
+            .scale(this.timeScale)
+            .orient("bottom")
+            .tickFormat(function(d) {
+                return pointer.formatDate(d);
+            })
+            .tickSize(0)
+            .tickPadding(12)
+            .tickValues([this.timeScale.domain()[0], this.timeScale.domain()[1]])
+
+        // select on parent node, we don't want to scale the timeline
+        this.vis.svg.append("g")
+            .attr("class", "x axis")
+            // put in middle of screen
+            .attr("transform", "translate(0," + (this.vis.height() - Vis.MARGIN.top - 25) + ")")
+            // inroduce axis
+            .call(axis)
+            .select(".domain");
+
+        // SLIDER
+
+        // add slider handle on parentNode, we don't want to scale it
+        var slider = this.vis.svg.append("g")
+          .attr("class", "slider")
+            .attr("transform", "translate(0, " + (this.vis.height() - Vis.MARGIN.top - 25) + ")")
+          .call(this.brush);
+
+        slider.selectAll(".extent,.resize")
+          .remove();
+
+        // background for slider to make selection area bigger
+        slider.select(".background")
+          .attr("height", 25)
+            .attr("transform", "translate(0," + -12 + ")")
+
+        // SLIDER > HANDLE
+        var handle = slider.append("g")
+          .attr("class", "handle")
+
+        handle.append("circle")
+          .attr("r", 5)
+
+        handle.append('text')
+          .text(this.startingValue)
+            .attr("text-align", "center")
+          .attr("transform", "translate(" + 0 + " ," + -20 + ")");
+
+        slider
+          .call(this.brush.event);
+    }
+
+    /**
+     *  Hide the timeline
+     */
+    Timeline.prototype.hide = function(){
+    }
+
+    /**
+     *  Play forward
+     */
+    Timeline.prototype.forward = function(){
+        var pointer = this;
+
+        d3.select(d3.select('.slider').node()).transition()
+            .ease(d3.ease("linear"))
+            .duration(function(){
+                return (5000 + 200 * d3.select(this.parentNode).selectAll("g.node").size()) * Math.abs((pointer.max - pointer.brush.extent()[0]) / (pointer.max - pointer.min));
+            })
+            .call(this.brush.extent([this.max, this.max]))
+            .call(this.brush.event);
+    }
+
+    /**
+     *  Play backwards
+     */
+    Timeline.prototype.rewind = function(){
+        var pointer = this;
+
+        d3.select(d3.select('.slider').node()).transition()
+            .ease(d3.ease("linear"))
+            .duration(function(){
+                return (5000 + 200 * d3.select(this.parentNode).selectAll("g.node").size()) * Math.abs((pointer.brush.extent()[0] - pointer.min) / (pointer.max - pointer.min));
+            })
+            .call(this.brush.extent([this.min, this.min]))
+            .call(this.brush.event);
+    }
+
+    Timeline.prototype.stop = function(){
+        d3.select(d3.select('.slider').node()).transition();
+    }
+
+    Timeline.prototype.update = function(){
+        d3.select(d3.select('.slider').node()).call(this.brush.event);
+    }
+
+    /**
+     *  Set to start
+     */
+    Timeline.prototype.toStart = function(){
+    }
+
+    /**
+     *  Set to end
+     */
+    Timeline.prototype.toEnd = function(){
+    }
+
+    return Timeline;
 
 })();
 

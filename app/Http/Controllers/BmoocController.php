@@ -52,8 +52,8 @@ class BmoocController extends Controller {
                 FROM artefact_tags
                 LEFT JOIN artefacts ON artefact_tags.artefact_id = artefacts.id
                 LEFT JOIN tags ON artefact_tags.tag_id = tags.id
-            ) threads_tags
-            GROUP BY threads_tags.tag_id
+            ) topics_tags
+            GROUP BY topics_tags.tag_id
             HAVING count > 1
         '));
 
@@ -87,8 +87,16 @@ class BmoocController extends Controller {
     }
 
     public function topic($id){
-        dd($id);
-        return view('topic', ['topic' => $topic]);
+        $user = Auth::user();
+
+        $topic = Topic::find($id);
+        $authors = User::orderBy('name')->get();
+        $tags = Tag::orderBy('tag')->get();
+
+        $tree = VisController::getTree($topic->firstAddition);
+        $list = $topic->artefacts;
+
+        return view('topic', ['user' => $user, 'topic' => $topic, 'authors' => $authors, 'tags' => $tags, 'tree' => $tree, 'list' => $list]);
     }
 
     public function feedback(){
@@ -692,7 +700,7 @@ class BmoocController extends Controller {
 
     public function getImage($id){
         $a = Artefact::find($id);
-        $path = base_path().'/../uploads/thumbnails/large/'.$a->url;
+        $path = storage_path('/app/artefacts/thumbnails/large/'.$a->content);
         if (file_exists($path)) {
             $filetype = mime_content_type( $path );
             $response = Response::make( File::get( $path ) , 200 );
@@ -705,7 +713,7 @@ class BmoocController extends Controller {
     public function getImageThumbnail($id){
         // get url from id
         $a = Artefact::find($id);
-        $path = base_path().'/../uploads/thumbnails/small/'.$a->url;
+        $path = storage_path('/app/artefacts/thumbnails/small/'.$a->content);
         // check if the artefact has a thumbnail based on id
         if (file_exists($path)) {
             $filetype = mime_content_type( $path );
@@ -719,21 +727,21 @@ class BmoocController extends Controller {
 
     public function getImageOriginal($id){
         $a = Artefact::find($id);
-        $path = base_path().'/../uploads/'.$a->url;
+        $path = storage_path('/app/artefacts/'.$a->content);
         if (file_exists($path)) {
             $filetype = mime_content_type( $path );
             $response = Response::make( File::get( $path ) , 200 );
             $response->header('Content-Type', $filetype);
             return $response;
         } else if($a->artefact_type == 31){
-            $url = str_replace('www.youtube.com/embed', 'img.youtube.com/vi', $a->url);
+            $url = str_replace('www.youtube.com/embed', 'img.youtube.com/vi', $a->content);
             $url .= '/0.jpg';
             $response = Response::make( file_get_contents($url), 200 );
             $response->header('Content-Type', 'image/jpeg');
             return $response;
         } else if($a->artefact_type == 32){
             $oembed_endpoint = 'http://vimeo.com/api/oembed';
-            $url = $oembed_endpoint . '.json?url=' . rawurlencode($a->url);
+            $url = $oembed_endpoint . '.json?url=' . rawurlencode($a->content);
             $json = file_get_contents($url);
             $obj = json_decode($json);
             $response = Response::make( file_get_contents($obj->thumbnail_url), 200 );

@@ -72,7 +72,7 @@
     </div>
 </form>
 
-<script src="js/awesomplete.min.js" async onload="awesomplete_init();"></script>
+<script src="/js/awesomplete.min.js" async onload="awesomplete_init();"></script>
 <script>
     function awesomplete_init(){
         $('input.dropdown-input').each(function(){

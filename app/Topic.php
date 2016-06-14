@@ -55,6 +55,12 @@ class Topic extends Model
             ->limit(1);
     }
 
+    public function firstAddition() {
+        return $this->hasOne('App\Artefact')
+            ->orderBy('artefacts.created_at', 'ASC')
+            ->limit(1);
+    }
+
     public function instructions(){
         return $this->hasMany('App\Instruction');
     }

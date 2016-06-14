@@ -1,6 +1,6 @@
 @extends('master')
 
-@section('title', 'bMOOC')
+@section('title', $topic->title)
 
 @section('header_actions')
     @if (isset($user) && $user->role=="editor")
@@ -13,6 +13,11 @@
 @stop
 
 @section('content')
+   <div class="row">
+       <div class="columns">
+           <h2 class="sub">{{$topic->title}}</h2>
+       </div>
+   </div>
     <div class="row full" id="vis-container">
         <div class="vis-gui render">
 
@@ -28,49 +33,64 @@
                         <a href="#" class="sort" data-sort="title">Title</a>
                     </li>
                     <li>
-                        <a href="#" class="sort" data-sort="additions"># additions</a>
+                        <a href="#" class="sort" data-sort="type">Type</a>
                     </li>
                     <li>
-                        <a href="#" class="sort" data-sort="contributors"># contributors</a>
+                        <a href="#" class="sort" data-sort="date_ts">Date added</a>
                     </li>
                     <li>
-                        <a href="#" class="sort" data-sort="initiator">Initiator</a>
+                        <a href="#" class="sort" data-sort="author">Author</a>
                     </li>
                     <li>
-                        <a href="#" class="sort desc" data-sort="last_addition_ts">Last addition date</a>
+                        <a href="#" class="sort" data-sort="tag_1">Tag 1</a>
                     </li>
                     <li>
-                        <a href="#" class="sort" data-sort="last_author">Last addition author</a>
+                        <a href="#" class="sort" data-sort="tag_2">Tag 2</a>
+                    </li>
+                    <li>
+                        <a href="#" class="sort" data-sort="tag_3">Tag 3</a>
                     </li>
                   </ul>
               </div>
           </div>
           <ul class="list block">
-           @foreach($topics as $topic)
+           @foreach($topic->artefacts as $artefact)
            <li>
-            <div class="row">
+                <div class="row">
                 <div class="columns large-4">
-                    <h2 class="title">{{ $topic->title }}</h2>
+                    <h3 class="title">
+                        {{ $artefact->title }}
+                    </h3>
+                    <span class="title_clean" hidden="hidden" style="display:none"><?php
+                        $s = str_replace(' ', '_', $artefact->title);
+                        echo preg_replace('/[^A-Za-z0-9\_]/', '', $s) ?></span>
                 </div>
-                <div class="columns large-2">
-                    @foreach ($aantalAntwoorden as $aantal)
-                        @if ($aantal->thread == $topic->thread)
-                         <strong class="additions">{{ $aantal->aantal_antwoorden }}</strong>
-                             @if ($aantal->aantal_antwoorden == 1)
-                                <span class="light">addition</span>
-                             @else
-                                <span class="light">additions</span>
-                             @endif
-                         @endif
-                    @endforeach
-                    <span class="light">by</span> <strong class="contributors">7</strong> <span class="light">contributors</span>
+                <div class="columns large-1">
+                    <span class="type">{{ $artefact->type->type }}</span>
                 </div>
                 <div class="columns large-3">
-                    <span class="light">initiated by</span> <span class="initiator">{{$topic->the_author->name}}</span>
+                    <span class="light">added</span>
+                    <span class="date">{{date('d/m/Y', strtotime($artefact->created_at))}}</span>
+                    <span class="date_ts" hidden="hidden" style="display: none;">{{$artefact->created_at}}</span>
+                    <span class="light">by</span>
+                    <span class="author">{{$artefact->author->name}}</span>
                 </div>
-                <div class="columns large-3">
-                    <span class="light">last addition</span> <span class="last_addition">{{ date('d/m/Y', strtotime($topic->last_modified)) }}</span><span class="last_addition_ts" style="display:none">{{strtotime($topic->last_modified)}}</span> <span class="light">by</span> <span class="last_author">{{ $topic->last_modifier->name }}</span>
+                <div class="columns large-1">
+                    <span class="tag_1">
+                        {{ $artefact->tags[0]->tag }}
+                    </span>
                 </div>
+                <div class="columns large-1">
+                    <span class="tag_2">
+                        {{ $artefact->tags[1]->tag }}
+                    </span>
+                </div>
+                <div class="columns large-1 end">
+                    <span class="tag_3">
+                        {{ $artefact->tags[2]->tag }}
+                    </span>
+                </div>
+
             </div>
             </li>
             @endforeach
@@ -81,15 +101,13 @@
 
 
 @section('scripts')
-  <script src="js/d3.min.js"></script>
-  <script src="js/d3plus.min.js"></script>
-  <script src="js/list.min.js"></script>
+  <script src="/js/d3.min.js"></script>
+  <script src="/js/d3plus.min.js"></script>
+  <script src="/js/list.min.js"></script>
     <script>
         var data = {};
-        data.list = JSON.parse('{!! addslashes(json_encode($topics)) !!}');
-        data.links = JSON.parse('{!! addslashes(json_encode($links)) !!}');;
-
-        console.log(data);
+        data.tree = JSON.parse('{!! addslashes(json_encode($tree)) !!}');
+        data.list = JSON.parse('{!! addslashes(json_encode($list)) !!}');
 
         var vis;
 
@@ -97,22 +115,24 @@
             if($('html').hasClass('svg')){
                 vis = new Vis($('#vis-container').get(0), data, {
                     interactive: true,
-                    mode: 'text',
+                    mode: 'all',
                     fit: true,
                     collide: false,
-                    resize: true
+                    resize: true,
+                    rotate: true
                 });
-                $('#vis-menu button[data-vis="network"]').addClass('active');
-                vis.render('network');
+                timeline = new Timeline(vis)
+                $('#vis-menu button[data-vis="tree"]').addClass('active');
+                vis.render('tree');
+                timeline.show();
             }
         });
 
-        var visMenu = new Menu('vis-menu', 'vis-container', 'vis-fallback', {
-            disabled: ['tree']
-        });
+
+        var visMenu = new Menu('vis-menu', 'vis-container', 'vis-fallback');
 
         var userList = new List('vis-fallback', {
-            valueNames: [ 'title', 'additions', 'author', 'initiator', 'last_addition_ts', 'last_author' ]
+            valueNames: [ 'title', 'author', 'type', 'date_ts', 'tag_1', 'tag_2', 'tag_3' ]
         });
     </script>
 @stop
