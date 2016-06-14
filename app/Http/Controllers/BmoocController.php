@@ -38,12 +38,11 @@ class BmoocController extends Controller {
     public function index(Request $request) {
         $user = Auth::user();
 
-        $topics = Topic::all();
+        $topics = Topic::with('author')->get();
+        dd($topics);
 
         $authors = User::orderBy('name')->get();
         $tags = Tag::orderBy('tag')->get();
-
-        $aantalAntwoorden = Topic::with('artefacts')->count();
 
         // lijst per tag alle threads op, selecteer degene met meerdere threads
         $links_query = DB::select(DB::raw('
@@ -85,7 +84,7 @@ class BmoocController extends Controller {
             }
         }
 
-        return view('index', ['topics' => $topics, 'user' => $user, 'authors' => $authors, 'tags' => $tags, 'aantalAntwoorden' => $aantalAntwoorden, 'links' => $links]);
+        return view('index', ['topics' => $topics, 'user' => $user, 'authors' => $authors, 'tags' => $tags, 'links' => $links]);
     }
 
     public function topic($id){

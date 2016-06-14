@@ -4,14 +4,14 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ArtefactType extends Model {
+class Type extends Model {
     protected $fillable = ['type'];
 
 	public function artefacts() {
-		return $this->hasMany('App\Artefact', 'type');
+		return $this->hasMany('App\Artefact');
 	}
 
 	public function instructions() {
-		return $this->hasMany('App\Instruction', 'type');
+		return $this->hasMany('App\Instruction');
 	}
 }

@@ -6,16 +6,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class Instruction extends Model {
 
-    public function instruction_type() {
-        return $this->belongsTo('App\ArtefactType', 'instruction_type');
+    protected $fillable = ['topic_id', 'active_from', 'active_until', 'author_id', 'type_id', 'title', 'content'];
+
+    public function type() {
+        return $this->belongsTo('App\Type');
     }
 
-    public function available_types() {
+    public function availableTypes() {
         return $this->belongsToMany('App\ArtefactType', 'instructions_artefact_types', 'instruction_id', 'artefact_type_id');
     }
 
-    public function the_author() {
-        return $this->belongsTo('App\User', 'author');
+    public function author() {
+        return $this->belongsTo('App\User', 'author_id');
     }
 
     public static function getCurrent($thread) {

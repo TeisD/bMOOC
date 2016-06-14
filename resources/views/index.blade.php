@@ -53,24 +53,18 @@
                     <h2 class="title">{{ $topic->title }}</h2>
                 </div>
                 <div class="columns large-2">
-                    @foreach ($aantalAntwoorden as $aantal)
-                        @if ($aantal->topic == $topic->topic)
-                         <strong class="additions">{{ $aantal->aantal_antwoorden }}</strong>
-                             @if ($aantal->aantal_antwoorden == 1)
+                         <strong class="additions">{{ $topic->artefactsCount }}</strong>
+                             @if ($topic->artefactsCount == 1)
                                 <span class="light">addition</span>
                              @else
                                 <span class="light">additions</span>
                              @endif
-                         @endif
-                    @endforeach
                     <span class="light">by</span> <strong class="contributors">7</strong> <span class="light">contributors</span>
                 </div>
                 <div class="columns large-3">
-                    <span class="light">initiated by</span> <span class="initiator">{{$topic->the_author->name}}</span>
+                    <span class="light">initiated by</span> <span class="initiator">{{$topic->author->name}}</span>
                 </div>
-                <div class="columns large-3">
-                    <span class="light">last addition</span> <span class="last_addition">{{ date('d/m/Y', strtotime($topic->last_modified)) }}</span><span class="last_addition_ts" style="display:none">{{strtotime($topic->last_modified)}}</span> <span class="light">by</span> <span class="last_author">{{ $topic->last_modifier->name }}</span>
-                </div>
+
             </div>
             </li>
             @endforeach

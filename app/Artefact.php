@@ -6,10 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Artefact extends Model {
 
-    protected $fillable = ['parent_id', 'topic', 'author', 'title', 'type', 'content', 'notes', 'copyright'];
+    protected $fillable = ['parent_id', 'topic_id', 'author_id', 'title', 'type_id', 'content', 'notes', 'copyright'];
 
     public function author() {
-        return $this->belongsTo('App\User', 'author');
+        return $this->belongsTo('App\User', 'author_id');
     }
 
     public function children() {
@@ -25,11 +25,11 @@ class Artefact extends Model {
     }
 
     public function type() {
-        return $this->belongsTo('App\ArtefactType', 'type');
+        return $this->belongsTo('App\ArtefactType');
     }
 
     public function topic() {
-        return $this->belongsTo('App\Topic', 'topic');
+        return $this->belongsTo('App\Topic');
     }
 
 }
