@@ -8,7 +8,7 @@ class Topic extends Model
 {
 
     protected $fillable = ['title', 'author_id', 'description', 'goal', 'start_date', 'end_date'];
-    protected $appends = ['artefactsCount'];
+    protected $appends = ['artefactCount', 'contributorCount'];
 
     public function author() {
         return $this->belongsTo('App\User', 'author_id');
@@ -18,18 +18,39 @@ class Topic extends Model
         return $this->hasMany('App\Artefact');
     }
 
-    public function artefactsCountRelation() {
+    // number of artefacts in a topic
+    public function artefactCountRelation() {
         return $this->hasOne('App\Artefact')
-            ->selectRaw('topic, count(*) as count')
-            ->groupBy('topic');
+            ->selectRaw('topic_id, count(*) as count')
+            ->groupBy('topic_id');
     }
 
-    public function getArtefactsCountAttribute(){
-        return $this->artefactsCountRelation->count;
+    public function getArtefactCountAttribute(){
+        return $this->artefactCountRelation->count;
+    }
+
+    // contributors in a topic
+    public function contributors() {
+        return $this->artefacts()
+            ->leftJoin('users', 'artefacts.author_id', '=', 'users.id')
+            ->select('users.*')
+            ->groupBy('users.id');
+    }
+
+    // count (without loading) contributors in a topic
+    public function contributorCountRelation() {
+        return $this->artefacts()
+            ->leftJoin('users', 'artefacts.author_id', '=', 'users.id')
+            ->selectRaw('count(*) as count')
+            ->groupBy('users.id');
+    }
+
+    public function getContributorCountAttribute(){
+        return $this->contributorCountRelation->count();
     }
 
     public function lastAddition() {
-        return $this->hasOne('App\Artefact', 'topic')
+        return $this->hasOne('App\Artefact')
             ->orderBy('artefacts.created_at', 'DESC')
             ->limit(1);
     }

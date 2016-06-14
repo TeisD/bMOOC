@@ -38,18 +38,17 @@ class BmoocController extends Controller {
     public function index(Request $request) {
         $user = Auth::user();
 
-        $topics = Topic::with('author')->get();
-        dd($topics);
-
+        $topics = Topic::all();
         $authors = User::orderBy('name')->get();
         $tags = Tag::orderBy('tag')->get();
 
+
         // lijst per tag alle threads op, selecteer degene met meerdere threads
         $links_query = DB::select(DB::raw('
-            SELECT tag_id, tag, GROUP_CONCAT(topic ORDER BY topic ASC) as topics, COUNT(*) as count
+            SELECT tag_id, tag, GROUP_CONCAT(topic_id ORDER BY topic_id ASC) as topics, COUNT(*) as count
             FROM
             (
-                SELECT DISTINCT tag_id, artefacts.topic, tags.tag
+                SELECT DISTINCT tag_id, artefacts.topic_id, tags.tag
                 FROM artefact_tags
                 LEFT JOIN artefacts ON artefact_tags.artefact_id = artefacts.id
                 LEFT JOIN tags ON artefact_tags.tag_id = tags.id
@@ -84,7 +83,7 @@ class BmoocController extends Controller {
             }
         }
 
-        return view('index', ['topics' => $topics, 'user' => $user, 'authors' => $authors, 'tags' => $tags, 'links' => $links]);
+        return view('index', ['user' => $user, 'topics' => $topics, 'authors' => $authors, 'tags' => $tags, 'links' => $links]);
     }
 
     public function topic($id){

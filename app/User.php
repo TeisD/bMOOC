@@ -28,10 +28,10 @@ class User extends Model implements AuthenticatableContract,
      *
      * @var array
      */
-    protected $guarded = ['password', 'remember_token'];
+    protected $hidden = array('password', 'remember_token');
 
     public function role() {
-		return $this->hasOne('App\UserRole', 'role_id');
+		return $this->belongsTo('App\UserRole', 'role_id');
 	}
 
     public function topics(){
