@@ -599,6 +599,7 @@ var Vis = (function(){
         // Options array
         this.options = {
             interactive: true, // 0: none, 1:Allow dragging & zooming, 3:allow dragging nodes
+            type: 'tree', // Type of the visualisation: tree or network
             mode: 'nodes', // Show nodes, text or all
             background: true, // give a background to text so the links appear behind
             fit: true, // scales the visualisation to fit the container upon render
@@ -609,6 +610,7 @@ var Vis = (function(){
 
         if(typeof opt !== 'undefined'){
             if(typeof opt.interactive !== 'undefined') this.options.interactive = opt.interactive;
+            if(typeof opt.type !== 'undefined') this.options.type = opt.type;
             if(typeof opt.mode !== 'undefined') this.options.mode = opt.mode;
             if(typeof opt.background !== 'undefined') this.options.background = opt.background;
             if(typeof opt.fit !== 'undefined') this.options.fit = opt.fit;
@@ -661,10 +663,6 @@ var Vis = (function(){
         this.g = this.zoomContainer.append("g")
             .attr("class", "vis_data");
 
-        if(type == "tree") this.renderTree();
-
-        if(type == "network") this.renderForce();
-
         if(this.options.interactive >= 1){
             this.zoomContainer.insert("rect",":first-child")
                 .attr('class', 'vis_zoom-capture')
@@ -679,6 +677,15 @@ var Vis = (function(){
                 .attr('class', 'vis-gui zoom')
             var pointer = this;
             gui.append('button')
+                .attr('class', 'secondary square rotate')
+                .html('&#x21bb;&#xfe0e;')
+                .on('click', function(){
+                    pointer.options.rotate = !pointer.options.rotate;
+                    pointer.drawNodes();
+                    pointer.drawLinks();
+                    pointer.fit();
+                });
+            gui.append('button')
                 .attr('class', 'secondary square zoom-in')
                 .html('&#x2795;&#xfe0e;')
                 .on('click', function(){ pointer.zoom(0.1) });
@@ -687,6 +694,17 @@ var Vis = (function(){
                 .html('&#10134;&#xfe0e;')
                 .on('click', function(){ pointer.zoom(-0.1) });
         }
+        
+        if(this.options.type == "tree") this.renderTree();
+        if(this.options.type == "network") this.renderForce();
+        
+        this.draw();
+    }
+    
+    Vis.prototype.draw = function(){
+        this.drawNodes();
+        this.drawLinks();
+        if(this.options.fit) this.fit();
     }
 
     /**
@@ -717,10 +735,10 @@ var Vis = (function(){
             .scaleExtent([s, 1]);
 
         // for some mysterious reason, updating the zoomListener only works when called twice
-        /*this.zoomListener
+        this.zoomListener
             .scale(s)
             .translate([t_w, t_h])
-            .scaleExtent([s, 1]);*/
+            .scaleExtent([s, 1]);
 
         this.svg.transition()
             .duration(125)
@@ -783,50 +801,19 @@ var Vis = (function(){
      * Generate and show the tree.
      */
     Vis.prototype.renderTree = function(){
-
+        console.log("render: tree");
+        
         if(this.data.tree == null) throw("Vis error: no data provided to render.");
 
         treelayout = d3.layout.tree()
             .nodeSize([Vis.IMAGE_SIZE, Vis.IMAGE_SIZE]);
 
         // Compute the new Vis layout.
-        var nodes = treelayout.nodes(this.data.tree);//.reverse()
-        var links = treelayout.links(nodes);
+        this.nodes = treelayout.nodes(this.data.tree);//.reverse()
+        this.links = treelayout.links(this.nodes);
 
         // horizontal spacing of the nodes (depth of the node * x)
-        nodes.forEach(function(d) { d.y = d.depth * (Vis.IMAGE_SIZE + Vis.IMAGE_SIZE/10) });
-
-        // Declare the nodes.
-        var node = this.g.selectAll("g.node")
-            .data(nodes);
-
-        // Draw the links
-        this.drawNodes(node);
-
-        // Declare the links
-        var link = this.g.selectAll("path.link")
-        .data(links, function(d) { return d.target.id; });
-
-        if(this.options.rotate){
-            var diagonal = d3.svg.diagonal()
-                .projection(function(d) { return [d.y, d.x]; });
-        } else {
-            var diagonal = d3.svg.diagonal()
-                .projection(function(d) { return [d.x, d.y]; });
-        }
-
-        link.enter().insert("path", "g")
-            .attr("class", "link")
-            .attr("d", diagonal);
-
-        if(this.options.fit) this.fit();
-    }
-
-    /**
-     *  Backwards compatibility
-     */
-    Vis.prototype.draw = function(){
-        this.render("tree");
+        this.nodes.forEach(function(d) { d.y = d.depth * (Vis.IMAGE_SIZE + Vis.IMAGE_SIZE/10) });
     }
 
     /**
@@ -835,6 +822,7 @@ var Vis = (function(){
      * data.links: een associatieve array met links (source, target, (text)), geassocieerd met het id van de nodes
      */
     Vis.prototype.renderForce = function(){
+        console.log("render: force");
 
         if(this.data.list == null) throw("Vis error: no data provided to render.");
 
@@ -866,39 +854,21 @@ var Vis = (function(){
             d.width = 500; // for collision detection
             d.height = 50;
         });
+                
+        this.nodes = nodes;
+        this.links = edges;
 
-        force.nodes(nodes)
-            .links(edges)
+        force.nodes(this.nodes)
+            .links(this.links)
             .on("start", start)
             .on("end", end)
             //.on("tick", tick)
             .start();
 
-        var link = this.g.append("g").selectAll(".link")
-            .data(force.links())
-            .enter()
-            .append('path')
-            .attr("class", "link")
-            .attr("id",function(d,i) {
-                return "linkId_" + i;
-            });
-
-        // declare the nodes
-        var node = this.g.selectAll(".node")
-          .data(nodes);
-
-        this.drawNodes(node);
-
         if(this.options.interactive == 2) node.call(force.drag);
-
-        node.append("title")
-            .text(function(d) { return d.title; });
-
+        
         function tick(){
-            pointer.g.selectAll('.node')
-                .attr("transform", function(d){
-                    return "translate(" + d.x + "," + d.y + ")";
-                });
+            pointer.draw();
         }
 
         function start(){
@@ -911,19 +881,14 @@ var Vis = (function(){
                 var diagonal = d3.svg.diagonal()
                     .projection(function(d) { return [d.x, d.y]; });
 
-                link.attr("d", diagonal);
-
                 if(!pointer.options.collide){
-                    var q = d3.geom.quadtree(nodes),
+                    var q = d3.geom.quadtree(pointer.nodes),
                     i = 0,
-                    n = nodes.length;
-                    while (++i < n) q.visit(collide(nodes[i]));
+                    n = pointer.nodes.length;
+                    while (++i < n) q.visit(collide(pointer.nodes[i]));
                 }
-
-                pointer.g.selectAll('.node')
-                    .attr("transform", function(d){
-                        return "translate(" + d.x + "," + d.y + ")";
-                    });
+                
+                //pointer.draw();
 
                 if (force.alpha() > 0) requestAnimationFrame(render);
             });
@@ -977,7 +942,7 @@ var Vis = (function(){
             if(!ended){
                 ended = true;
                 var linktext = pointer.g.insert("g", ":first-child").selectAll(".linktext")
-                    .data(force.links())
+                    .data(pointer.links)
                     .enter()
                     .append('g')
                     .attr("class", "linktext")
@@ -997,6 +962,7 @@ var Vis = (function(){
                         for(var i = 0; i < d.value.length; i++) tags.push(d.value[i].tag);
                         return tags.join(", ");
                     });
+                pointer.draw();
 
             }
             if(first && pointer.options.fit) {
@@ -1015,21 +981,28 @@ var Vis = (function(){
 
     /**
      * Draw the nodes. Reused by the render functions
+     * http://stackoverflow.com/questions/12992351/how-to-update-elements-of-d3-force-layout-when-the-underlying-data-changes
      */
-    Vis.prototype.drawNodes = function(node){
-
+    Vis.prototype.drawNodes = function(){
+                        
+        // Declare the nodes.
+        var node = this.g.selectAll(".node")
+            .data(this.nodes);
+        
         // Enter the nodes.
         var nodeEnter = node.enter().append("g")
             .attr("class", "node")
             .attr("id", function(d){ return d.id })
-
+        
+        console.log(this.options.rotate);
+        
         if(this.options.rotate){
-            nodeEnter.attr("transform", function(d) {
+            node.attr("transform", function(d) {
                 return "translate(" + d.y + "," + d.x + ")";
             });
         } else {
-            nodeEnter.attr("transform", function(d) {
-                return "translate(" + d.x + "," + d.y + ")";
+            node.attr("transform", function(d) {
+                return "translate(" + parseInt(d.x - Vis.IMAGE_SIZE/2) + "," + d.y + ")";
             });
         }
 
@@ -1046,7 +1019,7 @@ var Vis = (function(){
                 .attr("r", 5);
 
             //img
-            nodeEnter.filter(function(d) { return d.url; })
+            nodeEnter.filter(function(d) { return d.type_id > 28; })
                 .filter(function(d) { return !d.hidden })
                 .append("a")
                 .attr("xlink:href", function(d) {
@@ -1061,15 +1034,15 @@ var Vis = (function(){
                 .attr('height', Vis.IMAGE_SIZE);
 
             //text
-            var bg = nodeEnter.filter(function(d) { return d.contents })
+            var bg = nodeEnter.filter(function(d) { return d.type_id == 28 })
                 .filter(function(d) { return !d.hidden })
                 .append("rect")
                 .attr('width', Vis.IMAGE_SIZE)
                 .attr('height', Vis.IMAGE_SIZE)
                 .attr('y', -Vis.IMAGE_SIZE/2);
             if(this.options.background) bg.attr("class", "filled");
-
-            nodeEnter.filter(function(d) { return d.contents })
+            
+            nodeEnter.filter(function(d) { return d.type_id == 28 })
                 .filter(function(d) { return !d.hidden })
                 .append("a")
                 .attr("xlink:href", function(d) {
@@ -1095,6 +1068,8 @@ var Vis = (function(){
                 .attr("cx", 0)
                 .attr("cy", 0)
                 .attr("r", 5)
+                .append("title")
+                .text(function(d) { return d.title; });
         } else if(this.options.mode == 'text') {
             var a = nodeEnter.append("g")
                 .append("a")
@@ -1115,6 +1090,28 @@ var Vis = (function(){
                     return d.title;
                 })
         }
+    }
+    
+    Vis.prototype.drawLinks = function(){
+        // Declare the links
+        var link = this.g.selectAll("path.link")
+        .data(this.links, function(d) { return d.target.id; });
+
+        if(this.options.rotate){
+            var diagonal = d3.svg.diagonal()
+                .projection(function(d) { return [d.y, d.x]; });
+        } else {
+            var diagonal = d3.svg.diagonal()
+                .projection(function(d) { return [d.x, d.y]; });
+        }
+
+        link.enter().insert("path", "g")
+            .attr("class", "link")
+            .attr("id",function(d,i) {
+                return "linkId_" + i;
+            });
+        
+        link.attr("d", diagonal);
     }
 
     return Vis;
@@ -1224,7 +1221,7 @@ var Timeline = (function(){
         this.vis.svg.append("g")
             .attr("class", "x axis")
             // put in middle of screen
-            .attr("transform", "translate(0," + (this.vis.height() - Vis.MARGIN.top - 25) + ")")
+            .attr("transform", "translate(0," + (this.vis.height() - Vis.MARGIN.top) + ")")
             // inroduce axis
             .call(axis)
             .select(".domain");
@@ -1234,7 +1231,7 @@ var Timeline = (function(){
         // add slider handle on parentNode, we don't want to scale it
         var slider = this.vis.svg.append("g")
           .attr("class", "slider")
-            .attr("transform", "translate(0, " + (this.vis.height() - Vis.MARGIN.top - 25) + ")")
+            .attr("transform", "translate(0, " + (this.vis.height() - Vis.MARGIN.top) + ")")
           .call(this.brush);
 
         slider.selectAll(".extent,.resize")
@@ -1254,11 +1251,28 @@ var Timeline = (function(){
 
         handle.append('text')
           .text(this.startingValue)
-            .attr("text-align", "center")
-          .attr("transform", "translate(" + 0 + " ," + -20 + ")");
+            .attr("class", "lbl")
+            .attr("transform", "translate(" + 0 + " ," + -20 + ")");
 
         slider
           .call(this.brush.event);
+        
+        // BUTTONS
+            var gui = d3.select(vis.el).append('div')
+                .attr('class', 'vis-gui timeline')
+            var pointer = this;
+            gui.append('button')
+                .attr('class', 'secondary square rewind inline')
+                .html('&#x23ea;&#xfe0e;')
+                .on('click', function(){ pointer.rewind() });
+            gui.append('button')
+                .attr('class', 'secondary square stop inline')
+                .html('&#x25fc;&#xfe0e;')
+                .on('click', function(){ pointer.stop() });
+            gui.append('button')
+                .attr('class', 'secondary square forward inline')
+                .html('&#x23e9;&#xfe0e;')
+                .on('click', function(){ pointer.forward() });
     }
 
     /**
@@ -1336,10 +1350,11 @@ var Menu = (function(){
      * @param {id} html - The container of the html elementen for list visualisation
      * @param {obj} opt - An optional object defining the menu's behavior
      */
-    function Menu(menu, svg, html, opt){
+    function Menu(menu, svg, html, vis, opt){
         this.menu = $("#"+menu);
         this.svg = $("#"+svg);
         this.html = $("#"+html);
+        this.vis = vis;
 
         // Options array
         this.options = {
@@ -1362,12 +1377,28 @@ var Menu = (function(){
                 $(this).on('click', function(){
                     $('button', pointer.menu).removeClass('active');
                     $(this).addClass('active');
+                    
                     if(typeof($(this).attr('data-svg')) !== 'undefined'){
                         pointer.html.hide();
                         pointer.svg.show();
+                        pointer.vis.options.type = $(this).attr('data-vis');
+                        pointer.vis.options.rotate = false;
+                        pointer.vis.render();
                     } else {
                         pointer.svg.hide();
                         pointer.html.show();
+                        if($(this).attr('data-vis') == 'list'){
+                            $('[vis-grid]').hide();
+                            $('[vis-list]').show();
+                            $('.list', pointer.html).removeClass('grid');
+                            $('.list', pointer.html).addClass('block');
+                        }
+                        if($(this).attr('data-vis') == 'grid'){
+                            $('[vis-list]').hide();
+                            $('[vis-grid]').show();
+                            $('.list', pointer.html).removeClass('block');
+                            $('.list', pointer.html).addClass('grid');
+                        }
                     }
                 });
             } else{

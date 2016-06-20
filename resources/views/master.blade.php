@@ -75,6 +75,7 @@
 					<h1 class="inline"><a href="/">bMOOC</a></h1>
                     <span id="vis-menu">
                         <button class="tertiary inline" data-vis="list"><img src="/img/vis_list_white.png" />list</button>
+                        <button class="tertiary inline" data-vis="grid"><img src="/img/vis_grid_white.png" />grid</button>
                         <button class="tertiary inline" data-vis="tree" data-svg><img src="/img/vis_tree_white.png" />tree</button>
                         <button class="tertiary inline" data-vis="network" data-svg><img src="/img/vis_network_white.png"/>network</button>
                     </span>
@@ -84,6 +85,7 @@
                     @yield('header_search')
                 </div>
             </div>
+            @yield('header_title')
         </header>
 
         <div class="container">

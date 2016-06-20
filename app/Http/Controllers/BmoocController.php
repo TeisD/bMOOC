@@ -45,7 +45,7 @@ class BmoocController extends Controller {
 
         // lijst per tag alle threads op, selecteer degene met meerdere threads
         $links_query = DB::select(DB::raw('
-            SELECT tag_id, tag, GROUP_CONCAT(topic_id ORDER BY topic_id ASC) as topics, COUNT(*) as count
+            SELECT tag_id, tag, GROUP_CONCAT(topic_id ORDER BY topic_id ASC) as items, COUNT(*) as count
             FROM
             (
                 SELECT DISTINCT tag_id, artefacts.topic_id, tags.tag
@@ -56,32 +56,8 @@ class BmoocController extends Controller {
             GROUP BY topics_tags.tag_id
             HAVING count > 1
         '));
-
-        $links = [];
-
-        foreach ($links_query as $link){
-            $link->topics = array_map('intval', explode(',', $link->topics));
-
-            for($i = 0; $i < sizeof($link->topics); $i++){
-                for($j = $i+1; $j < sizeof($link->topics); $j++){
-                    $source = $link->topics[$i];
-                    $target = $link->topics[$j];
-                    // check if source target already exists
-                    $sources = array_keys(array_column($links, 'source'), $source);
-                    $targets = array_keys(array_column($links, 'target'), $target);
-                    $intersect = array_intersect($sources, $targets);
-                    // intersect keeps index, so re-index
-                    $intersect = array_values($intersect);
-                    if(sizeof($intersect) > 0){
-                        // add the tag
-                        array_push($links[$intersect[0]]['links'], ["id" => $link->tag_id, "tag" => $link->tag]);
-                    } else {
-                        // else make a new one
-                        array_push($links, ["source" => $source, "target" => $target, "links" => [["id" => $link->tag_id, "tag" => $link->tag]]]);
-                    }
-                }
-            }
-        }
+        
+        $links = VisController::getLinks($links_query);
 
         return view('index', ['user' => $user, 'topics' => $topics, 'authors' => $authors, 'tags' => $tags, 'links' => $links]);
     }
@@ -95,8 +71,25 @@ class BmoocController extends Controller {
 
         $tree = VisController::getTree($topic->firstAddition);
         $list = $topic->artefacts;
+        
+        // lijst per tag alle threads op, selecteer degene met meerdere threads
+        $links_query = DB::select(DB::raw('
+            SELECT tag_id, tag, GROUP_CONCAT(id ORDER BY id ASC) as items, COUNT(*) as count
+            FROM
+            (
+                SELECT DISTINCT tag_id, topic_id, artefacts.id, tags.tag
+                FROM artefact_tags
+                LEFT JOIN artefacts ON artefact_tags.artefact_id = artefacts.id
+                LEFT JOIN tags ON artefact_tags.tag_id = tags.id
+            ) topics_tags
+            WHERE topic_id = '.$topic->id.'
+            GROUP BY topics_tags.tag_id
+            HAVING count > 1
+        '));
+        
+        $links = VisController::getLinks($links_query);
 
-        return view('topic', ['user' => $user, 'topic' => $topic, 'authors' => $authors, 'tags' => $tags, 'tree' => $tree, 'list' => $list]);
+        return view('topic', ['user' => $user, 'topic' => $topic, 'authors' => $authors, 'tags' => $tags, 'tree' => $tree, 'list' => $list, 'links' => $links]);
     }
 
     public function feedback(){

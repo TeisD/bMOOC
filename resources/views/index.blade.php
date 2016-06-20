@@ -96,24 +96,25 @@
         data.list = JSON.parse('{!! addslashes(json_encode($topics)) !!}');
         data.links = JSON.parse('{!! addslashes(json_encode($links)) !!}');
 
-        var vis;
+        var vis = new Vis($('#vis-container').get(0), data, {
+            interactive: true,
+            type: 'network',
+            rotate: false,
+            mode: 'text',
+            fit: true,
+            collide: false,
+            resize: true
+        });
 
         $(document).ready(function(){
             if($('html').hasClass('svg')){
-                vis = new Vis($('#vis-container').get(0), data, {
-                    interactive: true,
-                    mode: 'text',
-                    fit: true,
-                    collide: false,
-                    resize: true
-                });
                 $('#vis-menu button[data-vis="network"]').addClass('active');
-                vis.render('network');
+                vis.render();
             }
         });
 
-        var visMenu = new Menu('vis-menu', 'vis-container', 'vis-fallback', {
-            disabled: ['tree']
+        var visMenu = new Menu('vis-menu', 'vis-container', 'vis-fallback', vis, {
+            disabled: ['grid', 'tree']
         });
 
         var userList = new List('vis-fallback', {
