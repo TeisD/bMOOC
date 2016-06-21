@@ -61,9 +61,9 @@
                             </li>
                             <li>
                                 @if (isset($user))
-                                   <a href="auth/logout" class="logout">Sign out {{$user->name}}</a>
+                                   <a href="/auth/logout" class="logout">Sign out {{$user->name}}</a>
                                 @else
-                                   <a href="auth/login" class="logout" data-reveal-id="signin" data-reveal-ajax>Sign in</a>
+                                   <a href="/auth/login" class="logout" data-reveal-id="signin" data-reveal-ajax>Sign in</a>
                                 @endif
                             </li>
                         </ul>

@@ -672,6 +672,7 @@ var Vis = (function(){
                 .attr('y', this.g.node().getBBox().y - 25)
                 .attr('width', this.g.node().getBBox().width + 50)
                 .attr('height', this.g.node().getBBox().height + 50);
+            console.log(this.g.node());
             this.container.call(this.zoomListener);
             // GUI
             var gui = d3.select(this.el).append('div')
@@ -682,9 +683,7 @@ var Vis = (function(){
                 .html('&#x21bb;&#xfe0e;')
                 .on('click', function(){
                     pointer.options.rotate = !pointer.options.rotate;
-                    pointer.drawNodes();
-                    pointer.drawLinks();
-                    pointer.fit();
+                    pointer.draw();
                 });
             gui.append('button')
                 .attr('class', 'secondary square zoom-in')
@@ -710,8 +709,6 @@ var Vis = (function(){
      *  Resize the tree to fit the container
      */
     Vis.prototype.fit = function(){
-
-        console.log('fit');
 
         width = this.width();
         height = this.height();
@@ -771,6 +768,19 @@ var Vis = (function(){
 
         if(s != 1){
             this.hasZoom = true;
+        }
+    }
+
+    /**
+     *  Update zoom container to fit dimensions of rendered tree
+     */
+    Vis.prototype.updateZoom = function(){
+        if(this.options.interactive >= 1){
+            this.zoomContainer.select('.vis_zoom-capture')
+                .attr('x', this.g.node().getBBox().x - 25)
+                .attr('y', this.g.node().getBBox().y - 25)
+                .attr('width', this.g.node().getBBox().width + 50)
+                .attr('height', this.g.node().getBBox().height + 50);
         }
     }
 
@@ -854,7 +864,6 @@ var Vis = (function(){
             d.py = undefined;
             d.x = i * (pointer.width() / nodes.length);
             d.y = Math.random() * pointer.height();
-            console.log(d.py);
             d.width = 500; // for collision detection
             d.height = 50;
         });
@@ -937,7 +946,6 @@ var Vis = (function(){
         }
 
         var ended = false;
-        var first = true;
 
         function end(){
             if(!ended){
@@ -964,19 +972,7 @@ var Vis = (function(){
                         return tags.join(", ");
                     });
                 pointer.draw();
-
             }
-            if(first && pointer.options.fit) {
-                pointer.fit();
-            }
-            if(first && pointer.options.interactive >= 1){
-                pointer.zoomContainer.select('.vis_zoom-capture')
-                    .attr('x', pointer.g.node().getBBox().x - 25)
-                    .attr('y', pointer.g.node().getBBox().y - 25)
-                    .attr('width', pointer.g.node().getBBox().width + 50)
-                    .attr('height', pointer.g.node().getBBox().height + 50);
-            }
-            if(first) first = false;
         }
     }
 
@@ -989,16 +985,12 @@ var Vis = (function(){
         // Declare the nodes.
         var node = this.g.selectAll(".node")
             .data(this.nodes);
-        
-        console.log(node);
 
         // Enter the nodes.
         var nodeEnter = node.enter().append("g")
             .attr("class", "node")
             .attr("id", function(d){ return d.id })
-        
-        console.log(this.options.rotate);
-        
+
         if(this.options.rotate){
             node.attr("transform", function(d) {
                 return "translate(" + d.y + "," + d.x + ")";
@@ -1093,6 +1085,8 @@ var Vis = (function(){
                     return d.title;
                 })
         }
+
+        this.updateZoom();
     }
     
     Vis.prototype.drawLinks = function(){
