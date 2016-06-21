@@ -653,6 +653,7 @@ var Vis = (function(){
     Vis.prototype.render = function(type){
         // clear the current vis
         d3.select(this.el).select(".vis_container").remove();
+        d3.select(this.el).selectAll(".vis-gui.zoom").remove();
         // add one g to capture events
         this.container = this.svg.insert("g",":first-child")
             .attr("class", "vis_container");
@@ -697,8 +698,6 @@ var Vis = (function(){
         
         if(this.options.type == "tree") this.renderTree();
         if(this.options.type == "network") this.renderForce();
-        
-        this.draw();
     }
     
     Vis.prototype.draw = function(){
@@ -814,6 +813,8 @@ var Vis = (function(){
 
         // horizontal spacing of the nodes (depth of the node * x)
         this.nodes.forEach(function(d) { d.y = d.depth * (Vis.IMAGE_SIZE + Vis.IMAGE_SIZE/10) });
+
+        this.draw();
     }
 
     /**
@@ -849,8 +850,11 @@ var Vis = (function(){
 
         // add a random start point in some corner
         nodes.forEach(function(d,i){
+            d.px = undefined;
+            d.py = undefined;
             d.x = i * (pointer.width() / nodes.length);
             d.y = Math.random() * pointer.height();
+            console.log(d.py);
             d.width = 500; // for collision detection
             d.height = 50;
         });
@@ -877,9 +881,6 @@ var Vis = (function(){
             requestAnimationFrame(function render() {
 
                 for (var i = 0; i < ticksPerRender; i++) force.tick();
-
-                var diagonal = d3.svg.diagonal()
-                    .projection(function(d) { return [d.x, d.y]; });
 
                 if(!pointer.options.collide){
                     var q = d3.geom.quadtree(pointer.nodes),
@@ -989,6 +990,8 @@ var Vis = (function(){
         var node = this.g.selectAll(".node")
             .data(this.nodes);
         
+        console.log(node);
+
         // Enter the nodes.
         var nodeEnter = node.enter().append("g")
             .attr("class", "node")
