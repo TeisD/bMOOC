@@ -61,6 +61,11 @@ h1 {
 .sub:before {
   content: "\21aa\00a0"; }
 
+.inline {
+  display: inline;
+  vertical-align: middle;
+  margin: 0; }
+
 /* LINKS */
 a, a:hover, a:visited, a:active {
   color: inherit; }
@@ -84,30 +89,39 @@ a.active, .sort.desc, .sort.asc {
 .light {
   color: #d9d9d9; }
 
+.indent {
+  margin-left: 1rem !important; }
+
 /* BUTTONS */
 .button, button, .button:hover, button:hover {
   background-color: transparent;
   font-weight: inherit;
   font-family: inherit; }
 
+button.block, button.primary.block, button.secondary.block, button.block.tertiary, button.block.form-input {
+  display: block;
+  margin-bottom: 1rem; }
+
 button.primary, .button.primary {
+  display: inline-block;
+  vertical-align: middle;
   border: none;
   margin: 0;
   padding: 0;
   color: #17cf1f;
   font-weight: 400;
   padding-left: 30px;
-  height: 24px; }
+  height: 2rem; }
 
-button.plus {
+button.plus, .button.plus {
   background: url(../img/plus.png) no-repeat left center;
   background-size: contain; }
 
-button.information {
+button.information, .button.information {
   background: url(../img/info.png) no-repeat left center;
   background-size: contain; }
 
-button.eye {
+button.eye, .button.eye {
   background: url(../img/eye.png) no-repeat left center;
   background-size: contain; }
 
@@ -304,6 +318,8 @@ dl dd {
 .list .row {
   margin-bottom: 1rem;
   line-height: 2.8rem; }
+.list li:hover {
+  background: #751e82; }
 
 /* MAIN */
 body {
@@ -313,7 +329,7 @@ body {
 header {
   display: table-row;
   width: 100%; }
-  header .row {
+  header .row.space {
     margin: 1rem 0; }
 
 nav {
@@ -344,6 +360,53 @@ nav {
   .row.full .columns {
     height: 100%; }
 
+.dropdown {
+  width: 100%;
+  display: none;
+  background: url("/img/bg.png");
+  list-style: none;
+  padding: 1rem;
+  margin: 0;
+  margin-top: 15px;
+  position: absolute;
+  z-index: 9999;
+  border-radius: 10px;
+  min-width: 25%;
+  max-width: 100%; }
+  .dropdown .close {
+    position: absolute;
+    top: -0.5rem;
+    right: 0;
+    color: #d9d9d9;
+    cursor: pointer;
+    font-size: 2rem;
+    font-weight: bold;
+    line-height: 1; }
+
+/* creates triangle */
+.dropdown:after {
+  content: "";
+  display: block;
+  /* reduce the damage in FF3.0 */
+  position: absolute;
+  top: -15px;
+  left: 10px;
+  width: 0;
+  border-width: 0 15px 15px;
+  border-style: solid;
+  border-color: #031F20 transparent; }
+
+@media only screen and (min-width: 40.063em) {
+  .dropdown {
+    width: auto;
+    max-width: 50%; }
+
+  .dropdown#info {
+    margin-left: 2rem; }
+
+  .dropdown.open {
+    display: block; } }
+/* medium screens */
 /* SVG */
 svg .vis_zoom {
   pointer-events: all;

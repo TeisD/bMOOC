@@ -12,10 +12,23 @@
     @include('forms.search')
 @stop
 
-@section('header_title')
+@section('header_content')
     <div class="row">
        <div class="columns">
-           <h2 class="sub">{{$topic->title}}</h2>
+           <h2 class="inline sub">{{$topic->title}}</h2>
+           <a class="button primary indent information" data-dropdown="info">&nbsp;</a>
+       </div>
+   </div>
+   <div class="row dropdown open" id="info">
+       <div class="columns">
+          <a class="close" aria-label="Close">&#215;</a>
+           <p><span class="light">topic initiated</span> {{date('d/m/Y', strtotime($topic->created_at))}} <span class="light">by</span> {{$topic->author->name}}</p>
+           <h3>Description</h3>
+           <p>{{$topic->description}}</p>
+           <h3>Goal</h3>
+           <p>{{$topic->goal}}</p>
+           <h3>Duration</h3>
+           <p>{{date('d/m/Y', strtotime($topic->start_date))}} <span class="light">until</span> {{date('d/m/Y', strtotime($topic->end_date))}}</p>
        </div>
    </div>
 @stop
@@ -58,7 +71,7 @@
           </div>
           <ul class="list grid">
            @foreach($topic->artefacts as $artefact)
-           <li>
+           <li><a href="#">
                 <div class="row">
                    <div class="columns large-12" vis-grid>
                       @if($artefact->type_id > 28)
@@ -68,7 +81,7 @@
                        @endif
                    </div>
                     <div class="columns large-4" vis-list>
-                        <h3 class="title">
+                        <h3 class="title inline">
                             {{ $artefact->title }}
                         </h3>
                         <span class="title_clean" hidden="hidden" style="display:none"><?php
@@ -100,9 +113,8 @@
                             {{ $artefact->tags[2]->tag }}
                         </span>
                     </div>
-
-            </div>
-            </li>
+                </div>
+            </a></li>
             @endforeach
           </ul>
         </div>

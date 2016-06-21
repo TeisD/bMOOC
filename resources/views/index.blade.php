@@ -47,10 +47,10 @@
           </div>
           <ul class="list block">
            @foreach($topics as $topic)
-           <li>
+           <li><a href="/topic/{{$topic->id}}">
             <div class="row">
                 <div class="columns large-4">
-                    <h2 class="title">{{ $topic->title }}</h2>
+                    <h3 class="title inline">{{ $topic->title }}</h3>
                 </div>
                 <div class="columns large-2">
                     <strong class="additions">{{ $topic->artefactCount }}</strong>
@@ -77,9 +77,8 @@
                     <span class="light">by</span>
                     <span class="last_author">{{$topic->lastAddition->author->name}}</span>
                 </div>
-
             </div>
-            </li>
+            </a></li>
             @endforeach
           </ul>
         </div>

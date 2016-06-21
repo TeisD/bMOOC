@@ -993,7 +993,7 @@ var Vis = (function(){
 
         if(this.options.rotate){
             node.attr("transform", function(d) {
-                return "translate(" + d.y + "," + d.x + ")";
+                return "translate(" + parseInt(d.y - Vis.IMAGE_SIZE/4) + "," + d.x + ")";
             });
         } else {
             node.attr("transform", function(d) {
@@ -1374,12 +1374,14 @@ var Menu = (function(){
                 $(this).on('click', function(){
                     $('button', pointer.menu).removeClass('active');
                     $(this).addClass('active');
+                    $('.dropdown').hide();
                     
                     if(typeof($(this).attr('data-svg')) !== 'undefined'){
                         pointer.html.hide();
                         pointer.svg.show();
+                        if($(this).attr('data-vis') == 'tree') pointer.vis.options.rotate = true;
+                        else pointer.vis.options.rotate = false;
                         pointer.vis.options.type = $(this).attr('data-vis');
-                        pointer.vis.options.rotate = false;
                         pointer.vis.render();
                     } else {
                         pointer.svg.hide();

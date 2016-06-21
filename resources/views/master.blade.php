@@ -46,7 +46,7 @@
         </div>
 
         <header>
-            <div class="row text-right">
+            <div class="row space text-right">
 			    <div class="small-12 columns">
                     <nav class="main">
                         <ul class="inline slash">
@@ -70,7 +70,7 @@
                     </nav>
                 </div>
             </div>
-            <div class="row">
+            <div class="row space">
 				<div class="large-5 columns">
 					<h1 class="inline"><a href="/">bMOOC</a></h1>
                     <span id="vis-menu">
@@ -85,7 +85,7 @@
                     @yield('header_search')
                 </div>
             </div>
-            @yield('header_title')
+            @yield('header_content')
         </header>
 
         <div class="container">
@@ -135,12 +135,24 @@
         </div>
 
         {{-- SCRIPTS --}}
-        <script src="/js/foundation.min.js"></script>
+        {{-- <script src="/js/foundation.min.js"></script> --}}
+        <script src="/js/foundation/foundation.js"></script>
+        <script src="/js/foundation/foundation.reveal.js"></script>
         <script src="/js/app.js?v=@version"></script>
         <script src="/js/help.js?v=@version"></script>
 
         <script>
             $(document).foundation();
+            $(document).ready(function(){
+                $('*[data-dropdown]').on("click", function(){
+                    var id = $(this).data('dropdown');
+                    $('.dropdown#'+id).toggle();
+                    console.log($('#'+id));
+                });
+                $('.dropdown').find('.close').on('click', function(){
+                    $(this).parents('.dropdown').hide();
+                });
+            });
         </script>
 
         @yield('scripts')
