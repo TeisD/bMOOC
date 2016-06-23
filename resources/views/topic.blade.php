@@ -71,7 +71,7 @@
           </div>
           <ul class="list grid">
            @foreach($topic->artefacts as $artefact)
-           <li><a href="#">
+           <li><a href="/relation/{{$artefact->id}}">
                 <div class="row">
                    <div class="columns large-12" vis-grid>
                       @if($artefact->type_id > 28)

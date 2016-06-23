@@ -92,6 +92,15 @@ class BmoocController extends Controller {
         return view('topic', ['user' => $user, 'topic' => $topic, 'authors' => $authors, 'tags' => $tags, 'tree' => $tree, 'list' => $list, 'links' => $links]);
     }
 
+    public function relation($id){
+        $user = Auth::user();
+        $artefact = Artefact::find($id);
+        $authors = User::orderBy('name')->get();
+        $tags = Tag::orderBy('tag')->get();
+
+        return view('relation', ['user' => $user, 'artefact'=> $artefact, 'authors' => $authors, 'tags' => $tags]);
+    }
+
     public function feedback(){
         $data = Input::all();
 
