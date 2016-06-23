@@ -127,12 +127,7 @@
         </div>
 
         {{-- FEEDBACK --}}
-        <div id="feedback" class="reveal-modal small" data-reveal aria-labelledby="feedback_title" aria-hidden="true" role="dialog">
-            <h2 id="feedback_title">Feedback</h2>
-            <p>Remarks, problems or suggestions? Please fill in the form below.</p>
-            @include('forms.feedback')
-            <a class="close-reveal-modal close" aria-label="Close">&#215;</a>
-        </div>
+        @include('forms.master', ['form' => 'feedback', 'class' => 'small'])
 
         {{-- SCRIPTS --}}
         {{-- <script src="/js/foundation.min.js"></script> --}}
@@ -143,6 +138,22 @@
 
         <script>
             $(document).foundation();
+
+            $(document).on('opened.fndtn.reveal', '[data-reveal]', function () {
+                var modal = $(this);
+                $(document).foundation('equalizer', 'reflow');
+                if(modal.hasClass('slide')){
+                    modal.animate({right:'0%'},500);
+                }
+            });
+
+            $(document).on('close.fndtn.reveal', '[data-reveal]', function () {
+                var modal = $(this);
+                if(modal.hasClass('slide')){
+                    modal.animate({right:'-50%'},500);
+                }
+            });
+
             $(document).ready(function(){
                 $('*[data-dropdown]').on("click", function(){
                     var id = $(this).data('dropdown');

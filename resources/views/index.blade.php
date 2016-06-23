@@ -3,13 +3,21 @@
 @section('title', 'bMOOC')
 
 @section('header_actions')
-    @if (isset($user) && $user->role=="editor")
-        <button class="primary plus" data-help="index" data-help-id="new_topic" data-reveal-id="new_topic">Start a new topic</button>
-    @endif
+
 @stop
 
 @section('header_search')
     @include('forms.search')
+@stop
+
+@section('header_content')
+    <div class="row">
+       <div class="columns">
+           @if ((isset($user) && $user->role=="editor") || (1 == 1))
+                <button class="primary plus" data-help="index" data-help-id="new_topic" data-reveal-id="new_topic">Start a new topic</button>
+            @endif
+       </div>
+   </div>
 @stop
 
 @section('content')
@@ -85,6 +93,8 @@
     </div>
 @stop
 
+{{-- NEW TOPIC FORM --}}
+@include('forms.master', ['form' => 'new_topic', 'class' => 'slide'])
 
 @section('scripts')
   <script src="/js/d3.min.js"></script>

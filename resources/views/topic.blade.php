@@ -121,7 +121,6 @@
     </div>
 @stop
 
-
 @section('scripts')
   <script src="/js/d3.min.js"></script>
   <script src="/js/d3plus.min.js"></script>
