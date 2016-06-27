@@ -29,25 +29,56 @@
 
 @section('content')
     <div class="row full">
-        <div class="small-6 columns">
-            <div class="loader" id="artefact_left_loader">
+        <div class="small-6 columns" id="artefact_left">
+            <div class="loader">
                 <img src="/img/loader_dark_big.gif" alt="loading..." />
             </div>
-            <div class="artefact" id="artefact_left_contents" data-reveal-id="artefact_lightbox_left"></div>
+            <div class="artefact" data-reveal-id="artefact_lightbox_left" style="cursor: pointer !important"></div>
         </div>
-        <div class="small-6 columns">
-            <div class="loader" id="artefact_right_loader">
+        <div class="small-6 columns" id="artefact_right">
+            <div class="loader">
                 <img src="/img/loader_dark_big.gif" alt="loading..." />
             </div>
-            <div class="artefact" id="artefact_right_contents" data-reveal-id="artefact_lightbox_right"></div>
+            <div class="artefact" data-reveal-id="artefact_lightbox_right" style="cursor:pointer !important;"></div>
         </div>
+    </div>
+
+    <div id="artefact_lightbox_left" class="reveal-modal full" data-reveal aria-hidden="true" role="dialog">
+       @include('modals.artefact', ['artefact' => $artefact->parent])
+        <a class="close-reveal-modal close" aria-label="Close">&#215;</a>
+    </div>
+
+    <div id="artefact_lightbox_right" class="reveal-modal full" data-reveal aria-hidden="true" role="dialog">
+       @include('modals.artefact', ['artefact' => $artefact])
+        <a class="close-reveal-modal close" aria-label="Close">&#215;</a>
     </div>
 @stop
 
 @section('scripts')
+   <script src="/js/imagesloaded.min.js" type="text/javascript"></script>
+
     <script>
         $('#vis-menu button[data-vis=list]').addClass('disabled');
         $('#vis-menu button[data-vis=grid]').addClass('disabled');
         $('#vis-menu button[data-vis=network]').addClass('disabled');
+    </script>
+
+    <script>
+        var artefact = JSON.parse('{!! addslashes(json_encode($artefact)) !!}');
+        var parent = JSON.parse('{!! addslashes(json_encode($artefact->parent)) !!}');
+
+        render($('#artefact_left'), parent);
+        render($('#artefact_right'), artefact);
+
+        $(document).on('open.fndtn.reveal', '#artefact_lightbox_left[data-reveal]', function () {
+            $(document).off('open.fndtn.reveal', '#artefact_lightbox_left[data-reveal]')
+            render($('#artefact_lightbox_left'), parent, 'original');
+        });
+
+        $(document).on('open.fndtn.reveal', '#artefact_lightbox_right[data-reveal]', function () {
+            $(document).off('open.fndtn.reveal', '#artefact_lightbox_right[data-reveal]')
+            render($('#artefact_lightbox_right'), artefact, 'original');
+        });
+
     </script>
 @stop

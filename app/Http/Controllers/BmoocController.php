@@ -35,13 +35,29 @@ class BmoocController extends Controller {
         return Redirect::to('/');
     }
 
+    public function viewPage($name, $options){
+        $user = Auth::user();
+        $authors = User::orderBy('name')->get();
+        $tags = Tag::orderBy('tag')->get();
+
+        $options = array_merge($options, ['user' => $user, 'authors' => $authors, 'tags' => $tags]);
+
+        return view($name, $options);
+    }
+
+    public function viewModal($name, $options){
+        $user = Auth::user();
+
+        $options = array_merge($options, ['user' => $user]);
+
+        return view($name, $options);
+    }
+
     public function index(Request $request) {
         $user = Auth::user();
 
         $topics = Topic::all();
         $authors = User::orderBy('name')->get();
-        $tags = Tag::orderBy('tag')->get();
-
 
         // lijst per tag alle threads op, selecteer degene met meerdere threads
         $links_query = DB::select(DB::raw('
@@ -59,15 +75,11 @@ class BmoocController extends Controller {
         
         $links = VisController::getLinks($links_query);
 
-        return view('index', ['user' => $user, 'topics' => $topics, 'authors' => $authors, 'tags' => $tags, 'links' => $links]);
+        return BmoocController::viewPage('index', ['topics' => $topics, 'links' => $links]);
     }
 
     public function topic($id){
-        $user = Auth::user();
-
         $topic = Topic::find($id);
-        $authors = User::orderBy('name')->get();
-        $tags = Tag::orderBy('tag')->get();
 
         $tree = VisController::getTree($topic->firstAddition);
         $list = $topic->artefacts;
@@ -89,16 +101,19 @@ class BmoocController extends Controller {
         
         $links = VisController::getLinks($links_query);
 
-        return view('topic', ['user' => $user, 'topic' => $topic, 'authors' => $authors, 'tags' => $tags, 'tree' => $tree, 'list' => $list, 'links' => $links]);
+        return BmoocController::viewPage('topic', ['topic' => $topic, 'tree' => $tree, 'list' => $list, 'links' => $links]);
     }
 
     public function relation($id){
-        $user = Auth::user();
         $artefact = Artefact::find($id);
-        $authors = User::orderBy('name')->get();
-        $tags = Tag::orderBy('tag')->get();
 
-        return view('relation', ['user' => $user, 'artefact'=> $artefact, 'authors' => $authors, 'tags' => $tags]);
+        return BmoocController::viewPage('relation', ['artefact'=> $artefact]);
+    }
+
+    public function artefact($id){
+        $artefact = Artefact::find($id);
+
+        return BmoocController::viewModal('modals.artefact', ['artefact'=> $artefact]);
     }
 
     public function feedback(){

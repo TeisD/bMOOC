@@ -534,6 +534,10 @@ nav{
 } /* medium screens */
 
 /* RENDERING OF ARTEFACTS */
+#artefact_left, #artefact_right{
+    padding: 5rem;
+    overflow: hidden;
+}
 .artefact, .loader{
     width: 100%;
     height: 100%;
@@ -568,11 +572,33 @@ nav{
         width: 100%;
         overflow-x: hidden;
         overflow-y: auto;
+        a{
+            @extend a.emphasis;
+        }
+
+        img{
+            position: relative;
+        }
     }
 
     .text{
-        display: table-cell;
+        //display: table-cell;
         vertical-align: middle;
+        height: 0;
+    }
+}
+#artefact, #instruction{
+    button{
+        position: absolute;
+        right: 0;
+        bottom: 0;
+    }
+    .artefact.expanded{
+        overflow: scroll;
+        img{
+            max-width: none;
+            max-height: none;
+        }
     }
 }
 

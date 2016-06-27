@@ -298,45 +298,35 @@ function formSubmit(form, parent){
  * @param type The type of the artefact
  * @param data The artefact
  */
-function render(div, type, data){
+function render(div, data, quality){
     var html;
     var loadImg = false;
+    var expandable = false;
+    if(quality == undefined) quality = 'medium'
 
     div.find('.artefact').hide();
     div.find('.loader').show();
 
-    switch (type) {
-        case 'text':
-            html = "<div class=\"textContainer\"><div class=\"text\"><h2>" + data.title + "</h2>" + data.contents + "</div></div>";
+    switch (data.type_id) {
+        case 28:
+            html = "<div class=\"textContainer\"><div class=\"text\"><h2>" + data.title + "</h2>" + data.content + "</div></div>";
             break;
-        case 'local_image':
-            html = '&nbsp;<img src="' + host + "/uploads/" + data.url + '">';
+        case 29:
+            html = '&nbsp;<img src="/artefact/' + data.id + '/'+quality+'">';
+            if(quality == 'original') expandable = true;
             loadImg = true;
             break;
-        case 'remote_image':
-            html = '&nbsp;<img src="' + data.url + '">';
-            loadImg = true;
+        case 31:
+            html = '<iframe  src="' + data.content + '?autoplay=0" width="100%" height="100%" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>';
             break;
-        case 'video_youtube':
-            html = '<iframe  src="' + data.url + '?autoplay=0" width="100%" height="100%" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>';
+        case 32:
+            html = '<iframe src="' + data.content + '" width="100%" height="100%" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>';
             break;
-        case 'video_vimeo':
-            html = '<iframe src="' + data.url + '" width="100%" height="100%" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>';
-            break;
-        case 'remote_document':
-            html = 'Please, <a href="' + data.url + '" target="_new">download</a> the document to open...';
-            break;
-        case 'local_document':
-            html = 'Please, <a href="' + host + "/uploads/" + data.url + '" target="_new">download</a> the document to open...';
-            break;
-        case 'local_pdf':
-            html = '<object data="' + host + "/uploads/" + data.url + '" type="application/pdf"><a href="' + host + "/uploads/" + data.url + '">Click to view PDF</a><br/><small>(Your browser does not support viewing of PDF\'s inside bMOOC)</small></object>';
-            break;
-        case 'remote_pdf':
-            html = '<object data="' + data.url + '" type="application/pdf"><a href="' + data.url + '">Click to view PDF</a><br/><small>(Your browser does not support viewing of PDF\'s inside bMOOC)</small></object>';
+        case 33:
+            html = '<object data="/artefact/' + data.id + '/original" type="application/pdf"><a href="/artefact/' + data.id + '/original">Click to view PDF</a><br/><small>(Your browser does not support viewing of PDF\'s inside bMOOC)</small></object>';
             break;
         default:
-            html = '<p>Oops. Something went wrong. Try reloading the page.</p>';
+            html = '<p>Oops, there was an error loading the artefact.<br />Please try reloading this page.</p>';
             break;
     }
 
@@ -344,14 +334,26 @@ function render(div, type, data){
 
     if (loadImg) {
         div.imagesLoaded(function () {
-            div.stop(true, true)
-            div.find('.loader').hide();
-            div.find('.artefact').fadeIn();
+            load();
         });
     } else {
+        load();
+    }
+
+    function load(){
         div.stop(true, true)
         div.find('.loader').hide();
         div.find('.artefact').fadeIn();
+
+        if(expandable){
+            div.find('#artefact').append('<button class="secondary square expand"><i class="fa fa-expand" aria-hidden="true"></i></button>');
+
+            div.find('.expand').on('click', function(){
+                div.find('.artefact').toggleClass('expanded');
+                div.find('.expand i').toggleClass('fa-expand');
+                div.find('.expand i').toggleClass('fa-compress');
+            });
+        }
     }
 }
 

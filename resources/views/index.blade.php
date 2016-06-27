@@ -3,21 +3,13 @@
 @section('title', 'bMOOC')
 
 @section('header_actions')
-
+    @if ((isset($user) && $user->role=="editor") || (1 == 1))
+        <button class="primary plus indent" data-help="index" data-help-id="new_topic" data-reveal-id="new_topic"></button>
+    @endif
 @stop
 
 @section('header_search')
     @include('forms.search')
-@stop
-
-@section('header_content')
-    <div class="row">
-       <div class="columns">
-           @if ((isset($user) && $user->role=="editor") || (1 == 1))
-                <button class="primary plus" data-help="index" data-help-id="new_topic" data-reveal-id="new_topic">Start a new topic</button>
-            @endif
-       </div>
-   </div>
 @stop
 
 @section('content')
