@@ -594,7 +594,7 @@ var Vis = (function(){
         }
      * @param {object} opt - An optional object defining the trees behavior
      */
-    function Vis(el, data, opt){
+    function Vis(el, data, url, opt){
 
         // Options array
         this.options = {
@@ -621,6 +621,7 @@ var Vis = (function(){
 
         this.data = data;
         this.el = el;
+        this.url = url;
 
         this.zoomListener = d3.behavior.zoom()
             .on("zoom", this.zoomed);
@@ -981,6 +982,8 @@ var Vis = (function(){
      * http://stackoverflow.com/questions/12992351/how-to-update-elements-of-d3-force-layout-when-the-underlying-data-changes
      */
     Vis.prototype.drawNodes = function(){
+
+        var pointer = this;
                         
         // Declare the nodes.
         var node = this.g.selectAll(".node")
@@ -1006,7 +1009,7 @@ var Vis = (function(){
             nodeEnter.filter(function(d) { return d.hidden; })
                 .append("a")
                 .attr("xlink:href", function(d) {
-                    return "/topic/"+d.id;
+                    return "/"+pointer.url+"/"+d.id;
                 })
                 .append("circle")
                 .attr("cx", 5)
@@ -1018,7 +1021,7 @@ var Vis = (function(){
                 .filter(function(d) { return !d.hidden })
                 .append("a")
                 .attr("xlink:href", function(d) {
-                    return "/topic/"+d.id;
+                    return "/"+pointer.url+"/"+d.id;
                 })
                 .append("image")
                 .attr("xlink:href", function(d) {
@@ -1041,7 +1044,7 @@ var Vis = (function(){
                 .filter(function(d) { return !d.hidden })
                 .append("a")
                 .attr("xlink:href", function(d) {
-                    return "/topic/"+d.id;
+                    return "/"+pointer.url+"/"+d.id;
                 })
                 .append("text")
                 .attr('y', -Vis.IMAGE_SIZE/2)
@@ -1057,7 +1060,7 @@ var Vis = (function(){
         } else if(this.options.mode == 'nodes') {
             nodeEnter.append("a")
                 .attr("xlink:href", function(d) {
-                    return "/topic/"+d.id;
+                    return "/"+pointer.url+"/"+d.id;
                 })
                 .append("circle")
                 .attr("cx", 0)
@@ -1069,7 +1072,7 @@ var Vis = (function(){
             var a = nodeEnter.append("g")
                 .append("a")
                 .attr("xlink:href", function(d) {
-                    return "/topic/"+d.id;
+                    return "/"+pointer.url+"/"+d.id;
                 });
 
             if(this.options.background){

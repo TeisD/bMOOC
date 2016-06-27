@@ -131,7 +131,7 @@
         data.list = JSON.parse('{!! addslashes(json_encode($list)) !!}');
         data.links = JSON.parse('{!! addslashes(json_encode($links)) !!}');
 
-        var vis = new Vis($('#vis-container').get(0), data, {
+        var vis = new Vis($('#vis-container').get(0), data, 'relation', {
             interactive: true,
             type: 'tree',
             mode: 'all',
