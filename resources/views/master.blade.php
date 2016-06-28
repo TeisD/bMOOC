@@ -6,9 +6,9 @@
     <title>@yield('title') - bMOOC - LUCA School of Arts</title>
     <link rel="icon" type="img/ico" href="/img/favicon.ico">
     {{-- NON BLOCKING STYLESHEETS --}}
-    <link rel="preload" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" as="style" onload="this.rel='stylesheet'">
+    <link rel="preload" href="/css/foundation-icons.min.css" as="style" onload="this.rel='stylesheet'">
     <link rel="preload" href="//cdn.quilljs.com/0.20.1/quill.snow.css" as="style" onload="this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="//cdn.quilljs.com/0.20.1/quill.snow.css"></noscript>
+    <link rel="preload" href="/css/foundation-datepicker.min.css" as="style" onload="this.rel='stylesheet'">
     <script src="/js/loadCSS.js"></script>
     <script src="/js/cssrelpreload.js"></script>
 
@@ -126,19 +126,19 @@
               <a class="close-reveal-modal close" aria-label="Close">&#215;</a>
         </div>
 
-        {{-- FEEDBACK --}}
-        @include('forms.master', ['form' => 'feedback', 'class' => 'small'])
+        {{-- FORMS --}}
+        @include('forms.master', ['form' => 'feedback', 'class' => 'small']) {{-- feedback --}}
+        @yield('forms')
 
         {{-- SCRIPTS --}}
         {{-- <script src="/js/foundation.min.js"></script> --}}
         <script src="/js/foundation/foundation.js"></script>
         <script src="/js/foundation/foundation.reveal.js"></script>
+        <script src="/js/foundation/foundation.abide.js"></script>
         <script src="/js/app.js?v=@version"></script>
         <script src="/js/help.js?v=@version"></script>
 
         <script>
-            $(document).foundation();
-
             $(document).on('opened.fndtn.reveal', '[data-reveal]', function () {
                 var modal = $(this);
                 $(document).foundation('equalizer', 'reflow');

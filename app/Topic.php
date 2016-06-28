@@ -8,7 +8,7 @@ class Topic extends Model
 {
 
     protected $fillable = ['title', 'author_id', 'description', 'goal', 'start_date', 'end_date'];
-    protected $appends = ['artefactCount', 'contributorCount'];
+    protected $appends = ['artefactCount', 'contributorCount', 'active'];
 
     public function author() {
         return $this->belongsTo('App\User', 'author_id');
@@ -68,6 +68,10 @@ class Topic extends Model
     public function activeInstruction() {
         return $this->hasOne('App\Instruction')
             ->where('instructions.active_until', '=', null);
+    }
+
+    public function getActiveAttribute(){
+        return (strtotime($this->start_date) < strtotime('now') && strtotime($this->end_date) > strtotime('now'));
     }
 
 }

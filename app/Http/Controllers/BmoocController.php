@@ -53,11 +53,8 @@ class BmoocController extends Controller {
         return view($name, $options);
     }
 
-    public function index(Request $request) {
-        $user = Auth::user();
-
-        $topics = Topic::all();
-        $authors = User::orderBy('name')->get();
+    public function index($archived = false) {
+        $topics = Topic::where('archived', $archived)->get();
 
         // lijst per tag alle threads op, selecteer degene met meerdere threads
         $links_query = DB::select(DB::raw('
@@ -75,7 +72,11 @@ class BmoocController extends Controller {
         
         $links = VisController::getLinks($links_query);
 
-        return BmoocController::viewPage('index', ['topics' => $topics, 'links' => $links]);
+        return BmoocController::viewPage('index', ['topics' => $topics, 'links' => $links, 'archived' => $archived]);
+    }
+
+    public function archive(){
+        return BmoocController::index(true);
     }
 
     public function topic($id){
@@ -116,8 +117,9 @@ class BmoocController extends Controller {
         return BmoocController::viewModal('modals.artefact', ['artefact'=> $artefact]);
     }
 
-    public function feedback(){
-        $data = Input::all();
+    public function feedback(Request $request){
+
+        $data = $request->all();
 
         if($data['email'] == "") $data['email'] = "teis.degreve@luca-arts.be";
         if($data['name'] == "") $data['name'] = "Teis De Greve";

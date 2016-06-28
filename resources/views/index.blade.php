@@ -12,13 +12,23 @@
     @include('forms.search')
 @stop
 
+@if(isset($archived) && $archived)
+@section('header_content')
+    <div class="row">
+       <div class="columns">
+           <h2 class="inline sub">Archive</h2>
+       </div>
+   </div>
+@stop
+@endif
+
 @section('content')
     <div class="row full" id="vis-container">
         <div class="vis-gui render">
 
         </div>
     </div>
-    <div class="row full" id="vis-fallback">
+    <div class="row" id="vis-fallback">
       <div class="columns">
           <div class="row vis-sort">
               <div class="columns text-center">
@@ -42,17 +52,28 @@
                     <li>
                         <a href="#" class="sort" data-sort="last_author">Last addition author</a>
                     </li>
+                    <li>
+                        <a href="#" class="sort" data-sort="active_from_ts">Active from</a>
+                    </li>
+                    <li>
+                        <a href="#" class="sort" data-sort="active_until_ts">Active until</a>
+                    </li>
                   </ul>
               </div>
           </div>
-          <ul class="list block">
-           @foreach($topics as $topic)
-           <li><a href="/topic/{{$topic->id}}">
+          <ul class="list grid">
+            @foreach($topics as $topic)
+            @if($topic->active)
+               <li>
+            @else
+                <li class="archived">
+            @endif
+           <a href="/topic/{{$topic->id}}">
             <div class="row">
-                <div class="columns large-4">
+                <div class="columns large-3">
                     <h3 class="title inline">{{ $topic->title }}</h3>
                 </div>
-                <div class="columns large-2">
+                <div class="columns medium-6 large-2">
                     <strong class="additions">{{ $topic->artefactCount }}</strong>
                          @if ($topic->artefactCount == 1)
                             <span class="light">addition</span>
@@ -67,26 +88,41 @@
                             <span class="light">contributors</span>
                          @endif
                 </div>
-                <div class="columns large-2">
+                <div class="columns medium-6 large-2">
                     <span class="light">initiated by</span> <span class="initiator">{{$topic->author->name}}</span>
                 </div>
-                <div class="columns large-3">
+                <div class="columns medium-6 large-3">
                     <span class="light">last addition</span>
                     <span class="last_addition">{{date('d/m/Y', strtotime($topic->lastAddition->created_at))}}</span>
                     <span class="last_addition_ts" hidden="hidden" style="display: none;">{{$topic->lastAddition->created_at}}</span>
                     <span class="light">by</span>
                     <span class="last_author">{{$topic->lastAddition->author->name}}</span>
                 </div>
+                <div class="columns medium-6 large-2">
+                    <span class="light">active from</span>
+                    <span class="active_from">{{date('d/m/Y', strtotime($topic->start_date))}}</span>
+                    <span class="active_from_ts" hidden="hidden" style="display: none;">{{$topic->start_date}}</span>
+                    <span class="light">until</span>
+                    <span class="active_until">{{date('d/m/Y', strtotime($topic->end_date))}}</span>
+                    <span class="active_until_ts" hidden="hidden" style="display: none;">{{$topic->end_date}}</span>
+                </div>
             </div>
             </a></li>
             @endforeach
           </ul>
         </div>
+        <div class="columns margin-bottom">
+            <div class="columns text-center">
+                <a href="/archive">view archived topics</a>
+            </div>
+        </div>
     </div>
 @stop
 
-{{-- NEW TOPIC FORM --}}
-@include('forms.master', ['form' => 'new_topic', 'class' => 'slide'])
+@section('forms')
+    {{-- NEW TOPIC FORM --}}
+    @include('forms.master', ['form' => 'new_topic', 'class' => 'slide'])
+@stop
 
 @section('scripts')
   <script src="/js/d3.min.js"></script>
@@ -119,7 +155,7 @@
         });
 
         var userList = new List('vis-fallback', {
-            valueNames: [ 'title', 'additions', 'contributors', 'author', 'initiator', 'last_addition_ts', 'last_author' ]
+            valueNames: [ 'title', 'additions', 'contributors', 'author', 'initiator', 'last_addition_ts', 'last_author', 'active_from_ts', 'active_until_ts']
         });
 
         userList.sort('last_addition_ts', { order: "desc" });

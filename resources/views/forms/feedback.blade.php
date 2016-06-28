@@ -1,17 +1,27 @@
 <h2>Feedback</h2>
 <p>Remarks, problems or suggestions? Please fill in the form below.</p>
-{{ Form::open(array('data-abide', 'id'=>'feedback_form', 'url'=>'feedback','method'=>'POST', 'files'=>true)) }}
+{{ Form::open(array('data-abide', 'id'=>'feedback_form', 'url'=>'/feedback','method'=>'POST', 'files'=>true)) }}
     <small class="mailstatus error full"></small>
-    <label for="fb_name">Name:
-        <input type="text" id="fb_name" name="fb_name"/>
-    </label>
-    <label for="fb_mail">E-mail:
-        <input type="email" id="fb_mail" name="fb_mail"/>
+
+    <div>
+        <label for="fb_name">Name:
+            <input type="text" id="fb_name" name="fb_name"/>
+        </label>
+    </div>
+
+    <div>
+        <label for="fb_mail">E-mail:
+            <input type="email" id="fb_mail" name="fb_mail"/>
+        </label>
         <small class="error">Please enter a valid e-mail address.</small>
-    </label>
-    <label for="fb_msg">Message:
+    </div>
+
+    <div>
+       <label for="fb_msg">Message:
         <textarea required rows="5" id="fb_msg"></textarea>
+        </label>
         <small class="error">Please describe your remark, problem or suggestion.</small>
-    </label>
-    <input type="submit" class="purple full" value="Submit"/>
+    </div>
+
+    <button type="submit">Submit</button>
 {{ Form::close() }}

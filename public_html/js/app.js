@@ -206,7 +206,7 @@ $(function(){
 
         $.ajax({
         type: "POST",
-        url: host+'/feedback',
+        url: '/feedback',
         data: {name:name, email:email, body:message, _token: token},
         success: function( msg ) {
             $('#feedback .mailstatus').addClass('success');
@@ -346,12 +346,12 @@ function render(div, data, quality){
         div.find('.artefact').fadeIn();
 
         if(expandable){
-            div.find('#artefact').append('<button class="secondary square expand"><i class="fa fa-expand" aria-hidden="true"></i></button>');
+            div.find('#artefact').append('<button class="secondary square expand"><i class="fi-arrows-out"></i></button>');
 
             div.find('.expand').on('click', function(){
                 div.find('.artefact').toggleClass('expanded');
-                div.find('.expand i').toggleClass('fa-expand');
-                div.find('.expand i').toggleClass('fa-compress');
+                div.find('.expand i').toggleClass('fi-arrows-out');
+                div.find('.expand i').toggleClass('fi-arrows-in');
             });
         }
     }
@@ -675,7 +675,6 @@ var Vis = (function(){
                 .attr('y', this.g.node().getBBox().y - 25)
                 .attr('width', this.g.node().getBBox().width + 50)
                 .attr('height', this.g.node().getBBox().height + 50);
-            console.log(this.g.node());
             this.container.call(this.zoomListener);
             // GUI
             var gui = d3.select(this.el).append('div')
@@ -858,7 +857,7 @@ var Vis = (function(){
 
             var targetNode = nodes.indexOf(nodes.filter(function(n) { return n.id === e.target; })[0]);
 
-            edges.push({source: sourceNode, target: targetNode, value: e.links});
+            if(sourceNode > -1 && targetNode > -1) edges.push({source: sourceNode, target: targetNode, value: e.links});
         });
 
         // add a random start point in some corner
@@ -1085,7 +1084,11 @@ var Vis = (function(){
                     })
             }
             a.append("text")
-                .attr("class", "title")
+                .attr("class", function(d){
+                    var c = "title";
+                    if(!d.active) c += " archived";
+                    return c;
+                })
                 .text(function(d){
                     return d.title;
                 })

@@ -3,6 +3,7 @@
 use App\Http\Controllers\BmoocController;
 
 Route::get('/', 'BmoocController@index');
+Route::get('archive', 'BmoocController@archive');
 Route::get('topic/{id}', 'BmoocController@topic');
 Route::get('relation/{id}', 'BmoocController@relation');
 Route::get('artefact/{id}', 'BmoocController@artefact');
