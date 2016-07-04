@@ -125,6 +125,24 @@ a.close:hover{
 a.active{
     border-bottom: 1px solid;
 }
+.nested{
+    position: relative;
+    z-index: 1;
+}
+.nested a{
+    z-index: 500;
+    position: relative;
+}
+.nested > a:first-of-type{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+.nested > a:first-of-type:hover{
+    border-bottom: none;
+}
 .light{
     color: $text-light;
 }
@@ -161,6 +179,10 @@ button.plus, .button.plus{
 }
 button.information, .button.information{
     background: url(../img/info.png) no-repeat left center;
+    background-size: contain;
+}
+button.more{
+    background: url(../img/more.png) no-repeat left center;
     background-size: contain;
 }
 button.eye, .button.eye{
@@ -253,6 +275,10 @@ button[type=submit]{
     font-family: $font;
     display: block;
     width: 100%;
+
+    img{
+        height: 1rem;
+    }
 }
 
 /* FORMS */
@@ -304,6 +330,10 @@ form{
     small, small.error{
         font-size: 0.8rem;
     }
+    .ql_editor{
+        margin-bottom: 0;
+    }
+
 }
 
 small.error.success{
@@ -395,6 +425,9 @@ ul.inline, ul.block, ul.grid{
     font-size: inherit;
     margin: 0;
     padding: 0;
+    li{
+        position: relative;
+    }
 }
 ul.inline{
     display: inline;
@@ -418,6 +451,7 @@ ul.grid{
         width: 100%;
         height: 100%;
         line-height: inherit;
+        position: relative;
     }
     img{
         display: block;

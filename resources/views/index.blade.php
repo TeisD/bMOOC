@@ -66,12 +66,25 @@
             @if($topic->active)
                <li>
             @else
-                <li class="archived">
+                <li>
             @endif
-           <a href="/topic/{{$topic->id}}">
-            <div class="row">
+               <div class="row">
                 <div class="columns large-3">
                     <h3 class="title inline">{{ $topic->title }}</h3>
+                    @if(isset($user) && $user->role->id > 1)
+                    <h3 class="inline">
+                    <a href="#" class="emphasis" data-dropdown="actions_{{$topic->id}}" data-dropdown-position="anchor">&darr;</a></h3>
+                    <div class="row dropdown open" id="actions_{{$topic->id}}">
+                       <div class="columns">
+                          <a href="#" class="close" aria-label="Close">&#215;</a>
+                            <ul class="list">
+                                <li><a href="#" onclick="archive({{$topic->id}})">Archive</a></li>
+                                <li><a href="/topic/{{$topic->id}}">View</a></li>
+                                <li><a href="#" onclick="del({{$topic->id}})">Delete</a></li>
+                            </ul>
+                       </div>
+                   </div>
+                   @endif
                 </div>
                 <div class="columns medium-6 large-2">
                     <strong class="additions">{{ $topic->artefactCount }}</strong>
@@ -92,11 +105,15 @@
                     <span class="light">initiated by</span> <span class="initiator">{{$topic->author->name}}</span>
                 </div>
                 <div class="columns medium-6 large-3">
+                   @if(isset($topic->lastAddition))
                     <span class="light">last addition</span>
                     <span class="last_addition">{{date('d/m/Y', strtotime($topic->lastAddition->created_at))}}</span>
                     <span class="last_addition_ts" hidden="hidden" style="display: none;">{{$topic->lastAddition->created_at}}</span>
                     <span class="light">by</span>
                     <span class="last_author">{{$topic->lastAddition->author->name}}</span>
+                    @else
+                    <span class="light">no additions yet</span>
+                    @endif
                 </div>
                 <div class="columns medium-6 large-2">
                     <span class="light">active from</span>
@@ -107,7 +124,7 @@
                     <span class="active_until_ts" hidden="hidden" style="display: none;">{{$topic->end_date}}</span>
                 </div>
             </div>
-            </a></li>
+            </li>
             @endforeach
           </ul>
         </div>
@@ -121,7 +138,7 @@
 
 @section('forms')
     {{-- NEW TOPIC FORM --}}
-    @include('forms.master', ['form' => 'new_topic', 'class' => 'slide'])
+    @include('forms.master', ['form' => 'new_topic', 'class' => 'slide', 'ajax' => 'true'])
 @stop
 
 @section('scripts')
@@ -160,6 +177,15 @@
 
         userList.sort('last_addition_ts', { order: "desc" });
 
+        function archive(){
+        }
+
+        function del(){
+            var d = confirm("WARNING: YOU ARE ABOUT TO DELETE THE TOPIC\n\nClick 'OK' to delete and 'cancel' to abort. This action cannot be undone.");
+            if(d){
+                console.log('delete');
+            }
+        }
 
     </script>
 @stop

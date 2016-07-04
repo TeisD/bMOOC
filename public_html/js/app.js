@@ -8,6 +8,9 @@
 $(document).foundation({
     abide : {
         timeout: 1000,
+        patterns: {
+            day_month_year: /(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d/
+        },
         validators: {
             tag_new: function(el, required, parent){
                 var tags = [];
@@ -59,6 +62,13 @@ $(document).foundation({
                     }
                 }
                 return valid;
+            },
+            quill: function(el, required, parent){
+                var valid = true;
+                $(el).val(parent.find('.ql-editor').html());
+                if(parent.find('.ql-editor').text().length == 0) valid = false;
+                return valid;
+
             },
             filetype: function(el, required, parent){
                 var div = parent;
@@ -233,53 +243,74 @@ $(function(){
         var form = $(this);
         e.preventDefault();
 
-        // reset & show loading screen
-        $('#progress .loader').show();
-        $('#progress .message').html('Preparing your contribution for submission...');
-        $('#progress').foundation('reveal', 'open');
+        var button = $('*[type="submit"]', form);
+        button.html('<img src="/img/loader_transparent.gif" /> Submitting...');
+        button.prop('disabled', true);
+        button.addClass('disabled');
 
-        var input = document.querySelectorAll('#'+form.attr('id')+' .input_file input')[0];
+        var input = $('.input_file input', form);
         var parent = form.parents('[data-reveal]');
 
-        var t_100 = new Thumbnail(input, 100);
-        var t_1000 = new Thumbnail(input, 1000);
+        if(input.length){
 
-        $.when(t_100.generate(), t_1000.generate()).done(function(){
-            if(t_100.hasData) {
-                $('<input>', {
-                    type: 'hidden',
-                    id: 'thumbnail_small',
-                    name: 'thumbnail_small',
-                    value: t_100.get()
-                }).appendTo(form);
-            }
-            if(t_1000.hasData) {
-                $('<input>', {
-                    type: 'hidden',
-                    id: 'thumbnail_large',
-                    name: 'thumbnail_large',
-                    value: t_1000.get()
-                }).appendTo(form);
-            }
+            input = input[0];
+
+            var t_100 = new Thumbnail(input, 100);
+            var t_1000 = new Thumbnail(input, 1000);
+
+            $.when(t_100.generate(), t_1000.generate()).done(function(){
+                if(t_100.hasData) {
+                    $('<input>', {
+                        type: 'hidden',
+                        id: 'thumbnail_small',
+                        name: 'thumbnail_small',
+                        value: t_100.get()
+                    }).appendTo(form);
+                }
+                if(t_1000.hasData) {
+                    $('<input>', {
+                        type: 'hidden',
+                        id: 'thumbnail_large',
+                        name: 'thumbnail_large',
+                        value: t_1000.get()
+                    }).appendTo(form);
+                }
+                formSubmit(form, parent);
+            }).fail(function(data) {
+                formSubmit(form, parent);
+            });
+        } else {
             formSubmit(form, parent);
-        }).fail(function(data) {
-            formSubmit(form, parent);
-        });
+        }
     });
 });
 
 function formSubmit(form, parent){
-    $('#progress .message').html('Uploading files...');
      var options = {
         success: function(data){
+            var button = $('*[type="submit"]', form);
+            button.html('<img src="Submit');
+            button.prop('disabled', false);
+            button.removeClass('disabled');
             if(data.refresh) location.reload(true);
             else window.location = data.url;
         },
         error: function(data){
-            $('#progress .loader').hide();
-            $('#progress .message').html('<h2>Oops!</h2><p>Something went wrong while  saving your contribution.</p>');
-            $('#progress .message').append('<small class="error">' + data.responseJSON.message + '</small>');
-            $('#progress .message').append('<a href="#" data-reveal-id="' + parent.attr('id') + '" class="emphasis">Please try again</a>');
+
+            $(".json.error").remove();
+
+            var button = $('*[type="submit"]', form);
+            button.html('Submit');
+            button.prop('disabled', false);
+            button.removeClass('disabled');
+
+            if(data.responseJSON){
+                $.each(data.responseJSON, function(i, msg){
+                    form.prepend('<small class="error json" style="display: block">'+msg+'</small>');
+                });
+            } else{
+                form.prepend('<small class="error json" style="display: block">Oops, something went wrong while submitting the form. Please check if the entered information is correct and try again. If the error remains, please use the feedback form to contact the system administrator.</small>');
+            }
         }
      };
 

@@ -35,7 +35,7 @@ class BmoocController extends Controller {
         return Redirect::to('/');
     }
 
-    public function viewPage($name, $options){
+    public function viewPage($name, $options = []){
         $user = Auth::user();
         $authors = User::orderBy('name')->get();
         $tags = Tag::orderBy('tag')->get();
@@ -45,7 +45,7 @@ class BmoocController extends Controller {
         return view($name, $options);
     }
 
-    public function viewModal($name, $options){
+    public function viewModal($name, $options = []){
         $user = Auth::user();
 
         $options = array_merge($options, ['user' => $user]);
@@ -147,21 +147,6 @@ class BmoocController extends Controller {
           }
     }
 
-    public function showTopic($links, $answer = null) {
-        $user = Auth::user();
-        $artefactLinks = Artefact::find($links);
-
-        if(!$user){
-            return view('errors.login');
-        }
-
-        if ($artefactLinks) {
-            return view('topic', ['artefactLeft' => $links, 'answerRight' => $answer, 'user' => $user]);
-        } else {
-            return view('no_topic');
-        }
-    }
-
     public function searchDiscussions($author = null, $tag = null, $keyword = null) {
         $user = Auth::user();
         //filter the artefacts on author first
@@ -206,6 +191,46 @@ class BmoocController extends Controller {
                         ->groupBy('thread')->get();
 
         return view('index', ['topic' => $discs, 'user' => $user, 'auteurs' => $auteurs, 'tags' => $tags, 'titel' => "met tag '" . $tag . "'", 'aantalAntwoorden' => $aantalAntwoorden, 'search' => ['tag' => $tag, 'author' => $author, 'keyword' => $keyword]]);
+    }
+
+    public function newTopic(Request $request){
+        $user = Auth::user();
+        if(!$user) return false;
+        if($user->role_id < 2) return false;
+
+        $request->start_date = str_replace('/', '-', $request->start_date);
+        $request->end_date = str_replace('/', '-', $request->end_date);
+
+        $this->validate($request, [
+            'title' => 'required|max:100',
+            'description_raw' => 'required',
+            'goal_raw' => 'required',
+            'start_date' => 'date|required',
+            'end_date' => 'date|required|after:start_date'
+        ]);
+
+        try{
+            $topic = new Topic;
+            $topic->author_id = $user->id;
+            $topic->title = $request->title;
+            $topic->description = $request->description_raw;
+            $topic->goal = $request->goal_raw;
+            $topic->start_date = date('Y-m-d H:i:s', strtotime($request->start_date));
+            $topic->end_date = date('Y-m-d H:i:s', strtotime($request->end_date));
+            $topic->save();
+
+            if ( $request->isXmlHttpRequest() ) {
+                return Response::json( [
+                    'status' => '200',
+                    'url' => URL::to('/topic/'.$topic->id)
+                ], 200);
+            }
+            return $this->showTopic($comment->child_of->id, $aantalKinderen - 1);
+        } catch (Exception $e) {
+            DB::rollback();
+            throw $e;
+        }
+
     }
 
     public function commentDiscussion(Request $request) {
@@ -554,7 +579,7 @@ class BmoocController extends Controller {
         } // End if ($user)
     }
 
-    public function newTopic(Request $request) {
+    public function newTopicOld(Request $request) {
         $user = Auth::user();
         if ($user && $user->role == "editor") { // Als de gebruiker ingelogd is en editor is, anders niets doen
         try {

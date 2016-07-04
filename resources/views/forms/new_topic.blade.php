@@ -1,7 +1,7 @@
 <div class="row">
     <div class="columns large-10 large-offset-1">
 <h2>Start a new topic</h2>
-<p>Initiate a topic by filling in a title and a description for the topic, the goal of the topic and it's start and end date. Choose your words carefully, as this information might might have a big impact on how the students understand and use the topic.</p>
+<p>Initiate a topic by filling in a title and a description for the topic, the goal of the topic and it's start and end date. Choose your words carefully, as this information might have a big impact on how the students understand and use the topic.</p>
 {{ Form::open(array('id'=>'new_topic_form', 'data-abide'=>'ajax', 'url'=>'topic/new','method'=>'POST', 'files'=>true)) }}
     {{-- INPUT: topic_title --}}
     <div class="row"><div class="columns">
@@ -14,15 +14,13 @@
     {{-- INPUT: description --}}
     <div class="row"><div class="columns">
         <label>Description:</label>
-        @include('forms.elements.texteditor', ['id' => 'description'])
-        <small class="error">Please enter a description for the topic.</small>
+        @include('forms.elements.texteditor', ['id' => 'description', 'required' => 'required', 'error_msg' => 'Please enter a description for the topic.'])
     </div></div>
 
     {{-- INPUT: goal --}}
     <div class="row"><div class="columns">
         <label>Goal:</label>
-        @include('forms.elements.texteditor', ['id' => 'goal'])
-        <small class="error">Please enter a goal for the topic.</small>
+        @include('forms.elements.texteditor', ['id' => 'goal', 'required' => 'required', 'error_msg' => 'Please enter a goal for the topic.'])
     </div></div>
 
     <fieldset class="form-inline">
@@ -31,7 +29,7 @@
         <div class="row"><div class="columns large-6">
             <label for="start_date">Start date:</label>
             <div class="field">
-                <input type="date" id="start_date" value="dd/mm/yyyy" data-date-format="dd/mm/yyyy" name="start_date" required />
+                <input type="date" id="start_date" pattern="day_month_year" placeholder="dd/mm/yyyy" data-date-format="dd/mm/yyyy" name="start_date" required />
                 <small class="error">Please select a start date for the topic.</small>
             </div>
         </div></div>
@@ -39,7 +37,7 @@
         <div class="row"><div class="columns large-6">
             <label for="end_date">End date:</label>
             <div class="field">
-                <input type="date" id="end_date" value="dd/mm/yyyy" data-date-format="dd/mm/yyyy" name="end_date" required />
+                <input type="date" id="end_date" pattern="day_month_year" placeholder="dd/mm/yyyy" data-date-format="dd/mm/yyyy" name="end_date" required />
                 <small class="error">Please select an end date for the topic.</small>
             </div>
         </div></div>

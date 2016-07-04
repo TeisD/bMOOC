@@ -59,7 +59,7 @@
 
        <div class="medium-4 columns">
           <div class="form-inline">
-               <label for="zoek">Search</label>
+               <label for="keyword">Search</label>
                <div class="field">
                 @if(isset($search))
                     <input type="text" id="keyword" value="{{ $search['keyword'] }}"/>

@@ -9,8 +9,6 @@ Route::get('relation/{id}', 'BmoocController@relation');
 Route::get('artefact/{id}', 'BmoocController@artefact');
 Route::get('search/{author?}/{tag?}/{keyword?}', 'BmoocController@searchDiscussions');
 
-
-//Route::get('topic/{left}/{answer?}', ['uses'=>'BmoocController@showTopic']);
 Route::post('topic/new', 'BmoocController@newTopic');
 Route::post('instruction/new', 'BmoocController@newInstruction');
 Route::post('artefact/new', 'BmoocController@newInstruction');

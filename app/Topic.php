@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Topic extends Model
 {
 
-    protected $fillable = ['title', 'author_id', 'description', 'goal', 'start_date', 'end_date'];
+    protected $fillable = ['title', 'author_id', 'description', 'goal', 'start_date', 'end_date', 'archived'];
     protected $appends = ['artefactCount', 'contributorCount', 'active'];
 
     public function author() {
@@ -26,6 +26,7 @@ class Topic extends Model
     }
 
     public function getArtefactCountAttribute(){
+        if(!$this->artefactCountRelation) return 0;
         return $this->artefactCountRelation->count;
     }
 
@@ -46,6 +47,7 @@ class Topic extends Model
     }
 
     public function getContributorCountAttribute(){
+        if(!$this->contributorCountRelation) return 0;
         return $this->contributorCountRelation->count();
     }
 

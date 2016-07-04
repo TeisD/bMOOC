@@ -1,4 +1,4 @@
-<div id="{{$id}}">
+<div id="{{$id}}" class="ql">
     <div class="ql_toolbar" class="toolbar ql-toolbar ql-snow">
         <span class="ql-format-group">
             <select title="Size" class="ql-size">
@@ -35,5 +35,14 @@
 
     <div class="ql_editor"></div>
 
-    <textarea name="{{$id}}_raw" id="{{$id}}_raw" style="display:none"></textarea>
+    <textarea name="{{$id}}_raw" id="{{$id}}_raw" @if(isset($required)) required data-abide-validator="quill" @endif style="display:none"></textarea>
+
+    @if(isset($required))
+    <small class="error">
+    @if(isset($error_msg)) {{$error_msg}}
+    @else This field is required.
+    @endif
+    </small>
+    @endif
+
 </div>
