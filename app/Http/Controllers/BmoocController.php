@@ -233,6 +233,13 @@ class BmoocController extends Controller {
 
     }
 
+    public function deleteTopic($id){
+        $user = Auth::user();
+        if(isset($user) && $user->role->id > 1){
+            Topic::find($id)->delete();
+        }
+    }
+
     public function commentDiscussion(Request $request) {
         $user = Auth::user();
         if ($user) { // Als de gebruiker ingelogd is, anders niets doen

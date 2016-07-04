@@ -80,7 +80,7 @@
                             <ul class="list">
                                 <li><a href="#" onclick="archive({{$topic->id}})">Archive</a></li>
                                 <li><a href="/topic/{{$topic->id}}">View</a></li>
-                                <li><a href="#" onclick="del({{$topic->id}})">Delete</a></li>
+                                <li><a href="/topic/{{$topic->id}}/delete" onclick="var d = confirm('WARNING: YOU ARE ABOUT TO DELETE THE TOPIC\n\nClick \'OK\' to delete and \'cancel\' to abort. This action cannot be undone.'); return d;">Delete</a></li>
                             </ul>
                        </div>
                    </div>
@@ -178,13 +178,6 @@
         userList.sort('last_addition_ts', { order: "desc" });
 
         function archive(){
-        }
-
-        function del(){
-            var d = confirm("WARNING: YOU ARE ABOUT TO DELETE THE TOPIC\n\nClick 'OK' to delete and 'cancel' to abort. This action cannot be undone.");
-            if(d){
-                console.log('delete');
-            }
         }
 
     </script>

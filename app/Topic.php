@@ -3,12 +3,15 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Topic extends Model
 {
+    use SoftDeletes;
 
     protected $fillable = ['title', 'author_id', 'description', 'goal', 'start_date', 'end_date', 'archived'];
     protected $appends = ['artefactCount', 'contributorCount', 'active'];
+    protected $dates = ['deleted_at'];
 
     public function author() {
         return $this->belongsTo('App\User', 'author_id');
