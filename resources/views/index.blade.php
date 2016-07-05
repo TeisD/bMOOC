@@ -3,8 +3,8 @@
 @section('title', 'bMOOC')
 
 @section('header_actions')
-    @if ((isset($user) && $user->role=="editor") || (1 == 1))
-        <button class="primary plus indent" data-help="index" data-help-id="new_topic" data-reveal-id="new_topic"></button>
+    @if (isset($user) && $user->role->id > 1)
+        <button class="primary plus indent" data-help="index" data-help-id="new_topic" data-reveal-id="new_topic">new topic</button>
     @endif
 @stop
 
@@ -66,7 +66,7 @@
             @if($topic->active)
                <li>
             @else
-                <li>
+                <li class="archived">
             @endif
                <div class="row">
                 <div class="columns large-3">
@@ -78,9 +78,14 @@
                        <div class="columns">
                           <a href="#" class="close" aria-label="Close">&#215;</a>
                             <ul class="list">
-                                <li><a href="#" onclick="archive({{$topic->id}})">Archive</a></li>
+                                @if($topic->archived)
+                                    <li><a href="/topic/{{$topic->id}}?action=unarchive">Unarchive</a></li>
+                                @else
+                                    <li><a href="/topic/{{$topic->id}}?action=archive">Archive</a></li>
+                                @endif
                                 <li><a href="/topic/{{$topic->id}}">View</a></li>
-                                <li><a href="/topic/{{$topic->id}}/delete" onclick="var d = confirm('WARNING: YOU ARE ABOUT TO DELETE THE TOPIC\n\nClick \'OK\' to delete and \'cancel\' to abort. This action cannot be undone.'); return d;">Delete</a></li>
+                                <li><a href="/topic/{{$topic->id}}/?action=edit">Edit</a></li>
+                                <li><a href="/topic/{{$topic->id}}?action=delete" onclick="var d = confirm('WARNING: YOU ARE ABOUT TO DELETE THE TOPIC\n\nClick \'OK\' to delete and \'cancel\' to abort. This action cannot be undone.'); return d;">Delete</a></li>
                             </ul>
                        </div>
                    </div>
@@ -138,7 +143,7 @@
 
 @section('forms')
     {{-- NEW TOPIC FORM --}}
-    @include('forms.master', ['form' => 'new_topic', 'class' => 'slide', 'ajax' => 'true'])
+    @include('forms.master', ['form' => 'new_topic', 'class' => 'slide'])
 @stop
 
 @section('scripts')
@@ -160,15 +165,9 @@
             resize: true
         });
 
-        $(document).ready(function(){
-            if($('html').hasClass('svg')){
-                $('#vis-menu button[data-vis="network"]').addClass('active');
-                vis.render();
-            }
-        });
-
         var visMenu = new Menu('vis-menu', 'vis-container', 'vis-fallback', vis, {
-            disabled: ['grid', 'tree']
+            enabled: ['list', 'network'],
+            default: 'network'
         });
 
         var userList = new List('vis-fallback', {
@@ -176,9 +175,6 @@
         });
 
         userList.sort('last_addition_ts', { order: "desc" });
-
-        function archive(){
-        }
 
     </script>
 @stop

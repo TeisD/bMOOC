@@ -10,7 +10,7 @@ Route::get('artefact/{id}', 'BmoocController@artefact');
 Route::get('search/{author?}/{tag?}/{keyword?}', 'BmoocController@searchDiscussions');
 
 Route::post('topic/new', 'BmoocController@newTopic');
-Route::get('topic/{id}/delete', 'BmoocController@deleteTopic');
+Route::patch('topic/new', 'BmoocController@newTopic');
 Route::post('instruction/new', 'BmoocController@newInstruction');
 Route::post('artefact/new', 'BmoocController@newInstruction');
 

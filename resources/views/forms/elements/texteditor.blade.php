@@ -33,9 +33,13 @@
         </span>
     </div>
 
-    <div class="ql_editor"></div>
+    <div class="ql_editor">
+        @if(isset($content)) {!! $content !!} @endif
+    </div>
 
-    <textarea name="{{$id}}_raw" id="{{$id}}_raw" @if(isset($required)) required data-abide-validator="quill" @endif style="display:none"></textarea>
+    <textarea name="{{$id}}_raw" id="{{$id}}_raw" @if(isset($required)) required data-abide-validator="quill" @endif style="display:none">
+        @if(isset($content)) {!! $content !!} @endif
+    </textarea>
 
     @if(isset($required))
     <small class="error">

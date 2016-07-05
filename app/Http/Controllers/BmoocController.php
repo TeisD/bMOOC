@@ -23,6 +23,7 @@ use Mail;
 use Response;
 use File;
 use URL;
+use Log;
 
 class BmoocController extends Controller {
 
@@ -79,8 +80,31 @@ class BmoocController extends Controller {
         return BmoocController::index(true);
     }
 
-    public function topic($id){
+    public function topic(Request $request, $id){
         $topic = Topic::find($id);
+        $user = Auth::user();
+
+        /* IS THERE AN ACTION TO BE EXECUTED? */
+        if($request->has('action') && isset($user) && $user->role->id > 1){
+            switch($request->input('action')){
+                case 'delete':
+                    $topic->delete();
+                    break;
+                case 'archive':
+                    $topic->update(['archived' => 1]);
+                    break;
+                case 'unarchive':
+                    $topic->update(['archived' => 0]);
+                    break;
+                case 'edit':
+                    return view('forms.master_standalone', ['user' => $user, 'form'=> 'new_topic', 'topic' => $topic]);
+                    break;
+                default:
+                    break;
+            }
+            // redirect to homepage
+            return redirect('/#list');
+        }
 
         $tree = VisController::getTree($topic->firstAddition);
         $list = $topic->artefacts;
@@ -201,7 +225,7 @@ class BmoocController extends Controller {
         $request->start_date = str_replace('/', '-', $request->start_date);
         $request->end_date = str_replace('/', '-', $request->end_date);
 
-        $this->validate($request, [
+        $validator = Validator::make($request->all(), [
             'title' => 'required|max:100',
             'description_raw' => 'required',
             'goal_raw' => 'required',
@@ -210,8 +234,18 @@ class BmoocController extends Controller {
         ]);
 
         try{
-            $topic = new Topic;
-            $topic->author_id = $user->id;
+
+            $topic;
+
+            if ($request->isMethod('post')) {
+                $topic = new Topic;
+                $topic->author_id = $user->id;
+            }
+
+            if($request->isMethod('patch')){
+                $topic = Topic::find($request->id);
+            }
+
             $topic->title = $request->title;
             $topic->description = $request->description_raw;
             $topic->goal = $request->goal_raw;
@@ -233,10 +267,64 @@ class BmoocController extends Controller {
 
     }
 
-    public function deleteTopic($id){
+    public function newInstruction(Request $request){
         $user = Auth::user();
-        if(isset($user) && $user->role->id > 1){
-            Topic::find($id)->delete();
+        if(!$user) return false;
+        if($user->role_id < 2) return false;
+
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|max:100',
+            'filetype' => 'required',
+            'id' => 'required'
+        ]);
+
+        try{
+
+            $instruction = new Instruction;
+            $instruction->author_id = $user->id;
+            $instruction->topic_id = $request->id;
+            $instruction->title = $request->title;
+
+            // do some stuff with content here
+            switch($request->filetype){
+                case 'text':
+                    $validator = Validator::make($request->all(), [
+                        'text' => 'required|string'
+                    ]);
+                    $instruction->contents = $request->contents;
+                case 'image':
+                    $validator = Validator::make($request->all(), [
+                        'file' => 'required|image'
+                    ]);
+                    // store image
+                    // set type_id to right type
+                    break;
+                case 'video':
+                    $validator = Validator::make($request->all(), [
+                        'url' => 'required|url'
+                    ]);
+                    break;
+                case 'file':
+                    $validator = Validator::make($request->all(), [
+                        'file' => 'required|pdf'
+                    ]);
+                    //make pdf validator
+                default:
+                    throw new Exception('Invalid filetype');
+            }
+
+            $instruction->save();
+
+            if ( $request->isXmlHttpRequest() ) {
+                return Response::json( [
+                    'status' => '200',
+                    'refresh' => true
+                ], 200);
+            }
+            return $this->showTopic($comment->child_of->id, $aantalKinderen - 1);
+        } catch (Exception $e) {
+            DB::rollback();
+            throw $e;
         }
     }
 
@@ -414,7 +502,7 @@ class BmoocController extends Controller {
         }
     }
 
-    public function newInstruction(Request $request) {
+    public function newInstructioOldn(Request $request) {
         $user = Auth::user();
         if ($user && $user->role == "editor") { // Als de gebruiker ingelogd is en editor is, anders niets doen
             $filename = uniqid();

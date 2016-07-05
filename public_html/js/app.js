@@ -55,67 +55,27 @@ $(document).foundation({
             },
             filesize: function(el, required, parent){
                 var valid = true;
+                if(!required) return valid;
                 if(el.files.length > 0){
                     var f = el.files[0];
                     if (f.size > 5120000) {
                         valid = false;
+                        msg = "The file is too large (> 5MB)"
                     }
+                } else {
+                    valid = false;
+                    msg = "Please select a file to upload"
                 }
+                $('small.error', parent).text(msg);
                 return valid;
             },
             quill: function(el, required, parent){
                 var valid = true;
+                if(!required) return valid;
                 $(el).val(parent.find('.ql-editor').html());
                 if(parent.find('.ql-editor').text().length == 0) valid = false;
                 return valid;
 
-            },
-            filetype: function(el, required, parent){
-                var div = parent;
-                var valid = true;
-                var msg;
-
-                // check if anything is selected
-                if(!div.find('.type_select').hasClass('active')){
-                    valid = false;
-                    msg = "Please choose on of the file types."
-                }
-
-                // text
-                if(div.find('button#type_text').hasClass('active')){
-                    if(div.find('.ql-editor').text().length <= 0){
-                        valid = false;
-                        msg = "Please enter some text.";
-                    } else {
-                        div.find('textarea').val(div.find('.ql-editor').html());
-                    }
-                // image
-                } else if(div.find('button#type_image').hasClass('active')){
-                    if(div.find('.input_file input[type=file]').val().length == 0){
-                        valid = false;
-                        msg = "Please select an image to upload."
-                    }
-                // video
-                } else if(div.find('button#type_video').hasClass('active')){
-                    if(div.find('.input_url input[type=text]').val().length == 0){
-                        valid = false;
-                        msg = "Please enter a link to a video on YouTube or Vimeo."
-                    }
-                // file
-                } else if(div.find('button#type_file').hasClass('active')){
-                    if(div.find('.input_file input[type=file]').val().length == 0){
-                        valid = false;
-                        msg = "Please select a PDF to upload."
-                    }
-                }
-
-                if(!valid){
-                    div.find('.error.filetype_error').html(msg);
-                    div.find('.error.filetype_error').css('display', 'block');
-                } else{
-                    div.find('.error.filetype_error').css('display', 'none');
-                }
-                return valid;
             }
         }
     }
@@ -125,38 +85,53 @@ $(document).foundation({
  * Toon of verberg invoervelden van antwoordtypes
  * @param {event} e Event van de knop die werd geklikt
  */
-function showAnswerType(e) {
+function showAnswerType(e, el) {
+
     e.preventDefault();
-    var parent = $(this).parents(".filetype");
-    var $this = $(this);
+
+    var parent = $(el).parents("fieldset");
+    var el = $(el);
 
     // clear form and errors
-    parent.find('.filetype_error').hide();
+    $('.filetype_error', parent).hide();
     parent.removeClass('error');
-    parent.children().removeClass('error');
+    $('div.error', parent).removeClass('error');
 
-    if($this.hasClass('active')){
+    if(el.hasClass('active')){
         return false;
     }
+    $('.type_select', parent).removeClass('active');
+    $('input, textarea', parent).prop('required', false);
+    el.addClass('active');
 
-    parent.find('.type_select').removeClass('active');
-    $this.addClass('active');
     parent.find('.type_input').hide();
-    if ($this.attr('id') == 'type_text') {
-        parent.find('.input_textarea').slideDown();
-        parent.find('.temp_type').val('text');
-    } else if ($this.attr('id') == 'type_image') {
-        parent.find('.filetype_label').html('Select an image to upload <small>(JPG, PNG or GIF, &lt;5MB)</small>');
-        parent.find('.input_file').slideDown();
-        parent.find('.temp_type').val('image');
-    } else if ($this.attr('id') == 'type_video') {
-        parent.find('.input_url').slideDown();
-        parent.find('.temp_type').val('video');
-    } else if ($this.attr('id') == 'type_file') {
-        parent.find('.filetype_label').html('Select a PDF to upload. <small>(&lt;5MB. If the file is too large you can use <a href="http://smallpdf.com/compress-pdf">this free tool</a> to resize your PDF)</small>');
-        parent.find('.input_file').slideDown();
-        parent.find('.temp_type').val('file');
+
+    switch(el.data('type')){
+        case 'text':
+            $('#text textarea', parent).prop('required', true);
+            $('#text', parent).slideDown();
+            break;
+        case 'image':
+            $('#upload .label', parent).html('Select an image to upload <small>(JPG, PNG or GIF, &lt;5MB)</small>');
+            $('#upload input', parent).prop('required', true);
+            parent.find('#upload').slideDown();
+            break;
+        case 'video':
+            $('#url input', parent).prop('required', true);
+            $('#url', parent).slideDown();
+            break;
+        case 'file':
+            parent.find('#upload .label').html('Select a PDF to upload. <small>(&lt;5MB. If the file is too large you can use <a href="http://smallpdf.com/compress-pdf">this free tool</a> to resize your PDF)</small>');
+            $('#upload input', parent).prop('required', true);
+            $('#upload', parent).slideDown();
+            break;
+        default:
+            break;
     }
+
+    $('#filetype', parent).val(el.data('type'));
+
+    return false;
 }
 
 /********
@@ -237,7 +212,7 @@ $(function(){
     })
 });
 
-/* NEW TOPIC */
+/* NEW topic / instruction / artefact */
 $(function(){
     $('*[data-abide="ajax"]').on('valid.fndtn.abide', function(e) {
         var form = $(this);
@@ -289,13 +264,15 @@ function formSubmit(form, parent){
      var options = {
         success: function(data){
             var button = $('*[type="submit"]', form);
-            button.html('<img src="Submit');
+            button.html('Submit');
             button.prop('disabled', false);
             button.removeClass('disabled');
             if(data.refresh) location.reload(true);
             else window.location = data.url;
         },
         error: function(data){
+
+            console.log(data);
 
             $(".json.error").remove();
 
@@ -1394,10 +1371,12 @@ var Menu = (function(){
 
         // Options array
         this.options = {
-            disabled: [] // an array of modes to be disabled
+            enabled: ['list'], // an array of modes to be enabled
+            default: 'list' // the default view if no hash is set
         };
         if(typeof opt !== 'undefined'){
-            if(typeof opt.disabled !== 'undefined') this.options.disabled = opt.disabled;
+            if(typeof opt.enabled !== 'undefined') this.options.enabled = opt.enabled;
+            if(typeof opt.default !== 'undefined') this.options.default = opt.default;
         }
 
         this.init();
@@ -1408,10 +1387,13 @@ var Menu = (function(){
      */
     Menu.prototype.init = function(){
         var pointer = this;
-        $('button', this.menu).each(function(){
-            if($.inArray($(this).data('vis'), pointer.options.disabled) < 0){
+
+        /* bind events */
+        $('.button', this.menu).each(function(){
+            if($.inArray($(this).data('vis'), pointer.options.enabled) >= 0){
                 $(this).on('click', function(){
-                    $('button', pointer.menu).removeClass('active');
+                    hash = window.location.hash.substring(1);
+                    $('.button', pointer.menu).removeClass('active');
                     $(this).addClass('active');
                     $('.dropdown').hide();
                     
@@ -1441,8 +1423,18 @@ var Menu = (function(){
                 });
             } else{
                 $(this).addClass('disabled');
+                $(this).on('click', function(e){
+                    e.preventDefault();
+                });
             }
         });
+
+        /* show default */
+        if(window.location.hash && ($.inArray(window.location.hash.substring(1), this.options.enabled) >= 0)){
+            $('[data-vis='+window.location.hash.substring(1)+']', this.menu).click();
+        } else {
+            $('[data-vis='+this.options.default+']', this.menu).click();
+        }
     }
 
     return Menu

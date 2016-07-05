@@ -74,10 +74,10 @@
 				<div class="large-5 columns">
 					<h1 class="inline"><a href="/">bMOOC</a></h1>
                     <span id="vis-menu">
-                        <button class="tertiary inline" data-vis="list"><img src="/img/vis_list_white.png" />list</button>
-                        <button class="tertiary inline" data-vis="grid"><img src="/img/vis_grid_white.png" />grid</button>
-                        <button class="tertiary inline" data-vis="tree" data-svg><img src="/img/vis_tree_white.png" />tree</button>
-                        <button class="tertiary inline" data-vis="network" data-svg><img src="/img/vis_network_white.png"/>network</button>
+                        <a class="button tertiary inline" data-vis="list" href="#list"><img src="/img/vis_list_white.png" />list</a>
+                        <a class="button tertiary inline" data-vis="grid" href="#grid"><img src="/img/vis_grid_white.png" />grid</a>
+                        <a class="button tertiary inline" data-vis="tree" data-svg href="#tree"><img src="/img/vis_tree_white.png" />tree</a>
+                        <a class="button tertiary inline" data-vis="network" data-svg href="#network"><img src="/img/vis_network_white.png"/>network</a>
                     </span>
                     @yield('header_actions')
 				</div>

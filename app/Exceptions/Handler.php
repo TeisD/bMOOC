@@ -51,7 +51,7 @@ class Handler extends ExceptionHandler
         }
 
         // add handler for Ajax requests
-        if ( $request->isXmlHttpRequest() && !$e->validator ) {
+        if ( $request->isXmlHttpRequest() && !isset($e->validator) ) {
             return Response::json([$e->getMessage()], 500);
         }
 

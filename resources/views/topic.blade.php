@@ -3,8 +3,8 @@
 @section('title', $topic->title)
 
 @section('header_actions')
-    @if (isset($user) && $user->role=="editor")
-        <button class="primary plus" data-help="index" data-help-id="new_topic" data-reveal-id="new_topic">Start a new topic</button>
+    @if (isset($user) && $user->role->id > 1)
+        <button class="primary plus indent" data-help="index" data-help-id="new_instruction" data-reveal-id="new_instruction">new instruction</button>
     @endif
 @stop
 
@@ -119,6 +119,12 @@
           </ul>
         </div>
     </div>
+@stop
+
+
+@section('forms')
+    {{-- NEW TOPIC FORM --}}
+    @include('forms.master', ['form' => 'new_instruction', 'class' => 'slide'])
 @stop
 
 @section('scripts')

@@ -155,6 +155,7 @@ a.active{
     background-color: transparent;
     font-weight: inherit;
     font-family: inherit;
+    display: inline-block;
 }
 
 button.block, button.primary.block, button.secondary.block{
@@ -220,9 +221,32 @@ button.secondary:last-child, .button.secondary:last-child{
     margin-bottom: 0;
 }
 
+button.type_select{
+    display: block;
+    width: 100%;
+    height: 7rem;
+    margin-bottom: 10rem;
+    border: 1px dotted $text;
+    background: none;
+    i{
+      display: block;
+        font-size: 3rem;
+    }
+}
+
+button.type_select:hover{
+    border-style: solid !important;
+}
+button.type_select.active{
+    border-style: solid !important;
+    border-width: 2px !important;
+}
+
 button.tertiary, .button.tertiary{
     @extend .secondary;
+    display: inline-block;
     background: none;
+    margin-bottom: 0;
 }
 
 button.tertiary:hover, .button.tertiary:hover{
@@ -553,7 +577,7 @@ nav{
     }
 }
 .margin-bottom{
-    margin-bottom: 1rem;
+    margin-bottom: 1rem !important;
 }
 .dropdown{
     width: 100%;
@@ -757,4 +781,76 @@ svg{
 /* OVERRIDES */
 .ql-snow.ql-toolbar{
     padding: 0.25rem;
+}
+
+/* Inputfile */
+
+.input_file label{
+    width: 100%;
+}
+
+.js .inputfile {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+
+.no-js .inputfile + div {
+    display: none;
+}
+
+.inputfile + div {
+    width: 100%;
+    margin-top: 5px;
+    margin-bottom: 1rem;
+}
+
+.error .inputfile + div {
+    margin-bottom: 0;
+}
+
+.inputfile + div > span {
+    border: 1px solid white;
+    display: block;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.inputfile + div > span > span{
+    padding: 0.5rem;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.inputfile + div > span .file_label {
+    background-color: white;
+    color: #444;
+    fill: #444;
+    padding-right: 0.75rem;
+}
+
+.inputfile + div .file_label svg{
+    height: 0.8rem;
+    width: 0.8rem;
+    margin-right: 0.25rem
+}
+
+.inputfile + div > span.file_reset{
+    margin: 0;
+    padding: 0.5rem;
+    margin-left: 1rem;
+    width: auto;
+    float: right;
+}
+
+.inputfile + div > span.file_reset:hover{
+    background: red;
+}
+
+.inputfile + small.error {
+    margin-top: 100px;
 }
