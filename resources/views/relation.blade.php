@@ -18,9 +18,9 @@
           <a class="close" aria-label="Close">&#215;</a>
            <p><span class="light">topic initiated</span> {{date('d/m/Y', strtotime($artefact->topic->created_at))}} <span class="light">by</span> {{$artefact->topic->author->name}}</p>
            <h3>Description</h3>
-           <p>{{$artefact->topic->description}}</p>
+           <p>{!!$artefact->topic->description!!}</p>
            <h3>Goal</h3>
-           <p>{{$artefact->topic->goal}}</p>
+           <p>{!!$artefact->topic->goal!!}</p>
            <h3>Duration</h3>
            <p>{{date('d/m/Y', strtotime($artefact->topic->start_date))}} <span class="light">until</span> {{date('d/m/Y', strtotime($artefact->topic->end_date))}}</p>
        </div>

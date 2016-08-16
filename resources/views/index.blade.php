@@ -84,8 +84,8 @@
                                     <li><a href="/topic/{{$topic->id}}?action=archive">Archive</a></li>
                                 @endif
                                 <li><a href="/topic/{{$topic->id}}">View</a></li>
-                                <li><a href="/topic/{{$topic->id}}/?action=edit">Edit</a></li>
-                                <li><a href="/topic/{{$topic->id}}?action=delete" onclick="var d = confirm('WARNING: YOU ARE ABOUT TO DELETE THE TOPIC\n\nClick \'OK\' to delete and \'cancel\' to abort. This action cannot be undone.'); return d;">Delete</a></li>
+                                <li><a href="/topic/{{$topic->id}}?action=edit">Edit</a></li>
+                                <li><a href="/topic/{{$topic->id}}?action=delete" onclick="var d = confirm('WARNING: YOU ARE ABOUT TO DELETE THE TOPIC\n\nClick \'OK\' to delete and \'cancel\' to abort. This action cannot be undone.\n\nIf you would like to archive the topic, click cancel and then select \'archive\' from the drop-down menu.'); return d;">Delete</a></li>
                             </ul>
                        </div>
                    </div>
@@ -109,6 +109,14 @@
                 <div class="columns medium-6 large-2">
                     <span class="light">initiated by</span> <span class="initiator">{{$topic->author->name}}</span>
                 </div>
+                <div class="columns medium-6 large-2">
+                    <span class="light">active from</span>
+                    <span class="active_from">{{date('d/m/Y', strtotime($topic->start_date))}}</span>
+                    <span class="active_from_ts" hidden="hidden" style="display: none;">{{$topic->start_date}}</span>
+                    <span class="light">until</span>
+                    <span class="active_until">{{date('d/m/Y', strtotime($topic->end_date))}}</span>
+                    <span class="active_until_ts" hidden="hidden" style="display: none;">{{$topic->end_date}}</span>
+                </div>
                 <div class="columns medium-6 large-3">
                    @if(isset($topic->lastAddition))
                     <span class="light">last addition</span>
@@ -119,14 +127,6 @@
                     @else
                     <span class="light">no additions yet</span>
                     @endif
-                </div>
-                <div class="columns medium-6 large-2">
-                    <span class="light">active from</span>
-                    <span class="active_from">{{date('d/m/Y', strtotime($topic->start_date))}}</span>
-                    <span class="active_from_ts" hidden="hidden" style="display: none;">{{$topic->start_date}}</span>
-                    <span class="light">until</span>
-                    <span class="active_until">{{date('d/m/Y', strtotime($topic->end_date))}}</span>
-                    <span class="active_until_ts" hidden="hidden" style="display: none;">{{$topic->end_date}}</span>
                 </div>
             </div>
             </li>

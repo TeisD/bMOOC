@@ -31,18 +31,14 @@
         {{-- INPUT: TEXT --}}
         <div class="row type_input" style="display: none" id="text">
            <div class="columns">
-            @if(isset($edit))
-                @include('forms.elements.texteditor', ['id' => 'af_text', 'required' => 'required', 'error_msg' => 'Please enter some text.', 'content' => 'temp'])
-            @else
-                @include('forms.elements.texteditor', ['id' => 'text', 'required' => 'required', 'error_msg' => 'Please enter some text.'])
-            @endif
+                @include('forms.elements.texteditor', ['id' => 'af_text', 'required' => 'required', 'error_msg' => 'Please enter some text.'])
             </div>
         </div>
 
         {{-- INPUT: FILE --}}
         <div class="row type_input" style="display: none;" id="upload">
             <div class="columns">
-                @include('forms.elements.fileupload', ['id' => 'af_upload', 'required' => 'required', 'content' => 'temp'])
+                @include('forms.elements.fileupload', ['id' => 'af_upload', 'required' => 'required'])
             </div>
         </div>
 
@@ -51,7 +47,7 @@
         <div class="row type_input" style="display: none"; id="url">
             <div class="columns">
                 <label>Upload or find a video on YouTube or Vimeo and paste the link to the video here:
-                    <input type="text" required id="af_url" name="af_url" @if(isset($edit)) value="{{$topic->title}}" @endif/>
+                    <input type="text" required id="af_url" name="af_url"/>
                 </label>
                 <small class="error">Please enter a link to a video on youtube or vimeo.</small>
             </div>

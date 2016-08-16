@@ -55,18 +55,18 @@ $(document).foundation({
             },
             filesize: function(el, required, parent){
                 var valid = true;
+                msg = '';
                 if(!required) return valid;
                 if(el.files.length > 0){
                     var f = el.files[0];
                     if (f.size > 5120000) {
                         valid = false;
-                        msg = "The file is too large (> 5MB)"
+                        $('small.error', parent).text("The file is too large (> 5MB)");
                     }
                 } else {
                     valid = false;
-                    msg = "Please select a file to upload"
+                    $('small.error', parent).text("Please select a file to upload");
                 }
-                $('small.error', parent).text(msg);
                 return valid;
             },
             quill: function(el, required, parent){
@@ -223,7 +223,7 @@ $(function(){
         button.prop('disabled', true);
         button.addClass('disabled');
 
-        var input = $('.input_file input', form);
+        var input = $('#upload input', form);
         var parent = form.parents('[data-reveal]');
 
         if(input.length){
@@ -320,6 +320,7 @@ function render(div, data, quality){
             html = "<div class=\"textContainer\"><div class=\"text\"><h2>" + data.title + "</h2>" + data.content + "</div></div>";
             break;
         case 29:
+        case 30:
             html = '&nbsp;<img src="/artefact/' + data.id + '/'+quality+'">';
             if(quality == 'original') expandable = true;
             loadImg = true;
@@ -331,6 +332,7 @@ function render(div, data, quality){
             html = '<iframe src="' + data.content + '" width="100%" height="100%" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>';
             break;
         case 33:
+        case 34:
             html = '<object data="/artefact/' + data.id + '/original" type="application/pdf"><a href="/artefact/' + data.id + '/original">Click to view PDF</a><br/><small>(Your browser does not support viewing of PDF\'s inside bMOOC)</small></object>';
             break;
         default:
@@ -1368,6 +1370,7 @@ var Menu = (function(){
         this.svg = $("#"+svg);
         this.html = $("#"+html);
         this.vis = vis;
+        this.firstClick = true;
 
         // Options array
         this.options = {
@@ -1395,7 +1398,10 @@ var Menu = (function(){
                     hash = window.location.hash.substring(1);
                     $('.button', pointer.menu).removeClass('active');
                     $(this).addClass('active');
-                    $('.dropdown').hide();
+                    if(!pointer.firstClick){
+                        $('.dropdown').hide();
+                    }
+                    pointer.firstClick = false;
                     
                     if(typeof($(this).attr('data-svg')) !== 'undefined'){
                         pointer.html.hide();
@@ -1429,7 +1435,16 @@ var Menu = (function(){
             }
         });
 
-        /* show default */
+        /* bind browser history buttons */
+        window.onpopstate = function(event){
+            pointer.update();
+        };
+
+        this.update();
+    }
+
+    Menu.prototype.update = function(){
+        /* show hash or default */
         if(window.location.hash && ($.inArray(window.location.hash.substring(1), this.options.enabled) >= 0)){
             $('[data-vis='+window.location.hash.substring(1)+']', this.menu).click();
         } else {
@@ -1437,7 +1452,7 @@ var Menu = (function(){
         }
     }
 
-    return Menu
+    return Menu;
 
 })();
 

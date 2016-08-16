@@ -24,6 +24,18 @@ use Response;
 use File;
 use URL;
 use Log;
+use stdClass;
+use Storage;
+
+abstract class Types
+{
+    const TEXT = 28;
+    const IMAGE = 29;
+    const VIDEO_YOUTUBE = 31;
+    const VIDEO_VIMEO = 32;
+    const FILE = 33;
+
+}
 
 class BmoocController extends Controller {
 
@@ -220,7 +232,7 @@ class BmoocController extends Controller {
     public function newTopic(Request $request){
         $user = Auth::user();
         if(!$user) return false;
-        if($user->role_id < 2) return false;
+        if($user->role_id < 1) return false;
 
         $request->start_date = str_replace('/', '-', $request->start_date);
         $request->end_date = str_replace('/', '-', $request->end_date);
@@ -259,7 +271,7 @@ class BmoocController extends Controller {
                     'url' => URL::to('/topic/'.$topic->id)
                 ], 200);
             }
-            return $this->showTopic($comment->child_of->id, $aantalKinderen - 1);
+            return BmoocController::topic($request, $topic->id);
         } catch (Exception $e) {
             DB::rollback();
             throw $e;
@@ -280,38 +292,25 @@ class BmoocController extends Controller {
 
         try{
 
+            $now = date('Y-m-d H:i:s');
+
+            // disable current instruction
+            $c_instruction = Instruction::where('topic_id', $request->id)
+                ->where('active_until', null)
+                ->first();
+            $c_instruction->active_until = $now;
+            $c_instruction->save();
+
             $instruction = new Instruction;
             $instruction->author_id = $user->id;
             $instruction->topic_id = $request->id;
             $instruction->title = $request->title;
+            $instruction->active_from = $now;
 
-            // do some stuff with content here
-            switch($request->filetype){
-                case 'text':
-                    $validator = Validator::make($request->all(), [
-                        'text' => 'required|string'
-                    ]);
-                    $instruction->contents = $request->contents;
-                case 'image':
-                    $validator = Validator::make($request->all(), [
-                        'file' => 'required|image'
-                    ]);
-                    // store image
-                    // set type_id to right type
-                    break;
-                case 'video':
-                    $validator = Validator::make($request->all(), [
-                        'url' => 'required|url'
-                    ]);
-                    break;
-                case 'file':
-                    $validator = Validator::make($request->all(), [
-                        'file' => 'required|pdf'
-                    ]);
-                    //make pdf validator
-                default:
-                    throw new Exception('Invalid filetype');
-            }
+            $af = BmoocController::parseArtefact($request);
+
+            $instruction->content = $af->content;
+            $instruction->type_id = $af->type;
 
             $instruction->save();
 
@@ -321,521 +320,86 @@ class BmoocController extends Controller {
                     'refresh' => true
                 ], 200);
             }
-            return $this->showTopic($comment->child_of->id, $aantalKinderen - 1);
+            return BmoocController::topic($request, $request->id);
         } catch (Exception $e) {
             DB::rollback();
             throw $e;
         }
     }
 
-    public function commentDiscussion(Request $request) {
-        $user = Auth::user();
-        if ($user) { // Als de gebruiker ingelogd is, anders niets doen
-            $filename = uniqid();
-            try {
-                DB::beginTransaction();
-                $comment = new Artefact();
-                $comment->author = $user->id;
+    public function newArtefact(Request $request){
+    }
 
-                // Titel van het artefact zetten
-                if ($request->input('answer_title')) $comment->title = $request->input('answer_title');
-                else $comment->title = 'No title';
+    private function parseArtefact(Request $request){
+        $filename = uniqid();
 
-                if ($request->input('answer_copyright')) $comment->copyright = $request->input('answer_copyright');
+        $af = new stdClass();
 
-                // De eigenlijke inhoud verwerken en het type bepalen en juist zetten
-                $at = null;
-                switch ($request->input('answer_temp_type')) {
-                    case 'text':
-                        if ($request->input('answer_text')) {
-                            $comment->contents = $request->input('answer_text');
-                        }
-                        $at = ArtefactType::where('description', 'text')->first();
-                        break;
-                    case 'video':
-                        if ($request->input('answer_url') && $request->input('answer_url')!=null && $request->input('answer_url')!='') { // URL meegegeven voor video
-                            $url = $request->input('answer_url');
-                            if (strpos($url, 'youtube') !== false || strpos($url, 'youtu.be') !== false) { // Youtube video
-
-                                $yt = BmoocController::parseYoutube($url);
-                                if($yt && $yt != ''){
-                                    $comment->url = 'http://www.youtube.com/embed/' . $yt;
-                                    $at = ArtefactType::where('description', 'video_youtube')->first();
-                                } else throw new Exception('The URL you entered is not a valid link to a YouTube video');
-
-                            } elseif (strpos($url, 'vimeo.com') !== false) { // Vimeo video
-                                $comment->url = '//player.vimeo.com/video/'.substr($url, strpos($url, 'vimeo.com/') + 10);
-                                $at = ArtefactType::where('description', 'video_vimeo')->first();
-                            } else {
-                                throw new Exception('The URL you entered is not a valid link to a YouTube or Vimeo video.');
-                            }
-                        } else { // Kan niet voorkomen, maar voor de veiligheid wel fout opwerpen
-                            //$topic->url = 'https://www.youtube.com/embed/YecyKnQUcBY'; // Dummy video
-                            throw new Exception('No video URL provided for new contribution of type video');
-                        }
-                        break;
-                    case 'image':
-                        if (Input::file('answer_upload') && Input::file('answer_upload')->isValid()) {
-                            $extension = strtolower(Input::file('answer_upload')->getClientOriginalExtension());
-                            if (in_array($extension, ['jpg', 'png', 'gif', 'jpeg'])) {
-                                $destinationPath = 'uploads';
-                                Input::file('answer_upload')->move($destinationPath, $filename);
-                                $comment->url = $filename;
-                                $at = ArtefactType::where('description', 'local_image')->first();
-                            } else throw new Exception('Image should be a JPEG, PNG or GIF.');
-                        } elseif ($request->input('answer_url') && $request->input('answer_url')!=null && $request->input('answer_url')!='') { // URL voor de afbeelding
-                            if (getimagesize($request->input('answer_url'))) { // De afbeelding is een echte afbeelding als dit niet false teruggeeft
-                                $comment->url = $request->input('answer_url');
-                                $at = ArtefactType::where('description', 'remote_image')->first();
-                            }
-                        }
-                        break;
-                    case 'file':
-                        if (Input::file('answer_upload') && Input::file('answer_upload')->isValid()) {
-                            $extension = strtolower(Input::file('answer_upload')->getClientOriginalExtension());
-                            if (in_array($extension, ['pdf'])) {
-                                $destinationPath = 'uploads';
-                                Input::file('answer_upload')->move($destinationPath, $filename);
-                                $comment->url = $filename;
-                                $at = ArtefactType::where('description', 'local_pdf')->first();
-                            } else throw new Exception('File should be a PDF.');
-                        } elseif ($request->input('answer_url') && $request->input('answer_url')!=null && $request->input('answer_url')!='') { // URL voor de afbeelding
-                            if (getimagesize($request->input('answer_url'))) { // De afbeelding is een echte afbeelding als dit niet false teruggeeft
-                                $comment->url = $request->input('answer_url');
-                                $at = ArtefactType::where('description', 'remote_pdf')->first();
-                            } else throw new Exception('The document in the url is not an image');
-                        }
-                        break;
-                }
-
-                // Thumbnails opslaan
-                if(isset($comment->url)){
-                    // small
-                    if($request->input('thumbnail_small') && $request->input('thumbnail_small') != null && $request->input('thumbnail_small') != ''){
-                        $destinationPath = 'uploads/thumbnails/small/' . $comment->url;
-                        $data = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $request->input('thumbnail_small')));
-                        file_put_contents($destinationPath, $data);
-                    }
-                    // large
-                    if($request->input('thumbnail_large') && $request->input('thumbnail_large') != null && $request->input('thumbnail_large') != ''){
-                        $destinationPath = 'uploads/thumbnails/large/' . $comment->url;
-                        $data = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $request->input('thumbnail_large')));
-                        file_put_contents($destinationPath, $data);
-                    }
-                }
-
-                if ($at) $at->artefacts()->save($comment);
-                else throw new Exception('Selected file is not a valid image or PDF.');
-                // Einde inhoud verwerken en type bepalen
-
-                if ($request->input('answer_parent')) {
-                    $vader = Artefact::find($request->input('answer_parent'));
-                    $vader->children()->save($comment);
-
-                    $comment->thread = $vader->thread;
+        // do some stuff with content here
+        switch($request->filetype){
+            case 'text':
+                $validator = Validator::make($request->all(), [
+                    'af_text' => 'required|string'
+                ]);
+                $af->content = $request->af_text_raw;
+                $af->type = Types::TEXT;
+                break;
+            case 'image':
+                $validator = Validator::make($request->all(), [
+                    'af_upload' => 'required|image'
+                ]);
+                Storage::put('artefacts/'.$filename, $request->af_upload);
+                BmoocController::storeThumbnails($request, $filename);
+                $af->content = $filename;
+                $af->type = Types::IMAGE;
+                break;
+            case 'video':
+                $validator = Validator::make($request->all(), [
+                    'af_url' => 'required|url'
+                ]);
+                $url = $request->af_url;
+                if (strpos($url, 'youtube') !== false || strpos($url, 'youtu.be') !== false) {
+                    // Youtube video
+                    $af->content = '//youtube.com/embed/' . BmoocController::parseYoutube($url);
+                    $af->type = Types::VIDEO_YOUTUBE;
+                } elseif (strpos($url, 'vimeo.com') !== false) {
+                    // Vimeo video
+                    $af->content = '//player.vimeo.com/video/'.substr($url, strpos($url, 'vimeo.com/') + 10);
+                    $af->type = Types::VIDEO_VIMEO;
                 } else {
-                    $maxthread = Artefact::max('thread');
-                    $comment->thread = $maxthread + 1;
+                    throw new Exception('The URL you entered is not a valid link to a YouTube or Vimeo video.');
                 }
+                break;
+            case 'file':
+                $validator = Validator::make($request->all(), [
+                    'af_upload' => 'required|mimes:pdf'
+                ]);
+                //TODO: make pdf validator
+                Storage::put('artefacts/'.$filename, $request->af_upload);
+                BmoocController::storeThumbnails($request, $filename);
+                $af->content = $filename;
+                $af->type = Types::FILE;
+                break;
+            default:
+                throw new Exception('Invalid filetype');
+        }
 
-                // Attachment verwerken
-                if (Input::file('answer_attachment') && Input::file('answer_attachment')->isValid()) {
-                    $extension = strtolower(Input::file('answer_attachment')->getClientOriginalExtension());
-                    if (in_array($extension, ['jpg', 'png', 'gif', 'jpeg', 'pdf'])) {
-                        $destinationPath = 'uploads/attachments';
-                        $filename = base64_encode(Input::file('answer_attachment')->getClientOriginalName() . time()).'.'.$extension;
-                        Input::file('answer_attachment')->move($destinationPath, $filename);
-                        $comment->attachment = $filename;
-                    } else throw new Exception('Attachment should be a JPG, PNG, GIF or PDF');
-                }
+        return $af;
+    }
 
-                $comment->save();
-
-                // Tags verwerken
-                // Oude geselecteerde tags komen in answers_tags als array
-                if ($request->input('answer_tags')) {
-                    foreach ($request->input('answer_tags') as $oldtag) {
-                        $t = Tags::find($oldtag);
-                        $t->times_used += 1;
-                        $comment->tags()->save($t);
-                    }
-                    // Nieuwe tag
-                    if ($request->input('answer_new_tag')) {
-                        $t = new Tags(['tag' => $request->input('answer_new_tag'), 'times_used' => 1]);
-                        $comment->tags()->save($t);
-                    }
-                }
-
-                $pater = Artefact::where('thread', $comment->thread)->whereNull('parent_id')->first();
-                $pater->last_modified = Carbon::now();
-                $pater->last_contributor = $comment->author;
-                $pater->save();
-
-                DB::commit();
-
-                // Tel hoeveel kinderen er zijn voor de vader
-                if ($comment->child_of) {
-                    $aantalKinderen = Artefact::where('parent_id', $comment->child_of->id)->count();
-                    $url = 'topic/' . $comment->child_of->id . '/' . ($aantalKinderen - 1);
-                    if ( $request->isXmlHttpRequest() ) {
-                        return Response::json( [
-                            'status' => '200',
-                            'url' => URL::to($url)
-                        ], 200);
-                    } else
-                    return $this->showTopic($comment->child_of->id, $aantalKinderen - 1);
-                } else
-                    if ( $request->isXmlHttpRequest() ) {
-                        return Response::json( [
-                            'status' => '200',
-                            'url' => URL::to('topic/' . $comment->child_of->id)
-                        ], 200);
-                    } else
-                        return $this->showTopic($comment->id, 0);
-
-            } catch (Exception $e) {
-                DB::rollback();
-                //return view('errors.topic', ['error' => $e]);
-                throw $e;
-            }
-
+    private function storeThumbnails(Request $request, $filename){
+        // Thumbnails opslaan
+        // small
+        if($request->thumbnail_small && $request->thumbnail_small != null && $request->thumbnail_small != ''){
+            $data = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $request->thumbnail_small));
+            Storage::put('artefacts/thumbnails/small/'.$filename, $data);
+        }
+        // large
+        if($request->thumbnail_large && $request->thumbnail_large != null && $request->thumbnail_large != ''){
+            $data = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $request->thumbnail_large));
+            Storage::put('artefacts/thumbnails/large/'.$filename, $data);
         }
     }
-
-    public function newInstructioOldn(Request $request) {
-        $user = Auth::user();
-        if ($user && $user->role == "editor") { // Als de gebruiker ingelogd is en editor is, anders niets doen
-            $filename = uniqid();
-            try {
-                DB::beginTransaction();
-                $instruction = new Instruction();
-                $instruction->author = $user->id;
-                $instruction->active_from = Carbon::now();
-                if ($request->input('instruction_title'))
-                    $instruction->title = $request->input('instruction_title');
-                else
-                    $instruction->title = 'No title';
-
-                $at = null;
-                switch ($request->input('instruction_temp_type')) {
-                    case 'text':
-                        if ($request->input('instruction_text')) {
-                            $instruction->contents = $request->input('instruction_text');
-                        }
-                        $at = ArtefactType::where('description', 'text')->first();
-                        break;
-                    case 'video':
-                        if ($request->input('instruction_url') && $request->input('instruction_url') != null && $request->input('instruction_url') != '') {// URL meegegeven voor video
-                            $url = $request->input('instruction_url');
-
-                            if (strpos($url, 'youtube') !== false || strpos($url, 'youtu.be') !== false) { // Youtube video
-                                $yt = BmoocController::parseYoutube($url);
-                                if($yt && $yt != ''){
-                                    $instruction->url = 'http://www.youtube.com/embed/' . $yt;
-                                    $at = ArtefactType::where('description', 'video_youtube')->first();
-                                } else throw new Exception('The URL you entered is not a valid link to a YouTube video');
-                            } elseif (strpos($url, 'vimeo.com') !== false) { // Vimeo video
-                                $instruction->url = '//player.vimeo.com/video/' . substr($url, strpos($url, 'vimeo.com/') + 10);
-                                $at = ArtefactType::where('description', 'video_vimeo')->first();
-                            } else {
-                                throw new Exception('The URL you entered is not a valid link to a YouTube or Vimeo video.');
-                            }
-                        } else { // Kan niet voorkomen, maar voor de veiligheid wel fout opwerpen
-                            //$topic->url = 'https://www.youtube.com/embed/YecyKnQUcBY'; // Dummy video
-                            throw new Exception('No video URL provided for new instruction of type video');
-                        }
-                        break;
-                    case 'image':
-                        if (Input::file('instruction_upload') && Input::file('instruction_upload')->isValid()) {
-                            $extension = strtolower(Input::file('instruction_upload')->getClientOriginalExtension());
-                            if (in_array($extension, ['jpg', 'png', 'gif', 'jpeg'])) {
-                                $destinationPath = 'uploads';
-                                Input::file('instruction_upload')->move($destinationPath, $filename);
-                                $instruction->url = $filename;
-                                $at = ArtefactType::where('description', 'local_image')->first();
-                            } else
-                                throw new Exception('Wrong file uploaded for new instruction');
-                        } elseif ($request->input('instruction_url') && $request->input('instruction_url') != null && $request->input('instruction_url') != '') { // URL voor de afbeelding
-                            if (getimagesize($request->input('instruction_url'))) { // De afbeelding is een echte afbeelding als dit niet false teruggeeft
-                                $instruction->url = $request->input('instruction_url');
-                                $at = ArtefactType::where('description', 'remote_image')->first();
-                            } else throw new Exception('The document in the url is not an image');
-                        }
-                        break;
-                    case 'file':
-                        if (Input::file('instruction_upload') && Input::file('instruction_upload')->isValid()) {
-                            $extension = strtolower(Input::file('instruction_upload')->getClientOriginalExtension());
-                            if (in_array($extension, ['pdf'])) {
-                                $destinationPath = 'uploads';
-                                Input::file('instruction_upload')->move($destinationPath, $filename);
-                                $instruction->url = $filename;
-                                $at = ArtefactType::where('description', 'local_pdf')->first();
-                            } else
-                                throw new Exception('Wrong file uploaded for new topic');
-                        } elseif ($request->input('instruction_url') && $request->input('instruction_url') != null && $request->input('instruction_url') != '') { // URL voor de afbeelding
-                            if (getimagesize($request->input('instruction_url'))) { // De afbeelding is een echte afbeelding als dit niet false teruggeeft
-                                $instruction->url = $request->input('instruction_url');
-                                $at = ArtefactType::where('description', 'remote_pdf')->first();
-                            }
-                        }
-                        break;
-                }
-
-                // Thumbnails opslaan
-                if(isset($topic->url)){
-                    // small
-                    if($request->input('thumbnail_small') && $request->input('thumbnail_small') != null && $request->input('thumbnail_small') != ''){
-                        $destinationPath = 'uploads/thumbnails/small/' . $instruction->url;
-                        $data = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $request->input('thumbnail_small')));
-                        file_put_contents($destinationPath, $data);
-                    }
-                    // large
-                    if($request->input('thumbnail_large') && $request->input('thumbnail_large') != null && $request->input('thumbnail_large') != ''){
-                        $destinationPath = 'uploads/thumbnails/large/' . $instruction->url;
-                        $data = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $request->input('thumbnail_large')));
-                        file_put_contents($destinationPath, $data);
-                    }
-                }
-
-                if ($at)
-                    $at->instructions()->save($instruction);
-                else
-                    throw new Exception('Error creating new instruction (wrong type provided)');
-                // Einde inhoud verwerken en type bepalen
-
-                // Set the thread of the instruction
-                if ($request->input('instruction_parent')) $instruction->thread = $request->input('instruction_parent');
-
-                // Disable the previous instruction for the thread
-                $previous = Instruction::getCurrent($instruction->thread);
-                if ($previous) {
-                    $previous->active_until = $instruction->active_from;
-                    $previous->save();
-                }
-
-                $instruction->save();
-
-                // Set the available artefact types for the thread
-                if ($request->input('instruction_types')) {
-                    foreach ($request->input('instruction_types') as $instructiontype) {
-                        switch ($instructiontype) {
-                            case 'text':
-                                $it = ArtefactType::where('description', 'text')->first();
-                                if ($it)
-                                    $instruction->available_types()->attach($it->id);
-                                break;
-                            case 'image':
-                                $it = ArtefactType::where('description', 'local_image')->first();
-                                if ($it)
-                                    $instruction->available_types()->attach($it->id);
-                                $it = ArtefactType::where('description', 'remote_image')->first();
-                                if ($it)
-                                    $instruction->available_types()->attach($it->id);
-                                break;
-                            case 'video':
-                                $it = ArtefactType::where('description', 'video_youtube')->first();
-                                if ($it)
-                                    $instruction->available_types()->attach($it->id);
-                                $it = ArtefactType::where('description', 'video_vimeo')->first();
-                                if ($it)
-                                    $instruction->available_types()->attach($it->id);
-                                break;
-                            case 'file':
-                                $it = ArtefactType::where('description', 'local_pdf')->first();
-                                if ($it)
-                                    $instruction->available_types()->attach($it->id);
-                                $it = ArtefactType::where('description', 'remote_pdf')->first();
-                                if ($it)
-                                    $instruction->available_types()->attach($it->id);
-                                break;
-                        }
-                    }
-                }
-                // endif set the available artefact types for the thread
-
-                DB::commit();
-                // add handler for Ajax requests
-                if ( $request->isXmlHttpRequest() ) {
-                    return Response::json( [
-                        'status' => '200',
-                        'refresh' => 'refresh',
-                        'url' => URL::to('/')
-                    ], 200);
-                } else {
-                    return Redirect::back();
-                }
-
-            } catch (Exception $e) {
-                DB::rollback();
-                //return view('errors.topic', ['error' => $e]);
-                throw $e;
-            }
-
-        } // End if ($user)
-    }
-
-    public function newTopicOld(Request $request) {
-        $user = Auth::user();
-        if ($user && $user->role == "editor") { // Als de gebruiker ingelogd is en editor is, anders niets doen
-        try {
-            $filename = uniqid();
-            DB::beginTransaction();
-            $topic = new Artefact();
-            $topic->author = $user->id;
-
-            $thread = DB::table('artefacts')->max('thread') + 1;
-            $topic->thread = $thread;
-
-            if ($request->input('topic_title')) $topic->title = $request->input('topic_title');
-            else $topic->title = 'No title';
-
-            if ($request->input('topic_copyright')) $topic->copyright = $request->input('topic_copyright');
-
-            // De eigenlijke inhoud verwerken en het type bepalen en juist zetten
-            $at = null;
-            switch ($request->input('topic_temp_type')) {
-                case 'text':
-                    if ($request->input('topic_text')) {
-                        $topic->contents = $request->input('topic_text');
-                    }
-                    $at = ArtefactType::where('description', 'text')->first();
-                    break;
-                case 'video':
-                    if ($request->input('topic_url') && $request->input('topic_url')!=null && $request->input('topic_url')!='') { // URL meegegeven voor video
-                        $url = $request->input('topic_url');
-                        if (strpos($url, 'youtube') !== false || strpos($url, 'youtu.be') !== false) { // Youtube video
-                            $yt = BmoocController::parseYoutube($url);
-                                if($yt && $yt != ''){
-                                    $topic->url = 'http://www.youtube.com/embed/' . $yt;
-                                    $at = ArtefactType::where('description', 'video_youtube')->first();
-                                } else throw new Exception('The URL you entered is not a valid link to a YouTube video');
-                        } elseif (strpos($url, 'vimeo.com') !== false) { // Vimeo video
-                            $topic->url = '//player.vimeo.com/video/'.substr($url, strpos($url, 'vimeo.com/') + 10);
-                            $at = ArtefactType::where('description', 'video_vimeo')->first();
-                        } else {
-                            throw new Exception('The URL you entered is not a valid link to a YouTube or Vimeo video.');
-                        }
-                    } else { // Kan niet voorkomen, maar voor de veiligheid wel fout opwerpen
-                        //$topic->url = 'https://www.youtube.com/embed/YecyKnQUcBY'; // Dummy video
-                        throw new Exception('No video URL provided for new topic of type video');
-                    }
-                    break;
-                case 'image':
-                    if (Input::file('topic_upload') && Input::file('topic_upload')->isValid()) {
-                        $extension = strtolower(Input::file('topic_upload')->getClientOriginalExtension());
-                        if (in_array($extension, ['jpg', 'png', 'gif', 'jpeg'])) {
-                            $destinationPath = 'uploads';
-                            Input::file('topic_upload')->move($destinationPath, $filename);
-                            $topic->url = $filename;
-                            $at = ArtefactType::where('description', 'local_image')->first();
-                        } else throw new Exception('Image should be a JPEG, PNG or GIF.');
-                    } elseif ($request->input('topic_url') && $request->input('topic_url')!=null && $request->input('topic_url')!='') { // URL voor de afbeelding
-                        if (getimagesize($request->input('topic_url'))) { // De afbeelding is een echte afbeelding als dit niet false teruggeeft
-                            $topic->url = $request->input('topic_url');
-                            $at = ArtefactType::where('description', 'remote_image')->first();
-                        } else throw new Exception('The document in the url is not an image');
-                    }
-                    break;
-                case 'file':
-                    if (Input::file('topic_upload') && Input::file('topic_upload')->isValid()) {
-                        $extension = strtolower(Input::file('topic_upload')->getClientOriginalExtension());
-                        if (in_array($extension, ['pdf'])) {
-                            $destinationPath = 'uploads';
-                            Input::file('topic_upload')->move($destinationPath, $filename);
-                            $topic->url = $filename;
-                            $at = ArtefactType::where('description', 'local_pdf')->first();
-                        } else throw new Exception('File should be a PDF.');
-                    } elseif ($request->input('topic_url') && $request->input('topic_url')!=null && $request->input('topic_url')!='') { // URL voor de afbeelding
-                        if (getimagesize($request->input('topic_url'))) { // De afbeelding is een echte afbeelding als dit niet false teruggeeft
-                            $topic->url = $request->input('topic_url');
-                            $at = ArtefactType::where('description', 'remote_pdf')->first();
-                        }
-                    }
-                    break;
-            }
-
-            // Thumbnails opslaan
-            if(isset($topic->url)){
-                // small
-                if($request->input('thumbnail_small') && $request->input('thumbnail_small') != null && $request->input('thumbnail_small') != ''){
-                    $destinationPath = 'uploads/thumbnails/small/' . $topic->url;
-                    $data = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $request->input('thumbnail_small')));
-                    file_put_contents($destinationPath, $data);
-                }
-                // large
-                if($request->input('thumbnail_large') && $request->input('thumbnail_large') != null && $request->input('thumbnail_large') != ''){
-                    $destinationPath = 'uploads/thumbnails/large/' . $topic->url;
-                    $data = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $request->input('thumbnail_large')));
-                    file_put_contents($destinationPath, $data);
-                }
-            }
-
-
-            if ($at) $at->artefacts()->save($topic);
-            else throw new Exception('Selected file is not a valid image or PDF.');
-            // Einde inhoud verwerken en type bepalen
-
-            // Bijlage verwerken
-            if (Input::file('topic_attachment') && Input::file('topic_attachment')->isValid()) {
-                $extension = strtolower(Input::file('topic_attachment')->getClientOriginalExtension());
-                if (in_array($extension, ['jpg', 'png', 'gif', 'jpeg', 'pdf'])) {
-                    $destinationPath = 'uploads/attachments';
-                    $filename = base64_encode(Input::file('topic_attachment')->getClientOriginalName() . time()).'.'.$extension;
-                    Input::file('topic_attachment')->move($destinationPath, $filename);
-                    //$topic->url = $filename;
-                    $topic->attachment = $filename;
-                } else throw new Exception('Attachment should be a JPG, PNG, GIF or PDF');
-            }
-
-            // Topic opslaan
-            $topic->save();
-
-            // Tags verwerken
-            if ($request->input('topic_new_tag')) {
-                foreach ($request->input('topic_new_tag') as $newtag) {
-                    if ($newtag != '') {
-                        $existingtag = Tags::where('tag', strtolower($newtag))->first();
-                        if ($existingtag) {
-                            $existingtag->artefacts()->save($topic);
-                        } else {
-                            $newTag = Tags::create(['tag' => strtolower($newtag), 'times_used' => 1]);
-                            $newTag->artefacts()->save($topic);
-                        }
-                    } else throw new Exception('Tags must not be empty!');
-                }
-            }
-
-            DB::commit();
-            // add handler for Ajax requests
-            if ( $request->isXmlHttpRequest() ) {
-                return Response::json( [
-                    'status' => '200',
-                    'url' => URL::to('/')
-                ], 200);
-            } else {
-                return Redirect::back();
-            }
-
-        } catch (Exception $e) {
-            DB::rollback();
-            //return view('errors.topic', ['error' => $e]);
-            throw $e;
-        }
-        } // End if ($user)
-    }
-
-    public function datavis(Request $request) {
-		//$user = Auth::user();
-		$user = $request->user();
-		//dd($request);
-		$topics = Artefact::with(['the_author', 'tags', 'last_modifier'])->whereNull('parent_id')->orderBy('created_at', 'desc')->orderBy('last_modified', 'desc')->get();
-		$auteurs = DB::table('users')->select('id', 'name')->distinct()->get();
-		$tags = Tags::orderBy('tag')->get();
-
-		$aantalAntwoorden = DB::table('artefacts')->select(DB::raw('count(*) as aantal_antwoorden, thread'))
-                     ->groupBy('thread')->get();
-		return view('datavis', ['topic'=>$topics, 'user'=>$user, 'auteurs' => $auteurs, 'tags' => $tags, 'aantalAntwoorden'=>$aantalAntwoorden]);
-	}
 
     public function getImage($id){
         $a = Artefact::find($id);
@@ -895,6 +459,7 @@ class BmoocController extends Controller {
         if (preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $url, $match)) {
             $video_id = $match[1];
         }
-        return $video_id;
+        if($video_id && $video_id != '') return $video_id;
+        else throw new Exception('The URL is not a valid link to a YouTube video');
     }
 }
