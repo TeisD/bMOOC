@@ -22,6 +22,16 @@ class BmoocJsonController extends Controller
 		//$this->middleware('auth', ['except' => 'index']);
 	}
 
+    public function artefact($id){
+        $artefact = Artefact::find($id);
+        return response()->json(['artefact' => $artefact]);
+    }
+
+    public function children($id){
+        $children = Artefact::find($id)->children;
+        return response()->json($children);
+    }
+
 	public function discussion($id) {
 		$artefact = Artefact::with(['type', 'the_author', 'last_modifier', 'active_instruction'])->find($id);
 		$antwoorden = $artefact->children;

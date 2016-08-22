@@ -5,7 +5,7 @@ use App\Http\Controllers\BmoocController;
 Route::get('/', 'BmoocController@index');
 Route::get('archive', 'BmoocController@archive');
 Route::get('topic/{id}', 'BmoocController@topic');
-Route::get('relation/{id}', 'BmoocController@relation');
+Route::get('relation/{id}/{child?}', 'BmoocController@relation');
 Route::get('artefact/{id}', 'BmoocController@artefact');
 Route::get('search/{author?}/{tag?}/{keyword?}', 'BmoocController@searchDiscussions');
 
@@ -17,6 +17,9 @@ Route::post('artefact/new', 'BmoocController@newInstruction');
 Route::get('artefact/{id}/thumbnail', 'BmoocController@getImageThumbnail');
 Route::get('artefact/{id}/medium', 'BmoocController@getImage');
 Route::get('artefact/{id}/original', 'BmoocController@getImageOriginal');
+
+Route::get('json/artefact/{id}', 'BmoocJsonController@artefact');
+Route::get('json/artefact/{id}/children', 'BmoocJsonController@children');
 
 Route::get('json/instruction/{thread}', 'BmoocJsonController@instruction');
 Route::get('json/topic/{id}/answers', 'BmoocJsonController@answers');

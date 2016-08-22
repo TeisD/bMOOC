@@ -514,7 +514,6 @@ nav {
 /* medium screens */
 /* RENDERING OF ARTEFACTS */
 #artefact_left, #artefact_right {
-  padding: 5rem;
   overflow: hidden; }
 
 .artefact, .loader {
@@ -561,6 +560,40 @@ nav {
   #artefact .artefact.expanded img, #instruction .artefact.expanded img {
     max-width: none;
     max-height: none; }
+
+#relation {
+  padding: 3rem;
+  height: 100%;
+  width: 100%;
+  position: relative; }
+  #relation nav {
+    font-size: 4rem;
+    font-family: sans-serif; }
+  #relation .relation_nav {
+    position: absolute;
+    z-index: 999; }
+  #relation .relation_nav:hover {
+    border: none; }
+
+.relation_nav#nav_up {
+  left: 75%;
+  top: -2rem;
+  margin-left: -2rem; }
+
+.relation_nav#nav_right {
+  right: 0rem;
+  top: 50%;
+  margin-top: -3rem; }
+
+.relation_nav#nav_down {
+  left: 75%;
+  bottom: -2rem;
+  margin-left: -2rem; }
+
+.relation_nav#nav_left {
+  left: 0rem;
+  top: 50%;
+  margin-top: -3rem; }
 
 /* SVG */
 svg .vis_zoom {

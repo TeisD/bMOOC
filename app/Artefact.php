@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Artefact extends Model {
 
     protected $fillable = ['parent_id', 'topic_id', 'author_id', 'title', 'type_id', 'content', 'notes', 'copyright'];
+    protected $appends = ['has_children', 'has_parent'];
+
 
     public function author() {
         return $this->belongsTo('App\User', 'author_id');
@@ -30,6 +32,14 @@ class Artefact extends Model {
 
     public function topic() {
         return $this->belongsTo('App\Topic');
+    }
+
+    public function getHasChildrenAttribute(){
+        return $this->children()->count() > 0;
+    }
+
+    public function getHasParentAttribute(){
+        return $this->parent()->count() > 0;
     }
 
 }

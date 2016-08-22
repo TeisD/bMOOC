@@ -35,20 +35,7 @@
            <a class="button primary indent information" data-dropdown="info">&nbsp;</a>
        </div>
    </div>
-   <div class="row dropdown open" id="info">
-       <div class="columns">
-          <a class="close" aria-label="Close">&#215;</a>
-           <p><span class="light">topic initiated</span> {{date('d/m/Y', strtotime($topic->created_at))}} <span class="light">by</span> {{$topic->author->name}}</p>
-           <h3>Description</h3>
-           {!!$topic->description!!}<p></p>
-           <h3>Goal</h3>
-           {!!$topic->goal!!}<p></p>
-           <h3>Duration</h3>
-           <p>{{date('d/m/Y', strtotime($topic->start_date))}} <span class="light">until</span> {{date('d/m/Y', strtotime($topic->end_date))}}</p>
-           <h3>Current instruction</h3>
-           <p><a href="#">show instruction history</a></p>
-       </div>
-   </div>
+   @include('dropdowns.topic_info', ['open'=>'open', 'topic'=>$topic])
 @stop
 
 @section('content')
@@ -173,7 +160,6 @@
                 timeline.show();
             }
         });
-
 
         var visMenu = new Menu('vis-menu', 'vis-container', 'vis-fallback', vis, {
             enabled: ['list', 'grid', 'tree', 'network'],
