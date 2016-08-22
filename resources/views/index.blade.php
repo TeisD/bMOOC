@@ -35,28 +35,28 @@
                  sort by:
                 <ul class="inline slash">
                     <li>
-                        <a href="#" class="sort" data-sort="title">Title</a>
+                        <a href="javascript:;" class="sort" data-sort="title">Title</a>
                     </li>
                     <li>
-                        <a href="#" class="sort" data-sort="additions"># additions</a>
+                        <a href="javascript:;" class="sort" data-sort="additions"># additions</a>
                     </li>
                     <li>
-                        <a href="#" class="sort" data-sort="contributors"># contributors</a>
+                        <a href="javascript:;" class="sort" data-sort="contributors"># contributors</a>
                     </li>
                     <li>
-                        <a href="#" class="sort" data-sort="initiator">Initiator</a>
+                        <a href="javascript:;" class="sort" data-sort="initiator">Initiator</a>
                     </li>
                     <li>
-                        <a href="#" class="sort" data-sort="last_addition_ts">Last addition date</a>
+                        <a href="javascript:;" class="sort" data-sort="last_addition_ts">Last addition date</a>
                     </li>
                     <li>
-                        <a href="#" class="sort" data-sort="last_author">Last addition author</a>
+                        <a href="javascript:;" class="sort" data-sort="last_author">Last addition author</a>
                     </li>
                     <li>
-                        <a href="#" class="sort" data-sort="active_from_ts">Active from</a>
+                        <a href="javascript:;" class="sort" data-sort="active_from_ts">Active from</a>
                     </li>
                     <li>
-                        <a href="#" class="sort" data-sort="active_until_ts">Active until</a>
+                        <a href="javascript:;" class="sort" data-sort="active_until_ts">Active until</a>
                     </li>
                   </ul>
               </div>
@@ -70,25 +70,18 @@
             @endif
                <div class="row">
                 <div class="columns large-3">
-                    <h3 class="title inline">{{ $topic->title }}</h3>
+                    <h3 class="title inline"><a href="/topic/{{$topic->id}}">{{ $topic->title }}</a></h3>
+                    @if(!$topic->active)
+                        <small>(inactive)</small>
+                    @endif
+                    @if($topic->archived)
+                        <small>(archived)</small>
+                    @endif
                     @if(isset($user) && $user->role->id > 1)
                     <h3 class="inline">
-                    <a href="#" class="emphasis" data-dropdown="actions_{{$topic->id}}" data-dropdown-position="anchor">&darr;</a></h3>
-                    <div class="row dropdown open" id="actions_{{$topic->id}}">
-                       <div class="columns">
-                          <a href="#" class="close" aria-label="Close">&#215;</a>
-                            <ul class="list">
-                                @if($topic->archived)
-                                    <li><a href="/topic/{{$topic->id}}?action=unarchive">Unarchive</a></li>
-                                @else
-                                    <li><a href="/topic/{{$topic->id}}?action=archive">Archive</a></li>
-                                @endif
-                                <li><a href="/topic/{{$topic->id}}">View</a></li>
-                                <li><a href="/topic/{{$topic->id}}?action=edit">Edit</a></li>
-                                <li><a href="/topic/{{$topic->id}}?action=delete" onclick="var d = confirm('WARNING: YOU ARE ABOUT TO DELETE THE TOPIC\n\nClick \'OK\' to delete and \'cancel\' to abort. This action cannot be undone.\n\nIf you would like to archive the topic, click cancel and then select \'archive\' from the drop-down menu.'); return d;">Delete</a></li>
-                            </ul>
-                       </div>
-                   </div>
+                        <a href="javascript:;" class="emphasis" data-dropdown="topic_edit_{{$topic->id}}" data-dropdown-position="anchor">&darr;</a>
+                    </h3>
+                    @include('dropdowns.topic_edit', ['id'=>$topic->id])
                    @endif
                 </div>
                 <div class="columns medium-6 large-2">

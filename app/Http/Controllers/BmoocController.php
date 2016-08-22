@@ -436,13 +436,13 @@ class BmoocController extends Controller {
             $response = Response::make( File::get( $path ) , 200 );
             $response->header('Content-Type', $filetype);
             return $response;
-        } else if($a->artefact_type == 31){
+        } else if($a->type_id == 31){
             $url = str_replace('www.youtube.com/embed', 'img.youtube.com/vi', $a->content);
             $url .= '/0.jpg';
             $response = Response::make( file_get_contents($url), 200 );
             $response->header('Content-Type', 'image/jpeg');
             return $response;
-        } else if($a->artefact_type == 32){
+        } else if($a->type_id == 32){
             $oembed_endpoint = 'http://vimeo.com/api/oembed';
             $url = $oembed_endpoint . '.json?url=' . rawurlencode($a->content);
             $json = file_get_contents($url);

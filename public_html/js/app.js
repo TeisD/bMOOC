@@ -1049,6 +1049,7 @@ var Vis = (function(){
                 .attr('width', Vis.IMAGE_SIZE)
                 .attr('height', Vis.IMAGE_SIZE)
                 .attr('y', -Vis.IMAGE_SIZE/2);
+
             if(this.options.background) bg.attr("class", "filled");
             
             nodeEnter.filter(function(d) { return d.type_id == 28 })
@@ -1068,6 +1069,7 @@ var Vis = (function(){
                         .container(d3.select(this))
                         .draw();
                 });
+
         } else if(this.options.mode == 'nodes') {
             nodeEnter.append("a")
                 .attr("xlink:href", function(d) {
@@ -1093,7 +1095,8 @@ var Vis = (function(){
                         return d.title;
                     })
             }
-            a.append("text")
+
+            var txt = a.append("text")
                 .attr("class", function(d){
                     var c = "title";
                     if(!d.active) c += " archived";
@@ -1101,7 +1104,16 @@ var Vis = (function(){
                 })
                 .text(function(d){
                     return d.title;
-                })
+                });
+
+            txt.append("tspan")
+                .attr("class", "small")
+                .text(function(d){
+                    var c = ''
+                    if(!d.active) c+= " (inactive)";
+                    if(d.archived) c+= " (archived)";
+                    return c;
+                });
         }
 
         this.updateZoom();

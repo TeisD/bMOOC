@@ -14,8 +14,24 @@
 
 @section('header_content')
     <div class="row">
-       <div class="columns">
-           <h2 class="inline sub">{{$topic->title}}</h2>
+      @if(!$topic->active)
+        <div class="columns archived">
+      @else
+        <div class="columns">
+      @endif
+           <h2 class="inline sub"><a href="/topic/{{$topic->id}}">{{$topic->title}}</a></h2>
+           @if(!$topic->active)
+                <small>(inactive)</small>
+            @endif
+            @if($topic->archived)
+                <small>(archived)</small>
+            @endif
+           @if(isset($user) && $user->role->id > 1)
+            <h2 class="inline">
+                <a href="javascript:;" class="emphasis" data-dropdown="topic_edit_{{$topic->id}}" data-dropdown-position="anchor">&darr;</a>
+            </h2>
+            @include('dropdowns.topic_edit', ['id'=>$topic->id])
+           @endif
            <a class="button primary indent information" data-dropdown="info">&nbsp;</a>
        </div>
    </div>
@@ -24,9 +40,9 @@
           <a class="close" aria-label="Close">&#215;</a>
            <p><span class="light">topic initiated</span> {{date('d/m/Y', strtotime($topic->created_at))}} <span class="light">by</span> {{$topic->author->name}}</p>
            <h3>Description</h3>
-           <p>{!!$topic->description!!}</p>
+           {!!$topic->description!!}<p></p>
            <h3>Goal</h3>
-           <p>{!!$topic->goal!!}</p>
+           {!!$topic->goal!!}<p></p>
            <h3>Duration</h3>
            <p>{{date('d/m/Y', strtotime($topic->start_date))}} <span class="light">until</span> {{date('d/m/Y', strtotime($topic->end_date))}}</p>
            <h3>Current instruction</h3>

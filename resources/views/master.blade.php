@@ -156,6 +156,7 @@
 
             $(document).ready(function(){
                 $('*[data-dropdown]').on("click", function(){
+                    $('.dropdown').hide();
                     var id = $(this).data('dropdown');
                     if($(this).data('dropdown-position') == 'anchor') $('.dropdown#'+id).css({left: $(this).offset().left - 8});
                     $('.dropdown#'+id).toggle();

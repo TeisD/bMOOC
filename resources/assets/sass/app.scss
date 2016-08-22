@@ -587,15 +587,16 @@ nav{
     padding: 1rem;
     margin: 0;
     margin-top: 15px;
+    padding-right: 1.5rem;
     position: absolute;
     z-index: 9999;
     border-radius: 10px;
-    min-width: 25%;
+    min-width: none;
     max-width: 100%;
     .close{
         position: absolute;
         top: -0.5rem;
-        right: 0;
+        right: -0.5rem;
         color: $text-light;
         cursor: pointer;
         font-size: 2rem;
@@ -729,6 +730,11 @@ svg{
     text.title.stroke{
         stroke: $background;
         stroke-width: 5pt;
+    }
+    tspan.small{
+        font-size: 0.75rem;
+        font-weight: $regular;
+        font-family: $font;
     }
     .linktext text{
         font-size: 0.85rem;
