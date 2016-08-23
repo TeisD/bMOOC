@@ -1,5 +1,5 @@
 <fieldset id="{{$id}}">
-    <h3>Add text, an image, a video or a pdf:</h3>
+    <h3>Add text, an image, a video or a pdf</h3>
        {{-- BUTTONS --}}
         <div class="row margin-bottom">
            <div class="small-6 large-3 columns text-center">

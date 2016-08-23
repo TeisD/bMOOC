@@ -256,7 +256,8 @@ form input, form textarea, form select, form .ql_editor {
   border: 1px solid #ffffff;
   background: none;
   color: #ffffff;
-  margin-bottom: 1rem; }
+  margin-bottom: 1rem;
+  margin-top: 0.2rem; }
 form input:focus, form textarea:focus, form select:focus {
   background: inherit;
   border-width: 2px;
@@ -266,13 +267,28 @@ form label, form label.error {
   font-size: 0.875rem;
   font-weight: 400;
   text-transform: lowercase; }
+form .ql_editor {
+  margin-top: 0; }
 form .ql-container {
   font-family: #ffffff;
   font-size: inherit; }
 form .ql_toolbar {
-  background: #ffffff; }
+  background: #ffffff;
+  margin-top: 0.2rem; }
 form .ql-link-tooltip input, form .ql-link-tooltip input:focus {
   color: #080808; }
+form .tag-button {
+  margin-bottom: 1rem; }
+form .tag-button, form .tag-button label {
+  display: inline-block; }
+form .tag-button label span {
+  border: 1px dotted #ffffff;
+  display: inline-block;
+  padding: 5px 10px; }
+form .tag-button label input {
+  display: none; }
+form .tag-button input:checked + span {
+  border: 2px solid #ffffff; }
 
 .error label, .error label.error {
   color: inherit; }
@@ -562,7 +578,7 @@ nav {
     max-height: none; }
 
 #relation {
-  padding: 3rem;
+  padding: 2rem;
   height: 100%;
   width: 100%;
   position: relative; }

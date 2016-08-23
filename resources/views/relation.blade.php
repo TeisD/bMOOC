@@ -39,11 +39,26 @@
                 <div class="artefact" data-reveal-id="artefact_lightbox_right" data-reveal-ajax="/artefact/{{$artefact->children[min($child, count($artefact->children)-1)]->id}}" style="cursor:pointer !important;"></div>
             </div>
         </div>
+        <div class="row">
+            <div class="small-6 columns">
+               <button class="primary eye" data-reveal-id="artefact_lightbox_left" data-reveal-ajax="/artefact/{{$artefact->id}}">details</button>
+                <button class="primary plus indent" data-reveal-id="new_artefact">add (some)thing</button>
+            </div>
+            <div class="small-6 columns">
+               <button class="primary eye" data-reveal-id="artefact_lightbox_right" data-reveal-ajax="/artefact/{{$artefact->children[min($child, count($artefact->children)-1)]->id}}">details</button>
+                <button class="primary plus indent" data-reveal-id="new_artefact">add (some)thing</button>
+            </div>
+        </div>
     </div>
 
     <div id="artefact_lightbox_left" class="reveal-modal full" data-reveal aria-hidden="true" role="dialog"></div>
 
     <div id="artefact_lightbox_right" class="reveal-modal full" data-reveal aria-hidden="true" role="dialog"></div>
+@stop
+
+@section('forms')
+    {{-- NEW ARTEFACT FORM --}}
+    @include('forms.master', ['form' => 'new_artefact', 'class' => 'slide'])
 @stop
 
 @section('scripts')
@@ -54,6 +69,7 @@
             $('#vis-menu .button[data-vis=list]').addClass('disabled');
             $('#vis-menu .button[data-vis=grid]').addClass('disabled');
             $('#vis-menu .button[data-vis=network]').addClass('disabled');
+            $('#vis-menu .button[data-vis=tree]').addClass('active');
         });
     </script>
 
@@ -65,13 +81,22 @@
         var child_id = {{ min($child, count($artefact->children)-1) }}
 
         $(document).on('opened.fndtn.reveal', '#artefact_lightbox_left[data-reveal]', function () {
-            $(document).off('open.fndtn.reveal', '#artefact_lightbox_left[data-reveal]')
             render($('#artefact_lightbox_left'), artefact, 'original');
         });
 
         $(document).on('opened.fndtn.reveal', '#artefact_lightbox_right[data-reveal]', function () {
-            $(document).off('open.fndtn.reveal', '#artefact_lightbox_right[data-reveal]')
             render($('#artefact_lightbox_right'), children[child_id], 'original');
+        });
+
+        $(document).on('open.fndtn.reveal', '#new_artefact', function (event) {
+            console.log(event);
+            // update invisible parent_id field
+            $("#new_artefact #parent_id").val(112);
+            // update tags
+            $("#new_artefact #old_tags div").remove();
+            $.each(artefact.tags, function (k, tag) {
+                $('#answer_tags').prepend('<div class="tag-button purple"><label><input  type="checkbox" data-abide-validator="tag_select" name="answer_tags[]" value="' + tag.id + '"><span>' + tag.tag + '</span></label></div>');
+            });
         });
 
         showChild();
