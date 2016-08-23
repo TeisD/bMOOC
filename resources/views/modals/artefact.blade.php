@@ -1,20 +1,22 @@
-<div class="row full">
+@extends('modals.master')
+  @section('modal_content')
+   <div class="row full">
     <div class="columns large-3">
-        <h2>{{ $artefact->title }}</h2>
+        <h2 data-attr="title">{{ $artefact->title }}</h2>
         <dl class="details">
            <div class="row">
                <div class="small-6 medium-3 large-12 columns">
                 <dt>Added</dt>
-                <dd>{{date('d/m/Y H:i', strtotime($artefact->created_at))}}</dd>
+                <dd data-attr="created_at">{{date('d/m/Y H:i', strtotime($artefact->created_at))}}</dd>
                </div>
                <div class="small-6 medium-3 large-12 columns">
                 <dt>By</dt>
-                <dd><a href="/search/{{$artefact->author->id}}">{{$artefact->author->name}}</a></dd>
+                <dd data-attr="author"><a href="/search/{{$artefact->author->id}}">{{$artefact->author->name}}</a></dd>
                </div>
                 <div class="small-6 medium-3 large-12 columns">
                 <dt>Tags</dt>
                 <dd>
-                    <ul class="inline slash">
+                    <ul class="inline slash" data-attr="tags">
                        @foreach($artefact->tags as $tag)
                         <li><a href="/search/all/{{$tag->id}}">{{$tag->tag}}</a></li>
                         @endforeach
@@ -34,13 +36,8 @@
         <div class="loader">
             <img src="/img/loader_overlay_big.gif" alt="loading..." />
         </div>
-        <div class="artefact"></div>
+        <div class="artefact">
+        </div>
     </div>
 </div>
-
-{{--
-<script>
-    var artefact = JSON.parse('{!! addslashes(json_encode($artefact)) !!}');
-    render($('#artefact'), artefact);
-</script>
---}}
+@endsection

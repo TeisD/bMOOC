@@ -30,26 +30,20 @@
                 <div class="loader">
                     <img src="/img/loader_dark_big.gif" alt="loading..." />
                 </div>
-                <div class="artefact" data-reveal-id="artefact_lightbox_left" style="cursor: pointer !important"></div>
+                <div class="artefact" data-reveal-id="artefact_lightbox_left" data-reveal-ajax="/artefact/{{$artefact->id}}" style="cursor: pointer !important"></div>
             </div>
             <div class="small-6 columns" id="artefact_right">
                 <div class="loader">
                     <img src="/img/loader_dark_big.gif" alt="loading..." />
                 </div>
-                <div class="artefact" data-reveal-id="artefact_lightbox_right" style="cursor:pointer !important;"></div>
+                <div class="artefact" data-reveal-id="artefact_lightbox_right" data-reveal-ajax="/artefact/{{$artefact->children[min($child, count($artefact->children)-1)]->id}}" style="cursor:pointer !important;"></div>
             </div>
         </div>
     </div>
 
-    <div id="artefact_lightbox_left" class="reveal-modal full" data-reveal aria-hidden="true" role="dialog">
-       @include('modals.artefact', ['artefact' => $artefact])
-        <a class="close-reveal-modal close" aria-label="Close">&#215;</a>
-    </div>
+    <div id="artefact_lightbox_left" class="reveal-modal full" data-reveal aria-hidden="true" role="dialog"></div>
 
-    <div id="artefact_lightbox_right" class="reveal-modal full" data-reveal aria-hidden="true" role="dialog">
-       @include('modals.artefact', ['artefact' => $artefact->children[min($child, count($artefact->children)-1)]])
-        <a class="close-reveal-modal close" aria-label="Close">&#215;</a>
-    </div>
+    <div id="artefact_lightbox_right" class="reveal-modal full" data-reveal aria-hidden="true" role="dialog"></div>
 @stop
 
 @section('scripts')
@@ -67,25 +61,33 @@
 
         var artefact = JSON.parse('{!! addslashes(json_encode($artefact)) !!}');
         var children = JSON.parse('{!! addslashes(json_encode($artefact->children)) !!}');
+        var artefact_id = artefact.id;
         var child_id = {{ min($child, count($artefact->children)-1) }}
 
-        $(document).on('open.fndtn.reveal', '#artefact_lightbox_left[data-reveal]', function () {
+        $(document).on('opened.fndtn.reveal', '#artefact_lightbox_left[data-reveal]', function () {
             $(document).off('open.fndtn.reveal', '#artefact_lightbox_left[data-reveal]')
             render($('#artefact_lightbox_left'), artefact, 'original');
         });
 
-        $(document).on('open.fndtn.reveal', '#artefact_lightbox_right[data-reveal]', function () {
+        $(document).on('opened.fndtn.reveal', '#artefact_lightbox_right[data-reveal]', function () {
             $(document).off('open.fndtn.reveal', '#artefact_lightbox_right[data-reveal]')
-            render($('#artefact_lightbox_right'), child, 'original');
+            render($('#artefact_lightbox_right'), children[child_id], 'original');
         });
 
         showChild();
         showArtefact();
+        history.replaceState({
+            artefact: artefact,
+            children: children,
+            artefact_id: artefact_id,
+            child_id: child_id
+        }, "", "/relation/"+artefact_id+"/"+child_id);
 
         function up(){
             if(child_id > 0){
                 child_id--;
                 showChild();
+                updateUrl();
             }
         }
 
@@ -93,31 +95,47 @@
             if(child_id < children.length-1){
                 child_id++;
                 showChild();
+                updateUrl();
             }
         }
 
         function right(){
             if(children[child_id].has_children){
                 artefact = children[child_id];
+                artefact_id = artefact.id;
+                child_id = 0;
                 showArtefact();
                 // load children
                 $.getJSON("/json/artefact/"+artefact.id+"/children", function(data){
                     children = data;
-                    console.log(children);
-                    child_id = 0;
                     showChild();
+                    updateUrl();
                 });
             }
         }
 
         function left(){
             if(artefact.has_parent){
-                // load parent of artefact & set artefact
-                $.getJSON("/json/artefact/"+artefact.parent_id+", function(data){
-                    artefact = data;
-                    showArtefact();
+                artefact_id = artefact.parent_id;
+                prev_id = artefact.id;
+                $.when(
+                    $.getJSON("/json/artefact/"+artefact.parent_id+"/children", function(data){
+                        children = data;
+                        child_id = 0;
+                        // find child_id
+                        $.each(children, function(index, child){
+                            if (child.id == prev_id) child_id = index
+                        });
+                        showChild();
+                    }),
+                    // load parent of artefact & set artefact
+                    $.getJSON("/json/artefact/"+artefact.parent_id, function(data){
+                        artefact = data;
+                        showArtefact();
+                    })
+                ).then(function(){
+                    updateUrl();
                 });
-                // load children of artefact & set child
             }
 
         }
@@ -126,6 +144,7 @@
             if(artefact.has_parent) $("#nav_left").show();
             else $("#nav_left").hide();
             render($('#artefact_left'), artefact);
+            $('#artefact_left .artefact').attr('data-reveal-ajax', '/artefact/'+artefact.id);
         }
 
         function showChild(){
@@ -136,7 +155,51 @@
             if(children[child_id].has_children) $("#nav_right").show();
             else $("#nav_right").hide();
             render($('#artefact_right'), children[child_id]);
+            $('#artefact_right .artefact').attr('data-reveal-ajax', '/artefact/'+children[child_id].id);
         }
+
+        function updateUrl(){
+            var stateObj = { artefact: artefact, children: children, artefact_id: artefact_id, child_id: child_id };
+            history.pushState(stateObj, "", "/relation/"+artefact_id+"/"+child_id);
+        }
+
+        window.onpopstate = function(event) {
+            if (event.state) {
+                if(artefact != event.state.artefact || artefact_id != event.state.artefact_id){
+                    artefact = event.state.artefact;
+                    artefact_id = event.state.artefact_id;
+                    showArtefact();
+                }
+                if(children != event.state.children || child_id != event.state.child_id){
+                    children = event.state.children;
+                    child_id = event.state.child_id;
+                    showChild();
+                }
+            }
+        };
+
+        $('nav #nav_up').on('click', up);
+        $('nav #nav_down').on('click', down);
+        $('nav #nav_left').on('click', left);
+        $('nav #nav_right').on('click', right);
+
+        document.onkeydown = function(evt) {
+            evt = evt || window.event;
+            switch (evt.keyCode) {
+                case 37:
+                    left();
+                    break;
+                case 38:
+                    up();
+                    break;
+                case 39:
+                    right();
+                    break;
+                case 40:
+                    down();
+                    break;
+            }
+        };
 
     </script>
 @stop

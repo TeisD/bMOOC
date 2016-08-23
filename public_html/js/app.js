@@ -303,8 +303,8 @@ function formSubmit(form, parent){
  * Show an artefact in the desired container
  * The container should have two divs, .loader & .artefact
  * @param div A div which contains two childeren, .loader & .artefact
- * @param type The type of the artefact
  * @param data The artefact
+ * @param data An optinal parameter describing the quality of the artefact
  */
 function render(div, data, quality){
     var html;
@@ -364,6 +364,23 @@ function render(div, data, quality){
                 div.find('.expand i').toggleClass('fi-arrows-in');
             });
         }
+    }
+}
+
+/**
+ * Update the text in a lightbox
+ * The elements to be updated should have a data-attr tag matching the artefacts properties
+ * @param div The container div
+ * @param artefact The artefact
+ */
+function update(div, artefact){
+    div.find("[data-attr=title]").html(artefact.title);
+    div.find("[data-attr=created_at]").html(artefact.created_at);
+    div.find("[data-attr=author]").html('<a href="/search/'+artefact.author.id+'">'+artefact.author.name+'</a>');
+    tags = div.find("[data-attr=tags]");
+    tags.html('');
+    for(var i = 0; i < artefact.tags.length; i++){
+        tags.append('<li><a href="/search/all/'+artefact.tags[i].id+'">'+artefact.tags[i].tag+'</a></li>');
     }
 }
 
