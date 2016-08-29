@@ -141,10 +141,10 @@ class BmoocController extends Controller {
         return BmoocController::viewPage('topic', ['topic' => $topic, 'tree' => $tree, 'list' => $list, 'links' => $links]);
     }
 
-    public function relation($id, $child = 0){
+    public function relation($id, $child_id = 0){
         $artefact = Artefact::find($id);
 
-        return BmoocController::viewPage('relation', ['artefact'=> $artefact, 'child' => $child]);
+        return BmoocController::viewPage('relation', ['artefact'=> $artefact, 'child_id' => $child_id]);
     }
 
     public function artefact($id){

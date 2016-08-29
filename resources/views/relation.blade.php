@@ -36,7 +36,7 @@
                 <div class="loader">
                     <img src="/img/loader_dark_big.gif" alt="loading..." />
                 </div>
-                <div class="artefact" data-reveal-id="artefact_lightbox_right" data-reveal-ajax="/artefact/{{$artefact->children[min($child, count($artefact->children)-1)]->id}}" style="cursor:pointer !important;"></div>
+                <div class="artefact" data-reveal-id="artefact_lightbox_right" data-reveal-ajax="/artefact/{{$artefact->children[min($child_id, count($artefact->children)-1)]->id}}" style="cursor:pointer !important;"></div>
             </div>
         </div>
         <div class="row">
@@ -45,7 +45,7 @@
                 <button class="primary plus indent" data-reveal-id="new_artefact">add (some)thing</button>
             </div>
             <div class="small-6 columns">
-               <button class="primary eye" data-reveal-id="artefact_lightbox_right" data-reveal-ajax="/artefact/{{$artefact->children[min($child, count($artefact->children)-1)]->id}}">details</button>
+               <button class="primary eye" data-reveal-id="artefact_lightbox_right" data-reveal-ajax="/artefact/{{$artefact->children[min($child_id, count($artefact->children)-1)]->id}}">details</button>
                 <button class="primary plus indent" data-reveal-id="new_artefact">add (some)thing</button>
             </div>
         </div>
@@ -78,7 +78,7 @@
         var artefact = JSON.parse('{!! addslashes(json_encode($artefact)) !!}');
         var children = JSON.parse('{!! addslashes(json_encode($artefact->children)) !!}');
         var artefact_id = artefact.id;
-        var child_id = {{ min($child, count($artefact->children)-1) }}
+        var child_id = {{ min($child_id, count($artefact->children)-1) }}
 
         $(document).on('opened.fndtn.reveal', '#artefact_lightbox_left[data-reveal]', function () {
             render($('#artefact_lightbox_left'), artefact, 'original');
