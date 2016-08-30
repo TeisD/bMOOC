@@ -885,6 +885,7 @@ var Vis = (function(){
             var targetNode = nodes.indexOf(nodes.filter(function(n) { return n.id === e.target; })[0]);
 
             if(sourceNode > -1 && targetNode > -1) edges.push({source: sourceNode, target: targetNode, value: e.links});
+
         });
 
         // add a random start point in some corner
@@ -1139,7 +1140,9 @@ var Vis = (function(){
     Vis.prototype.drawLinks = function(){
         // Declare the links
         var link = this.g.selectAll("path.link")
-        .data(this.links, function(d) { return d.target.id; });
+            .data(this.links);
+
+        // .data(this.links, function(d) { console.log(d.source.id); return d.source.id; })
 
         if(this.options.rotate){
             var diagonal = d3.svg.diagonal()

@@ -32,11 +32,15 @@
                 </div>
                 <div class="artefact" data-reveal-id="artefact_lightbox_left" data-reveal-ajax="/artefact/{{$artefact->id}}" style="cursor: pointer !important"></div>
             </div>
-            <div class="small-6 columns" id="artefact_right">
+            <div class="small-6 columns artefact_right" id="artefact_right">
                 <div class="loader">
                     <img src="/img/loader_dark_big.gif" alt="loading..." />
                 </div>
+                @if($artefact->hasChildren)
                 <div class="artefact" data-reveal-id="artefact_lightbox_right" data-reveal-ajax="/artefact/{{$artefact->children[min($child_id, count($artefact->children)-1)]->id}}" style="cursor:pointer !important;"></div>
+                @else
+                <div class="artefact" data-reveal-id="artefact_lightbox_right" data-reveal-ajax="" style="cursor:pointer !important;"></div>
+                @endif
             </div>
         </div>
         <div class="row">
@@ -45,8 +49,12 @@
                 <button class="primary plus indent" data-reveal-id="new_artefact">add (some)thing</button>
             </div>
             <div class="small-6 columns">
+              @if($artefact->hasChildren)
                <button class="primary eye" data-reveal-id="artefact_lightbox_right" data-reveal-ajax="/artefact/{{$artefact->children[min($child_id, count($artefact->children)-1)]->id}}">details</button>
-                <button class="primary plus indent" data-reveal-id="new_artefact">add (some)thing</button>
+               @else
+               <button class="primary eye artefact_right" data-reveal-id="artefact_lightbox_right" data-reveal-ajax="">details</button>
+               @endif
+                <button class="primary plus indent artefact_right" data-reveal-id="new_artefact">add (some)thing</button>
             </div>
         </div>
     </div>
@@ -169,18 +177,27 @@
             if(artefact.has_parent) $("#nav_left").show();
             else $("#nav_left").hide();
             render($('#artefact_left'), artefact);
-            $('#artefact_left .artefact').attr('data-reveal-ajax', '/artefact/'+artefact.id);
+            $('*[data-reveal-id=artefact_lightbox_left]').attr('data-reveal-ajax', '/artefact/'+artefact.id);
         }
 
         function showChild(){
+            if(children.length <= 0) {
+                $("#nav_down").hide();
+                $("#nav_up").hide();
+                $("#nav_right").hide();
+                $(".artefact_right").hide();
+                return;
+            }
             if(child_id >= children.length-1) $("#nav_down").hide();
             else $("#nav_down").show();
             if(child_id <= 0) $("#nav_up").hide();
             else $("#nav_up").show();
             if(children[child_id].has_children) $("#nav_right").show();
             else $("#nav_right").hide();
+
+            $(".artefact_right").show();
             render($('#artefact_right'), children[child_id]);
-            $('#artefact_right .artefact').attr('data-reveal-ajax', '/artefact/'+children[child_id].id);
+            $('*[data-reveal-id=artefact_lightbox_right]').attr('data-reveal-ajax', '/artefact/'+children[child_id].id);
         }
 
         function updateUrl(){

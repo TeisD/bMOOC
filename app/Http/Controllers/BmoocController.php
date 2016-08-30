@@ -82,7 +82,7 @@ class BmoocController extends Controller {
             GROUP BY topics_tags.tag_id
             HAVING count > 1
         '));
-        
+
         $links = VisController::getLinks($links_query);
 
         return BmoocController::viewPage('index', ['topics' => $topics, 'links' => $links, 'archived' => $archived]);
@@ -127,16 +127,63 @@ class BmoocController extends Controller {
             FROM
             (
                 SELECT DISTINCT tag_id, topic_id, artefacts.id, tags.tag
-                FROM artefact_tags
-                LEFT JOIN artefacts ON artefact_tags.artefact_id = artefacts.id
-                LEFT JOIN tags ON artefact_tags.tag_id = tags.id
+                FROM (
+                    SELECT *, @row := @row +1 AS rownum
+                    FROM (SELECT @row :=0) r, artefact_tags
+                ) ranked
+                LEFT JOIN artefacts ON artefact_id = artefacts.id
+                LEFT JOIN tags ON tag_id = tags.id
+                WHERE rownum % 3 = 0
             ) topics_tags
             WHERE topic_id = '.$topic->id.'
             GROUP BY topics_tags.tag_id
             HAVING count > 1
         '));
         
-        $links = VisController::getLinks($links_query);
+        // some pretty crazy DB request intensive method
+        // This will match only the unique (user added) tag for each artefact
+
+        function get_tags($a) {
+            $ret = [];
+            foreach($a as $b) array_push($ret, ['tag_id' => $b->id, 'tag' => strtolower($b->tag)]);
+            return $ret;
+        }
+
+        function compare_tags($a, $b){
+            return strcmp($a['tag'],$b['tag']);
+        }
+
+        function find_tag($needle, $haystack){
+            $size = count($haystack);
+            for($i = 0; $i < $size; $i++){
+                if($haystack[$i]->tag == $needle['tag']) return $i;
+            }
+            return FALSE;
+        }
+
+        $links = [];
+
+        foreach($list as $artefact){
+            if(!$artefact->hasParent){
+                $unique_tags = get_tags($artefact->tags);
+                continue;
+            } else{
+                $artefact_tags = get_tags($artefact->tags);
+                $parent_tags = get_tags($artefact->parent->tags);
+                $unique_tags = array_udiff($artefact_tags, $parent_tags, 'App\Http\Controllers\\compare_tags');
+            }
+            foreach($unique_tags as $unique_tag){
+                $key = find_tag($unique_tag, $links);
+                if($key === FALSE){
+                    array_push($links, (object)array('tag_id' => $unique_tag['tag_id'], 'tag' => $unique_tag['tag'], 'items' => (string)$artefact->id, 'count' => 1));
+                } else {
+                    $links[$key]->items = $links[$key]->items.','.(string)$artefact->id;
+                    $links[$key]->count = $links[$key]->count + 1;
+                }
+            }
+        }
+
+        $links = VisController::getLinks($links);
 
         return BmoocController::viewPage('topic', ['topic' => $topic, 'tree' => $tree, 'list' => $list, 'links' => $links]);
     }

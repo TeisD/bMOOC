@@ -18,12 +18,16 @@ class VisController extends Controller {
         $links = [];
 
         foreach ($a as $link){
+            if($link->count <= 1) continue;
             $link->items = array_map('intval', explode(',', $link->items));
 
             for($i = 0; $i < sizeof($link->items); $i++){
                 for($j = $i+1; $j < sizeof($link->items); $j++){
                     $source = $link->items[$i];
                     $target = $link->items[$j];
+                    // check if source and target have a first generation relationship
+                    //if(Artefact::find($target)->parent_id == $source) continue;
+                    //if(Artefact::find($source)->parent_id == $target) continue;
                     // check if source target already exists
                     $sources = array_keys(array_column($links, 'source'), $source);
                     $targets = array_keys(array_column($links, 'target'), $target);
