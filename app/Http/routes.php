@@ -7,6 +7,7 @@ Route::get('archive', 'BmoocController@archive');
 Route::get('topic/{id}', 'BmoocController@topic');
 Route::get('relation/{id}/{child?}', 'BmoocController@relation');
 Route::get('artefact/{id}', 'BmoocController@artefact');
+Route::get('instruction/{id}', 'BmoocController@instruction');
 Route::get('search/{author?}/{tag?}/{keyword?}', 'BmoocController@searchDiscussions');
 
 Route::post('topic/new', 'BmoocController@newTopic');

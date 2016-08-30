@@ -373,6 +373,10 @@ ul.inline, ul.block, ul.grid {
   ul.inline li, ul.block li, ul.grid li {
     position: relative; }
 
+ul.no-list {
+  list-style: none;
+  margin-left: 0; }
+
 ul.inline {
   display: inline;
   color: #d9d9d9;
@@ -490,14 +494,14 @@ nav {
   margin-top: 15px;
   padding-right: 1.5rem;
   position: absolute;
-  z-index: 9999;
+  z-index: 1;
   border-radius: 10px;
   min-width: none;
   max-width: 100%; }
   .dropdown .close {
     position: absolute;
-    top: -0.5rem;
-    right: -0.5rem;
+    top: 0.3rem;
+    right: 0.5rem;
     color: #d9d9d9;
     cursor: pointer;
     font-size: 2rem;
@@ -520,7 +524,7 @@ nav {
 @media only screen and (min-width: 40.063em) {
   .dropdown {
     width: auto;
-    max-width: 50%; }
+    max-width: 80%; }
 
   .dropdown#info {
     margin-left: 2rem; }
@@ -528,6 +532,10 @@ nav {
   .dropdown.open {
     display: block; } }
 /* medium screens */
+@media only screen and (min-width: 64.063em) {
+  .dropdown {
+    max-width: 40%; } }
+/* large screens */
 /* RENDERING OF ARTEFACTS */
 #artefact_left, #artefact_right {
   overflow: hidden; }

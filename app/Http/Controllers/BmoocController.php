@@ -120,26 +120,7 @@ class BmoocController extends Controller {
 
         $tree = VisController::getTree($topic->firstAddition);
         $list = $topic->artefacts;
-        
-        // lijst per tag alle threads op, selecteer degene met meerdere threads
-        $links_query = DB::select(DB::raw('
-            SELECT tag_id, tag, GROUP_CONCAT(id ORDER BY id ASC) as items, COUNT(*) as count
-            FROM
-            (
-                SELECT DISTINCT tag_id, topic_id, artefacts.id, tags.tag
-                FROM (
-                    SELECT *, @row := @row +1 AS rownum
-                    FROM (SELECT @row :=0) r, artefact_tags
-                ) ranked
-                LEFT JOIN artefacts ON artefact_id = artefacts.id
-                LEFT JOIN tags ON tag_id = tags.id
-                WHERE rownum % 3 = 0
-            ) topics_tags
-            WHERE topic_id = '.$topic->id.'
-            GROUP BY topics_tags.tag_id
-            HAVING count > 1
-        '));
-        
+
         // some pretty crazy DB request intensive method
         // This will match only the unique (user added) tag for each artefact
 
@@ -198,6 +179,12 @@ class BmoocController extends Controller {
         $artefact = Artefact::find($id);
 
         return BmoocController::viewModal('modals.artefact', ['artefact'=> $artefact]);
+    }
+
+    public function instruction($id){
+        $instruction = Instruction::find($id);
+
+        return BmoocController::viewModal('modals.instruction', ['instruction'=> $instruction]);
     }
 
     public function feedback(Request $request){

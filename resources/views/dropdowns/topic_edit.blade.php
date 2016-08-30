@@ -1,6 +1,6 @@
 <div class="row dropdown" id="topic_edit_{{$id}}">
-   <div class="columns">
       <a href="javascript:;" class="close" aria-label="Close">&#215;</a>
+   <div class="columns">
         <ul class="list">
             <li><a href="/topic/{{$id}}?action=edit">Edit</a></li>
             @if($topic->archived)
