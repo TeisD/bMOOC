@@ -70,12 +70,12 @@ class Topic extends Model
         return $this->hasMany('App\Instruction');
     }
 
-    public function currentInstruction() {
+    public function activeInstruction() {
         return $this->hasOne('App\Instruction')
             ->where('instructions.active_until', '=', null);
     }
 
-    public function pastInstructions() {
+    public function prevInstructions() {
         return $this->hasMany('App\Instruction')
             ->where('instructions.active_until', '!=', null)
             ->orderBy('instructions.active_until', 'ASC');

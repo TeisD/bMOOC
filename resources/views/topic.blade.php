@@ -51,25 +51,25 @@
                  sort by:
                 <ul class="inline slash">
                     <li>
-                        <a href="#" class="sort" data-sort="title">Title</a>
+                        <a href="javascript:;" class="sort" data-sort="title">Title</a>
                     </li>
                     <li>
-                        <a href="#" class="sort" data-sort="type">Type</a>
+                        <a href="javascript:;" class="sort" data-sort="type">Type</a>
                     </li>
                     <li>
-                        <a href="#" class="sort asc" data-sort="date_ts">Date added</a>
+                        <a href="javascript:;" class="sort asc" data-sort="date_ts">Date added</a>
                     </li>
                     <li>
-                        <a href="#" class="sort" data-sort="author">Author</a>
+                        <a href="javascript:;" class="sort" data-sort="author">Author</a>
                     </li>
                     <li>
-                        <a href="#" class="sort" data-sort="tag_1">Tag 1</a>
+                        <a href="javascript:;" class="sort" data-sort="tag_1">Tag 1</a>
                     </li>
                     <li>
-                        <a href="#" class="sort" data-sort="tag_2">Tag 2</a>
+                        <a href="javascript:;" class="sort" data-sort="tag_2">Tag 2</a>
                     </li>
                     <li>
-                        <a href="#" class="sort" data-sort="tag_3">Tag 3</a>
+                        <a href="javascript:;" class="sort" data-sort="tag_3">Tag 3</a>
                     </li>
                   </ul>
               </div>

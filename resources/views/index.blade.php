@@ -6,6 +6,7 @@
     @if (isset($user) && $user->role->id > 1)
         <button class="primary plus indent" data-help="index" data-help-id="new_topic" data-reveal-id="new_topic">new topic</button>
     @endif
+    <button class="primary plus indent" data-help="index" data-help-id="new_topic" data-reveal-id="new_topic">new log</button>
 @stop
 
 @section('header_search')

@@ -14,11 +14,11 @@
        <p>{{date('d/m/Y', strtotime($topic->start_date))}} <span class="light">until</span> {{date('d/m/Y', strtotime($topic->end_date))}}</p>
    </div><!--
    --><div class="columns medium-6">
-       <h3>Current instruction</h3>
-      <p><a href="javascript:;" data-reveal-id="instruction_lightbox" data-reveal-ajax="/instruction/{{$topic->currentInstruction->id}}">{{$topic->currentInstruction->title}}</a></p>
-      @if(count($topic->pastInstructions) > 0)
-      <h3>Past instructions</h3>
-      @foreach($topic->pastInstructions as $instruction)
+       <h3>Active instruction</h3>
+      <p><a href="javascript:;" data-reveal-id="instruction_lightbox" data-reveal-ajax="/instruction/{{$topic->activeInstruction->id}}">{{$topic->activeInstruction->title}}</a></p>
+      @if(count($topic->prevInstructions) > 0)
+      <h3>Previous instructions</h3>
+      @foreach($topic->prevInstructions as $instruction)
        <ul class="no-list">
            <li><a href="javascript:;" data-reveal-id="instruction_lightbox" data-reveal-ajax="/instruction/{{$instruction->id}}" class="emphasis">{{$instruction->title}}</a></li>
         </ul>

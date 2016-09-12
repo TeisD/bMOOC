@@ -27,6 +27,13 @@ html, body {
 .no-svg .browser-alert, .no-flexbox .browser-alert, .no-flexboxlegacy .browser-alert {
   display: block; }
 
+.alert-box {
+  background: #031F20;
+  border: none;
+  margin-bottom: 0; }
+  .alert-box ul.inline {
+    color: #ffffff; }
+
 #vis-container, #vis-fallback {
   display: none; }
 
@@ -300,21 +307,31 @@ form .tag-button input:checked + span {
 small.error.success {
   background-color: #165d6c; }
 
+header .form-inline .field input {
+  margin-bottom: 0; }
+
 .form-inline {
   width: 100%;
   display: table; }
   .form-inline label {
     display: table-cell;
     padding-right: 0.5rem;
+    vertical-align: middle;
     white-space: nowrap; }
   .form-inline .field {
     display: table-cell;
     overflow: hidden;
-    width: 100%; }
-  .form-inline .awesomplete {
-    display: inline-block;
     width: 100%;
-    z-index: 999
+    vertical-align: middle; }
+  .form-inline button.form-input {
+    margin-top: 2px;
+    height: 2.32rem;
+    font-family: sans-serif; }
+  .form-inline .awesomplete {
+    display: block;
+    width: 100%;
+    z-index: 999;
+    height: 2.3125rem
     /* creates triangle */ }
     .form-inline .awesomplete ul {
       background: url("/img/bg.png");

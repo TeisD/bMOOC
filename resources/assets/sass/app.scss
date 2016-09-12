@@ -51,6 +51,17 @@ html, body{
     display: block;
 }
 
+.alert-box{
+    background: $blur;
+    border: none;
+
+    margin-bottom: 0;
+
+    ul.inline{
+        color: $text;
+    }
+}
+
 #vis-container, #vis-fallback{
     display: none;
 }
@@ -386,6 +397,9 @@ small.error.success{
     background-color: #165d6c;
 }
 
+header .form-inline .field input{
+    margin-bottom: 0;
+}
 
 .form-inline{
     width: 100%;
@@ -394,6 +408,7 @@ small.error.success{
     label{
         display: table-cell;
         padding-right: 0.5rem;
+        vertical-align: middle;
         white-space: nowrap;
     }
 
@@ -401,12 +416,20 @@ small.error.success{
         display: table-cell;
         overflow: hidden;
         width: 100%;
+        vertical-align: middle;
+    }
+
+    button.form-input{
+        margin-top: 2px;
+        height: 2.32rem;
+        font-family: sans-serif;
     }
 
     .awesomplete{
-        display: inline-block;
+        display: block;
         width: 100%;
         z-index: 999;
+        height: 2.3125rem;
         ul{
             background: $blur-img;
             list-style: none;

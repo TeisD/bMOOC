@@ -32,7 +32,18 @@
           ga('create', 'UA-71362622-1', 'auto');
           ga('send', 'pageview');
         </script>
-
+        {{--
+        <div data-alert class="alert-box">
+            <ul class="inline slash">
+                <li>
+                    <a href="javascript:;">add comment</a>
+                </li>
+                <li>
+                    <a href="javascript:;">stop logging</a>
+                </li>
+            </ul>
+        </div>
+        --}}
         <div data-alert class="alert-box alert modernizr-alert js-alert">
             <strong>JavaScript appears to be disabled in your browser.</strong><br />
             For full functionality of this site, it is necessary to enable JavaScript. Here are <a href="http://enable-javascript.com" class="emphasis">instructions how to enable Javascript</a>.

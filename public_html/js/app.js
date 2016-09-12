@@ -716,11 +716,11 @@ var Vis = (function(){
                 });
             gui.append('button')
                 .attr('class', 'secondary square zoom-in')
-                .html('&#x2795;&#xfe0e;')
+                .html('<i class="fi-plus"></i>')
                 .on('click', function(){ pointer.zoom(0.1) });
             gui.append('button')
                 .attr('class', 'secondary square zoom-out')
-                .html('&#10134;&#xfe0e;')
+                .html('<i class="fi-minus"></i>')
                 .on('click', function(){ pointer.zoom(-0.1) });
         }
         
@@ -1310,15 +1310,15 @@ var Timeline = (function(){
             var pointer = this;
             gui.append('button')
                 .attr('class', 'secondary square rewind inline')
-                .html('&#x23ea;&#xfe0e;')
+                .html('<i class="fi-rewind"></i>')
                 .on('click', function(){ pointer.rewind() });
             gui.append('button')
                 .attr('class', 'secondary square stop inline')
-                .html('&#x25fc;&#xfe0e;')
+                .html('<i class="fi-stop"></i>')
                 .on('click', function(){ pointer.stop() });
             gui.append('button')
                 .attr('class', 'secondary square forward inline')
-                .html('&#x23e9;&#xfe0e;')
+                .html('<i class="fi-fast-forward"></i>')
                 .on('click', function(){ pointer.forward() });
     }
 
