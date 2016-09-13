@@ -228,6 +228,7 @@
                         </label>
                         <small class="error">Please enter a title for the topic.</small>
                     </div>
+
                     <!-- CHECKBOX: topic_new_tag -->
                     <label>Tags (enter 3 below):</label>
                     <div class="form-inline">

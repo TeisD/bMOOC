@@ -13,7 +13,7 @@ Route::get('search/{author?}/{tag?}/{keyword?}', 'BmoocController@searchDiscussi
 Route::post('topic/new', 'BmoocController@newTopic');
 Route::patch('topic/new', 'BmoocController@newTopic');
 Route::post('instruction/new', 'BmoocController@newInstruction');
-Route::post('artefact/new', 'BmoocController@newInstruction');
+Route::post('artefact/new', 'BmoocController@newArtefact');
 
 Route::get('artefact/{id}/thumbnail', 'BmoocController@getImageThumbnail');
 Route::get('artefact/{id}/medium', 'BmoocController@getImage');

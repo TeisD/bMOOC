@@ -15,7 +15,7 @@
 
     {{-- INPUT: description --}}
     <div class="row"><div class="columns">
-        @include('forms.elements.artefacteditor', ['id' => 'af', 'required' => 'required'])
+        @include('forms.elements.artefacteditor', ['id' => 'instruction_af', 'required' => 'required'])
     </div></div>
 
     <button type="submit">
@@ -26,14 +26,14 @@
 </div>
 
 <script src="/js/pdf.js"></script>
-<script src="/js/quill.min.js" async onload="quill_init();"></script>
+<script src="/js/quill.min.js" async onload="quill_instruction_init();"></script>
 <script>
 
-    function quill_init(){
+    function quill_instruction_init(){
         $(function(){
-            var artefact = new Quill('#af .ql_editor', {
+            var artefact = new Quill('#instruction_af .ql_editor', {
                 modules: {
-                    'toolbar': { container: '#af .ql_toolbar' },
+                    'toolbar': { container: '#instruction_af .ql_toolbar' },
                     'link-tooltip': true
                 },
                 theme: 'snow'

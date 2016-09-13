@@ -39,6 +39,11 @@
 @stop
 
 @section('content')
+   @if($topic->artefactCount < 1)
+    <div class="row full">
+        <button class="primary plus centered" data-reveal-id="new_artefact">add (some)thing</button>
+    </div>
+   @else
     <div class="row full" id="vis-container">
         <div class="vis-gui render">
 
@@ -124,12 +129,18 @@
           </ul>
         </div>
     </div>
+    @endif
 @stop
-
 
 @section('forms')
     {{-- NEW TOPIC FORM --}}
     @include('forms.master', ['form' => 'new_instruction', 'class' => 'slide'])
+    {{-- NEW ARTEFACT FORM --}}
+    @if($topic->artefactCount < 1)
+        @include('forms.master', ['form' => 'new_artefact', 'class' => 'slide', $first = true])
+    @else
+        @include('forms.master', ['form' => 'new_artefact', 'class' => 'slide'])
+    @endif
 @stop
 
 @section('scripts')

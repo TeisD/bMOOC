@@ -201,7 +201,12 @@ button.eye, .button.eye{
     background: url(../img/eye.png) no-repeat left center;
     background-size: contain;
 }
-
+button.centered{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+}
 button.secondary, .button.secondary, .secondary{
     border: none;
     cursor: pointer;

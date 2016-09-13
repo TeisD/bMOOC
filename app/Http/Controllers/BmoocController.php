@@ -118,6 +118,11 @@ class BmoocController extends Controller {
             return redirect('/#list');
         }
 
+        // is the topic empty?
+        if($topic->artefactCount < 1){
+            return BmoocController::viewPage('topic', ['topic' => $topic, 'tree' => null, 'list' => null, 'links' => null]);
+        }
+
         $tree = VisController::getTree($topic->firstAddition);
         $list = $topic->artefacts;
 
@@ -273,8 +278,8 @@ class BmoocController extends Controller {
 
         $validator = Validator::make($request->all(), [
             'title' => 'required|max:100',
-            'description_raw' => 'required',
-            'goal_raw' => 'required',
+            'topic_description_raw' => 'required',
+            'topic_goal_raw' => 'required',
             'start_date' => 'date|required',
             'end_date' => 'date|required|after:start_date'
         ]);
@@ -289,12 +294,12 @@ class BmoocController extends Controller {
             }
 
             if($request->isMethod('patch')){
-                $topic = Topic::find($request->id);
+                $topic = Topic::find($request->topic_id);
             }
 
             $topic->title = $request->title;
-            $topic->description = $request->description_raw;
-            $topic->goal = $request->goal_raw;
+            $topic->description = $request->topic_description_raw;
+            $topic->goal = $request->topic_goal_raw;
             $topic->start_date = date('Y-m-d H:i:s', strtotime($request->start_date));
             $topic->end_date = date('Y-m-d H:i:s', strtotime($request->end_date));
             $topic->save();
@@ -332,8 +337,10 @@ class BmoocController extends Controller {
             $c_instruction = Instruction::where('topic_id', $request->id)
                 ->where('active_until', null)
                 ->first();
-            $c_instruction->active_until = $now;
-            $c_instruction->save();
+            if($c_instruction){
+                $c_instruction->active_until = $now;
+                $c_instruction->save();
+            }
 
             $instruction = new Instruction;
             $instruction->author_id = $user->id;
@@ -362,6 +369,23 @@ class BmoocController extends Controller {
     }
 
     public function newArtefact(Request $request){
+        $user = Auth::user();
+        if(!$user) return false;
+        if($user->role_id < 1) return false;
+
+        $parent_id = $request->parent_id;
+
+        // eerste artefact in topic of niet?
+        if($parent_id){
+            $validator = Validator::make($request->all(), [
+                'title' => 'required|max:100',
+                'filetype' => 'required',
+                'id' => 'required'
+            ]);
+        } else {
+            //
+        }
+
     }
 
     private function parseArtefact(Request $request){
