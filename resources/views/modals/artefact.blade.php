@@ -29,6 +29,10 @@
                 <dd>{{$artefact->copyright}}</dd>
                </div>
                @endif
+               <div class="small-6 medium-3 large-12 columns">
+                <dt>Description</dt>
+                <dd>{!!$artefact->description!!}</dd>
+               </div>
             </div>
         </dl>
     </div>

@@ -43,13 +43,13 @@ class BmoocController extends Controller {
         //$this->middleware('auth', ['except' => 'index']);
     }
 
-    public function getLogout() {
-        Auth::logout();
-        return Redirect::to('/');
-    }
-
     public function viewPage($name, $options = []){
+        if (!Auth::check()){
+            return view('landing');
+        }
+
         $user = Auth::user();
+
         $authors = User::orderBy('name')->get();
         $tags = Tag::orderBy('tag')->get();
 
@@ -175,7 +175,7 @@ class BmoocController extends Controller {
     }
 
     public function relation($id, $child_id = 0){
-        $artefact = Artefact::find($id);
+        $artefact = Artefact::with('tags')->find($id);
 
         return BmoocController::viewPage('relation', ['artefact'=> $artefact, 'child_id' => $child_id]);
     }
@@ -379,11 +379,69 @@ class BmoocController extends Controller {
         if($parent_id){
             $validator = Validator::make($request->all(), [
                 'title' => 'required|max:100',
+                'new_tag' => 'required',
+                'old_tags.*' => 'required|different:new_tag|min:2|max:2',
                 'filetype' => 'required',
+                'artefact_description_raw' => 'required',
                 'id' => 'required'
             ]);
         } else {
-            //
+            $validator = Validator::make($request->all(), [
+                'title' => 'required|max:100',
+                'new_tags.*' => 'required|min:3|max:3',
+                'filetype' => 'required',
+                'artefact_description_raw' => 'required',
+                'id' => 'required'
+            ]);
+        }
+
+        try{
+            $artefact = new Artefact;
+            $tags = [];
+            if($parent_id){
+                $artefact->parent_id = $parent_id;
+                array_push($tags, Tag::firstOrNew(['tag' => strtolower($request->new_tag)]));
+                foreach($request->old_tags as $old_tag){
+                    array_push($tags, Tag::firstOrNew(['tag' => strtolower($old_tag)]));
+                }
+            } else{
+                foreach($request->new_tags as $new_tag){
+                    array_push($tags, Tag::firstOrNew(['tag' => strtolower($new_tag)]));
+                }
+            }
+            $artefact->author_id = $user->id;
+            $artefact->topic_id = $request->id;
+            $artefact->title = $request->title;
+            if($request->copyright) $artefact->copyright = $request->copyright;
+            $artefact->description = $request->artefact_description_raw;
+
+            $af = BmoocController::parseArtefact($request);
+
+            $artefact->content = $af->content;
+            $artefact->type_id = $af->type;
+
+            $artefact->save();
+
+            $artefact->tags()->saveMany($tags);
+
+            if ( $request->isXmlHttpRequest() ) {
+                if($parent_id){
+                    return Response::json( [
+                        'status' => '200',
+                        'url' => '/relation/'.$parent_id.'/'.Artefact::find($parent_id)->children()->count()
+                    ], 200);
+                } else{
+                    return Response::json( [
+                        'status' => '200',
+                        'url' => '/relation/'.$artefact->id
+                    ], 200);
+                }
+            }
+            if($parent_id) return BmoocController::relation($artefact->id);
+            else return BmoocController::relation($parent_id, Artefact::find($parent_id)->children()->count());
+        } catch (Exception $e) {
+            DB::rollback();
+            throw $e;
         }
 
     }
@@ -406,7 +464,7 @@ class BmoocController extends Controller {
                 $validator = Validator::make($request->all(), [
                     'af_upload' => 'required|image'
                 ]);
-                Storage::put('artefacts/'.$filename, $request->af_upload);
+                $request->file('af_upload')->move(base_path().'/storage/app/artefacts', $filename);
                 BmoocController::storeThumbnails($request, $filename);
                 $af->content = $filename;
                 $af->type = Types::IMAGE;
@@ -461,7 +519,7 @@ class BmoocController extends Controller {
 
     public function getImage($id){
         $a = Artefact::find($id);
-        $path = storage_path('/app/artefacts/thumbnails/large/'.$a->content);
+        $path = storage_path('app/artefacts/thumbnails/large/'.$a->content);
         if (file_exists($path)) {
             $filetype = mime_content_type( $path );
             $response = Response::make( File::get( $path ) , 200 );
@@ -474,7 +532,7 @@ class BmoocController extends Controller {
     public function getImageThumbnail($id){
         // get url from id
         $a = Artefact::find($id);
-        $path = storage_path('/app/artefacts/thumbnails/small/'.$a->content);
+        $path = storage_path('app/artefacts/thumbnails/small/'.$a->content);
         // check if the artefact has a thumbnail based on id
         if (file_exists($path)) {
             $filetype = mime_content_type( $path );
@@ -488,7 +546,7 @@ class BmoocController extends Controller {
 
     public function getImageOriginal($id){
         $a = Artefact::find($id);
-        $path = storage_path('/app/artefacts/'.$a->content);
+        $path = storage_path('app/artefacts/'.$a->content);
         if (file_exists($path)) {
             $filetype = mime_content_type( $path );
             $response = Response::make( File::get( $path ) , 200 );

@@ -2,6 +2,12 @@
 
 <p>Using bMOOC for the first time? <a href="auth/register" class="emphasis" data-reveal-id="signup" data-reveal-ajax="true">Create an account</a></p>
 
+@if (count($errors))
+    @foreach($errors->all() as $error)
+        <small class="error">{{ $error }}</small>
+    @endforeach
+@endif
+
 {!! Form::open(array('data-abide', 'url'=>'/auth/login','method'=>'POST')) !!}
 <div>
     <label>Email:
@@ -21,7 +27,7 @@
         <input type="checkbox" name="remember">
     </label>
 
-    <input type="submit" class="full purple" value="Login" />
+<button type="submit" class="full purple">Sign in</button>
 {!! Form::close() !!}
 
 <p><small>Problems signing in? <a href="#" class="emphasis" data-reveal-id='feedback'>Send us a message</a></small></p>

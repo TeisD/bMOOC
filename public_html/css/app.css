@@ -258,6 +258,18 @@ button[type=submit] {
   button[type=submit] img {
     height: 1rem; }
 
+button.giant, .button.giant {
+  font-size: 3rem;
+  border: 5px solid #ffffff;
+  color: #ffffff;
+  font-family: "Roboto", sans-serif;
+  font-weight: 700;
+  text-transform: uppercase; }
+
+button.giant:hover, .button.giant:hover {
+  background: #ffffff;
+  color: #080808; }
+
 /* FORMS */
 form fieldset {
   margin: 0;
@@ -267,7 +279,7 @@ form fieldset {
 @-moz-document url-prefix() {
   form fieldset {
     display: table-cell; } }
-form input, form textarea, form select, form .ql_editor {
+form input:not([type='checkbox']), form textarea, form select, form .ql_editor {
   border: 1px solid #ffffff;
   background: none;
   color: #ffffff;
@@ -305,11 +317,11 @@ form .tag-button label input {
 form .tag-button input:checked + span {
   border: 2px solid #ffffff; }
 
-.error label, .error label.error {
+form .error label, form .error label.error {
   color: inherit; }
-.error small, .error small.error {
+form .error small, form .error small.error {
   font-size: 0.8rem; }
-.error .ql_editor {
+form .error .ql_editor, form .error input {
   margin-bottom: 0; }
 
 small.error.success {
@@ -468,9 +480,10 @@ dl dd {
   background: #751e82; }
 
 /* MAIN */
-body {
+#wrapper {
   display: table;
-  width: 100%; }
+  width: 100%;
+  height: 100%; }
 
 header {
   display: table-row;
@@ -561,6 +574,17 @@ nav {
   .dropdown {
     max-width: 40%; } }
 /* large screens */
+/* LANDING PAGE */
+.landing_controls {
+  position: absolute;
+  left: 0;
+  bottom: 0; }
+  .landing_controls button {
+    padding-right: 0;
+    margin-bottom: 0; }
+  .landing_controls i {
+    font-size: 2rem; }
+
 /* RENDERING OF ARTEFACTS */
 #artefact_left, #artefact_right {
   overflow: hidden; }

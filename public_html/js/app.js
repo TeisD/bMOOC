@@ -355,7 +355,10 @@ function render(div, data, quality){
         div.find('.loader').hide();
         div.find('.artefact').fadeIn();
 
-        if(expandable){
+
+        var img = $('.artefact img', div)[0]
+
+        if(expandable && (img.naturalHeight > $('.artefact img', div).height() || img.naturalWidth > $('.artefact img', div).width())){
             div.find('#artefact').append('<button class="secondary square expand"><i class="fi-arrows-out"></i></button>');
 
             div.find('.expand').on('click', function(){

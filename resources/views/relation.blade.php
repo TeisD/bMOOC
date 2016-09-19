@@ -1,6 +1,6 @@
 @extends('master')
 
-@section('title', $artefact->title)
+@section('title', $artefact->topic->title)
 
 @section('header_search')
     @include('forms.search')
@@ -30,38 +30,30 @@
                 <div class="loader">
                     <img src="/img/loader_dark_big.gif" alt="loading..." />
                 </div>
-                <div class="artefact" data-reveal-id="artefact_lightbox_left" data-reveal-ajax="/artefact/{{$artefact->id}}" style="cursor: pointer !important"></div>
+                <div class="artefact" data-reveal-id="artefact_lightbox_left" style="cursor: pointer !important"></div>
             </div>
             <div class="small-6 columns artefact_right" id="artefact_right">
                 <div class="loader">
                     <img src="/img/loader_dark_big.gif" alt="loading..." />
                 </div>
-                @if($artefact->hasChildren)
-                <div class="artefact" data-reveal-id="artefact_lightbox_right" data-reveal-ajax="/artefact/{{$artefact->children[min($child_id, count($artefact->children)-1)]->id}}" style="cursor:pointer !important;"></div>
-                @else
-                <div class="artefact" data-reveal-id="artefact_lightbox_right" data-reveal-ajax="" style="cursor:pointer !important;"></div>
-                @endif
+                <div class="artefact" data-reveal-id="artefact_lightbox_right" style="cursor:pointer !important;"></div>
             </div>
         </div>
         <div class="row">
             <div class="small-6 columns">
-               <button class="primary eye" data-reveal-id="artefact_lightbox_left" data-reveal-ajax="/artefact/{{$artefact->id}}">details</button>
-                <button class="primary plus indent" data-reveal-id="new_artefact">add (some)thing</button>
+               <button class="primary eye" data-reveal-id="artefact_lightbox_left">details</button>
+                <button class="primary plus indent" data-artefact=0 data-reveal-id="new_artefact">add (some)thing</button>
             </div>
             <div class="small-6 columns">
-              @if($artefact->hasChildren)
-               <button class="primary eye" data-reveal-id="artefact_lightbox_right" data-reveal-ajax="/artefact/{{$artefact->children[min($child_id, count($artefact->children)-1)]->id}}">details</button>
-               @else
-               <button class="primary eye artefact_right" data-reveal-id="artefact_lightbox_right" data-reveal-ajax="">details</button>
-               @endif
-                <button class="primary plus indent artefact_right" data-reveal-id="new_artefact">add (some)thing</button>
+               <button class="primary eye artefact_right" data-reveal-id="artefact_lightbox_right">details</button>
+                <button class="primary plus indent artefact_right" data-artefact=1 data-reveal-id="new_artefact">add (some)thing</button>
             </div>
         </div>
     </div>
 
-    <div id="artefact_lightbox_left" class="reveal-modal full" data-reveal aria-hidden="true" role="dialog"></div>
+    <div id="artefact_lightbox_left" class="reveal-modal full artefact_lightbox" data-reveal aria-hidden="true" role="dialog"></div>
 
-    <div id="artefact_lightbox_right" class="reveal-modal full" data-reveal aria-hidden="true" role="dialog"></div>
+    <div id="artefact_lightbox_right" class="reveal-modal full artefact_lightbox" data-reveal aria-hidden="true" role="dialog"></div>
 @stop
 
 @section('forms')
@@ -84,9 +76,21 @@
     <script>
 
         var artefact = JSON.parse('{!! addslashes(json_encode($artefact)) !!}');
-        var children = JSON.parse('{!! addslashes(json_encode($artefact->children)) !!}');
+        var children = JSON.parse('{!! addslashes(json_encode($artefact->children()->with("tags")->get())) !!}');
         var artefact_id = artefact.id;
         var child_id = {{ min($child_id, count($artefact->children)-1) }}
+        var a;
+
+        $("[data-reveal-id=artefact_lightbox_left]").on('click', function(){
+            $('#artefact_lightbox_left').foundation('reveal', 'open', {
+                url: '/artefact/'+artefact_id,
+            });
+        });
+        $("[data-reveal-id=artefact_lightbox_right]").on('click', function(){
+            $('#artefact_lightbox_right').foundation('reveal', 'open', {
+                url: '/artefact/'+children[child_id].id,
+            });
+        });
 
         $(document).on('opened.fndtn.reveal', '#artefact_lightbox_left[data-reveal]', function () {
             render($('#artefact_lightbox_left'), artefact, 'original');
@@ -96,14 +100,17 @@
             render($('#artefact_lightbox_right'), children[child_id], 'original');
         });
 
+        $('[data-reveal-id=new_artefact]').on('click', function(){
+            a = $(this).data('artefact');
+        });
+
         $(document).on('open.fndtn.reveal', '#new_artefact', function (event) {
-            console.log(event);
-            // update invisible parent_id field
-            $("#new_artefact #parent_id").val(112);
+            $("#parent_id", $(this)).attr('value', (a ? children[child_id].id : artefact_id));
             // update tags
-            $("#new_artefact #old_tags div").remove();
-            $.each(artefact.tags, function (k, tag) {
-                $('#answer_tags').prepend('<div class="tag-button purple"><label><input  type="checkbox" data-abide-validator="tag_select" name="answer_tags[]" value="' + tag.id + '"><span>' + tag.tag + '</span></label></div>');
+            $("#old_tags div", $(this)).remove();
+            console.log(children[child_id]);
+            $.each((a ? children[child_id].tags : artefact.tags), function (k, tag) {
+                $('#old_tags').append('<div class="tag-button purple"><label><input  type="checkbox" data-abide-validator="tag_select" name="old_tags[]" value="' + tag.tag + '"><span>' + tag.tag + '</span></label></div>\n');
             });
         });
 
@@ -177,7 +184,6 @@
             if(artefact.has_parent) $("#nav_left").show();
             else $("#nav_left").hide();
             render($('#artefact_left'), artefact);
-            $('*[data-reveal-id=artefact_lightbox_left]').attr('data-reveal-ajax', '/artefact/'+artefact.id);
         }
 
         function showChild(){
@@ -197,7 +203,6 @@
 
             $(".artefact_right").show();
             render($('#artefact_right'), children[child_id]);
-            $('*[data-reveal-id=artefact_lightbox_right]').attr('data-reveal-ajax', '/artefact/'+children[child_id].id);
         }
 
         function updateUrl(){

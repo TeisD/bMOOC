@@ -3,7 +3,12 @@
 <h2>Add (some)thing</h2>
 <p>Add something to the topic. Your artefact will be linked to the preceding additions, and to artefacts from different topics using tags, descriptions and keywords</p>
 {{ Form::open(array('id'=>'new_artefact_form', 'data-abide'=>'ajax', 'url'=>'artefact/new','method'=>'POST', 'files'=>true)) }}
-      <input type="text" hidden="hidden" id="parent_id" name="parent_id" value=""/>
+    @if(isset($artefact))
+        <input type="text" hidden="hidden" id="parent_id" name="parent_id"/>
+        <input type="text" hidden="hidden" id="id" name="id" value="{{$artefact->topic->id}}"/>
+    @elseif(isset($topic))
+        <input type="text" hidden="hidden" id="id" name="id" value="{{$topic->id}}"/>
+    @endif
 
     <fieldset>
        <h3>General information</h3>
@@ -21,7 +26,7 @@
             <div class="row form-inline"><div class="columns large-6">
                 <label for="topic_end_date">tag 1:</label>
                 <div class="field">
-                    <input type="text" required data-abide-validator="tag_new" id="new_tag-1" name="new_tag[]" />
+                    <input type="text" required data-abide-validator="tag_new" id="new_tag-1" name="new_tags[]" />
                     <small class="error">3 unique tags are required.</small>
                 </div>
             </div></div>
@@ -29,7 +34,7 @@
                <div class="columns large-6">
                 <label for="topic_end_date">tag 2:</label>
                 <div class="field">
-                    <input type="text" required data-abide-validator="tag_new" id="new_tag-2" name="new_tag[]" />
+                    <input type="text" required data-abide-validator="tag_new" id="new_tag-2" name="new_tags[]" />
                     <small class="error">3 unique tags are required.</small>
                 </div>
                 </div>
@@ -38,7 +43,7 @@
                <div class="columns large-6">
                 <label for="topic_end_date">tag 3:</label>
                 <div class="field">
-                    <input type="text" required data-abide-validator="tag_new" id="new_tag-3" name="new_tag[]" />
+                    <input type="text" required data-abide-validator="tag_new" id="new_tag-3" name="new_tags[]" />
                     <small class="error">3 unique tags are required.</small>
                 </div>
                 </div>

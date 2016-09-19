@@ -23,12 +23,12 @@ class BmoocJsonController extends Controller
 	}
 
     public function artefact($id){
-        $artefact = Artefact::find($id);
+        $artefact = Artefact::with('tags')->find($id);
         return response()->json($artefact);
     }
 
     public function children($id){
-        $children = Artefact::find($id)->children;
+        $children = Artefact::find($id)->children()->with('tags')->get();
         return response()->json($children);
     }
 

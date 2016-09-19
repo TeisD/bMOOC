@@ -321,6 +321,20 @@ button[type=submit]{
     }
 }
 
+button.giant, .button.giant{
+    font-size: 3rem;
+    border: 5px solid $text;
+    color: $text;
+    font-family: $font2;
+    font-weight: $bold;
+    text-transform: uppercase;
+}
+
+button.giant:hover, .button.giant:hover{
+    background: $text;
+    color: $background;
+}
+
 /* FORMS */
 form{
     fieldset{
@@ -334,7 +348,7 @@ form{
             display: table-cell;
         }
     }
-    input, textarea, select, .ql_editor{
+    input:not([type='checkbox']), textarea, select, .ql_editor{
         border: 1px solid $text;
         background: none;
         color: $text;
@@ -385,14 +399,14 @@ form{
     }
 }
 
-.error{
+form .error{
     label, label.error{
         color: inherit;
     }
     small, small.error{
         font-size: 0.8rem;
     }
-    .ql_editor{
+    .ql_editor, input{
         margin-bottom: 0;
     }
 
@@ -584,9 +598,10 @@ dl dd{
 }
 
 /* MAIN */
-body {
+#wrapper {
     display:table;
     width:100%;
+    height: 100%;
 }
 
 header{
@@ -689,6 +704,20 @@ nav{
         max-width: 40%
     }
 } /* large screens */
+
+/* LANDING PAGE */
+.landing_controls{
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    button{
+        padding-right: 0;
+        margin-bottom: 0;
+    }
+    i{
+        font-size: 2rem;
+    }
+}
 
 /* RENDERING OF ARTEFACTS */
 #artefact_left, #artefact_right{
