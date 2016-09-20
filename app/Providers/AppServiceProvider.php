@@ -17,7 +17,7 @@ class AppServiceProvider extends ServiceProvider
         // Make a custom blade directive:
          Blade::directive('version', function() {
             $v = 'default';
-            $file = base_path() . '/../.revision';
+            $file = base_path() . '/.revision';
             if(file_exists($file)){
                 $v = file_get_contents($file);
             }
