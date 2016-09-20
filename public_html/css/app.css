@@ -702,13 +702,18 @@ svg .linktext text {
 svg .axis {
   stroke: #ffffff;
   shape-rendering: crispEdges;
-  cursor: pointer; }
+  cursor: pointer;
+  stroke-width: 2px; }
 svg .slider {
   fill: #751e82;
   color: #751e82;
   cursor: pointer; }
   svg .slider .background {
     cursor: pointer !important; }
+svg .marker {
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 2px; }
 svg .lbl {
   font-weight: 700;
   text-anchor: middle; }

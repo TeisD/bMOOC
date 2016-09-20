@@ -726,9 +726,12 @@ var Vis = (function(){
                 .html('<i class="fi-minus"></i>')
                 .on('click', function(){ pointer.zoom(-0.1) });
         }
-        
+        var pointer = this;
         if(this.options.type == "tree") this.renderTree();
         if(this.options.type == "network") this.renderForce();
+        if(this.options.resize) d3.select(window).on('resize', function(){
+            pointer.fit();
+        });
     }
     
     Vis.prototype.draw = function(){
@@ -744,6 +747,8 @@ var Vis = (function(){
 
         width = this.width();
         height = this.height();
+
+        if(width == 0 || height == 0) return;
 
         var t = [0,0],
             s = 1,
@@ -1211,17 +1216,47 @@ var Timeline = (function(){
                 pointer.brushed(this);
             });
 
+        // define the axis
+        this.axis = d3.svg.axis()
+            .scale(this.timeScale)
+            .orient("bottom")
+            .tickFormat(function(d) {
+                return pointer.formatDate(d);
+            })
+            .tickSize(0)
+            .tickPadding(12)
+            .tickValues([this.timeScale.domain()[0], this.timeScale.domain()[1]])
+    }
+
+    Timeline.prototype.resize = function(){
+        this.stop();
+
+        this.timeScale.range([100, this.vis.width() - 100]);
+        d3.select('.x.axis')
+            .attr("transform", "translate(0," + (this.vis.height() - Vis.MARGIN.top) + ")")
+            .call(this.axis);
+
+        d3.select('.slider')
+            .attr("transform", "translate(0, " + (this.vis.height() - Vis.MARGIN.top) + ")");
+        var value = this.brush.extent()[0];
+        d3.select(this.vis.el).select(".handle").attr("transform", "translate(" + this.timeScale(value) + ",0)");
+
     }
 
     Timeline.prototype.brushed = function(e){
         var pointer = this;
 
+        if(this.brush.extent()[0] < this.min) this.brush.extent([this.min, this.min]);
+        if(this.brush.extent()[0] > this.max) this.brush.extent([this.max, this.max]);
+
         var value = this.brush.extent()[0];
 
-        // put the brush to a new value
-        if (d3.event.sourceEvent) { // not a programmatic event
-            value = this.timeScale.invert(d3.mouse(e)[0]);
-            this.brush.extent([value, value]);
+        if(e){
+            // put the brush to a new value
+            if (d3.event.sourceEvent) { // not a programmatic event
+                value = this.timeScale.invert(d3.mouse(e)[0]);
+                this.brush.extent([value, value]);
+            }
         }
 
         d3.select(this.vis.el).select(".handle").attr("transform", "translate(" + this.timeScale(value) + ",0)");
@@ -1243,6 +1278,12 @@ var Timeline = (function(){
                 return date > pointer.brush.extent()[0];
             })//.attr("opacity", "0.2");
             .attr("display", "none");
+        this.vis.g.selectAll(".linktext")
+            .filter(function(d) {
+                var date = d3.time.format("%Y-%m-%d %H:%M:%S").parse(d.target.created_at);
+                return date > pointer.brush.extent()[0];
+            })//.attr("opacity", "0.2");
+            .attr("display", "none");
 
         if(this.vis.options.fit) this.vis.fit();
     }
@@ -1256,24 +1297,13 @@ var Timeline = (function(){
 
         // AXIS
 
-        // define the axis
-        var axis = d3.svg.axis()
-            .scale(this.timeScale)
-            .orient("bottom")
-            .tickFormat(function(d) {
-                return pointer.formatDate(d);
-            })
-            .tickSize(0)
-            .tickPadding(12)
-            .tickValues([this.timeScale.domain()[0], this.timeScale.domain()[1]])
-
         // select on parent node, we don't want to scale the timeline
         this.vis.svg.append("g")
             .attr("class", "x axis")
             // put in middle of screen
             .attr("transform", "translate(0," + (this.vis.height() - Vis.MARGIN.top) + ")")
             // inroduce axis
-            .call(axis)
+            .call(this.axis)
             .select(".domain");
 
         // SLIDER
@@ -1323,6 +1353,33 @@ var Timeline = (function(){
                 .attr('class', 'secondary square forward inline')
                 .html('<i class="fi-fast-forward"></i>')
                 .on('click', function(){ pointer.forward() });
+
+        if(this.vis.options.resize){
+            d3.select(window).on('resize', function(){
+                pointer.resize();
+                pointer.vis.fit();
+            });
+        }
+    }
+
+    /**
+     *  Put the timeline on a given date
+     */
+    Timeline.prototype.setDate = function(date){
+        this.brush.extent([date, date]);
+        d3.select('.slider').call(this.brush.event);
+    }
+
+    /**
+     *  Put a last visit mark on the timeline at the given date
+     */
+    Timeline.prototype.mark = function(date){
+        lastVisit = d3.select(".slider").append("g")
+            .attr("class", "mark")
+            .attr("transform", "translate(" + this.timeScale(date) + ",0)")
+        lastVisit.append("circle")
+            .attr("r", 5)
+            .attr("class", "marker");
     }
 
     /**

@@ -110,17 +110,23 @@
                     </div>
                     <div class="columns large-1" vis-list>
                         <span class="tag_1">
+                           @if(isset($artefact->tags[0]))
                             {{ $artefact->tags[0]->tag }}
+                            @endif
                         </span>
                     </div>
                     <div class="columns large-1" vis-list>
                         <span class="tag_2">
+                           @if(isset($artefact->tags[1]))
                             {{ $artefact->tags[1]->tag }}
+                            @endif
                         </span>
                     </div>
                     <div class="columns large-1 end" vis-list>
                         <span class="tag_3">
+                            @if(isset($artefact->tags[2]))
                             {{ $artefact->tags[2]->tag }}
+                            @endif
                         </span>
                     </div>
                 </div>
@@ -147,6 +153,7 @@
   <script src="/js/d3.min.js"></script>
   <script src="/js/d3plus.min.js"></script>
   <script src="/js/list.min.js"></script>
+   <script src="/js/cookie.js"></script>
     <script>
         var data = {};
         data.tree = JSON.parse('{!! addslashes(json_encode($tree)) !!}');
@@ -169,6 +176,23 @@
                 $('#vis-menu button[data-vis="tree"]').addClass('active');
                 vis.render();
                 timeline.show();
+
+                /* mark the last visit */
+                var lastVisit = new Date(parseInt(readCookie({{$topic->id}})));
+                // start from beginning
+                if(isNaN( lastVisit.getTime() )){
+                    lastVisit = new Date({{strtotime($topic->start_date)*1000}});
+                }
+                // start from stored time
+                if (lastVisit.getTime() < Date.now()){
+                    timeline.mark(lastVisit);
+                    timeline.mark(new Date());
+                    timeline.setDate(lastVisit);
+                    setTimeout(function(){ timeline.forward(); }, 3000);
+                }
+
+                /* store a new cookie for the last visit mark */
+                createCookie({{$topic->id}}, Date.now(), 365);
             }
         });
 
@@ -180,5 +204,6 @@
         var userList = new List('vis-fallback', {
             valueNames: [ 'title', 'author', 'type', 'date_ts', 'tag_1', 'tag_2', 'tag_3' ]
         });
+
     </script>
 @stop

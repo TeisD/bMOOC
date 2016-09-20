@@ -875,6 +875,7 @@ svg{
         stroke: $text;
         shape-rendering: crispEdges;
         cursor: pointer;
+        stroke-width: 2px;
     }
     .slider{
         fill: $purple;
@@ -883,6 +884,11 @@ svg{
         .background{
             cursor: pointer !important;
         }
+    }
+    .marker{
+        fill: none;
+        stroke: $text;
+        stroke-width: 2px;
     }
     .lbl{
         font-weight: $bold;
