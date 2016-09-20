@@ -451,7 +451,7 @@ class AdminController extends Controller {
                 $table->string('title', 100)->change();
                 $table->integer('type')->change();
                 // loop through and copy the contents of the 'url' column to the 'content' column
-                DB::statement('UPDATE artefacts
+                DB::statement('UPDATE v2_artefacts
                     SET content = url
                     WHERE url <> \'NULL\'');
             });
@@ -464,7 +464,7 @@ class AdminController extends Controller {
             Schema::table('artefacts_tags', function($table){
                 $table->primary('id');
             });
-            DB::statement('RENAME TABLE artefacts_tags TO artefact_tags');
+            DB::statement('RENAME TABLE v2_artefacts_tags TO v2_artefact_tags');
         }
 
         /**
@@ -482,7 +482,7 @@ class AdminController extends Controller {
                 $table->integer('author')->change();
                 $table->integer('type')->change();
                 $table->string('title', 100)->change();
-                DB::statement('UPDATE instructions
+                DB::statement('UPDATE v2_instructions
                     SET content = url
                     WHERE url <> \'NULL\'');
             });
@@ -492,7 +492,7 @@ class AdminController extends Controller {
          *  instruction_artefact_types
          */
         if (Schema::hasTable('instructions_artefact_types')){
-            DB::statement('RENAME TABLE instructions_artefact_types TO instruction_artefact_types');
+            DB::statement('RENAME TABLE v2_instructions_artefact_types TO instruction_artefact_types');
         }
 
         /**
@@ -508,6 +508,14 @@ class AdminController extends Controller {
         Schema::table('users', function($table){
             $table->integer('role')->change();
         });
+
+        /**
+         * topics
+         */
+        DB::statement('INSERT INTO v2_topics (id, author, title, description, goal, start_date, end_date, created_at, updated_at)
+        SELECT topic, author, title, \'no description\', \'no goal\', created_at, \'2016-09-01 12:00:00\', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+        FROM v2_artefacts
+        WHERE parent_id IS NULL');
 
         /**
          *  add migrations to enable artisan
@@ -534,11 +542,6 @@ class AdminController extends Controller {
         }
 
         Artisan::call('migrate');
-
-        DB::statement('INSERT INTO topics (id, author, title, description, goal, start_date, end_date, created_at, updated_at)
-        SELECT topic, author, title, \'no description\', \'no goal\', created_at, \'2016-09-01 12:00:00\', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
-        FROM artefacts
-        WHERE parent_id IS NULL');
 
         return view('admin.actions.migrate');
     }
