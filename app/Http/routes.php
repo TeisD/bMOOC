@@ -22,7 +22,7 @@ Route::get('artefact/{id}/original', 'BmoocController@getImageOriginal');
 Route::get('json/artefact/{id}', 'BmoocJsonController@artefact');
 Route::get('json/artefact/{id}/children', 'BmoocJsonController@children');
 
-Route::get('json/instruction/{thread}', 'BmoocJsonController@instruction');
+Route::get('json/instruction/{id}', 'BmoocJsonController@instruction');
 Route::get('json/topic/{id}/answers', 'BmoocJsonController@answers');
 Route::get('json/topic/{id}/answers/search/{author?}/{tag?}/{keyword?}', 'BmoocJsonController@answers');
 Route::get('json/topic/{id}', 'BmoocJsonController@discussion');

@@ -82,14 +82,18 @@
         var a;
 
         $("[data-reveal-id=artefact_lightbox_left]").on('click', function(){
+            $('#artefact_lightbox_left').html("");
             $('#artefact_lightbox_left').foundation('reveal', 'open', {
                 url: '/artefact/'+artefact_id,
             });
+            return false;
         });
         $("[data-reveal-id=artefact_lightbox_right]").on('click', function(){
+            $('#artefact_lightbox_right').html("");
             $('#artefact_lightbox_right').foundation('reveal', 'open', {
                 url: '/artefact/'+children[child_id].id,
             });
+            return false;
         });
 
         $(document).on('opened.fndtn.reveal', '#artefact_lightbox_left[data-reveal]', function () {

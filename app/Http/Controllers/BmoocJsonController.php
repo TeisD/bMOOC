@@ -32,6 +32,11 @@ class BmoocJsonController extends Controller
         return response()->json($children);
     }
 
+    public function instruction($id){
+        $instruction = Instruction::find($id);
+        return response()->json($instruction);
+    }
+
 	public function discussion($id) {
 		$artefact = Artefact::with(['type', 'the_author', 'last_modifier', 'active_instruction'])->find($id);
 		$antwoorden = $artefact->children;
@@ -46,13 +51,6 @@ class BmoocJsonController extends Controller
 		$aantalAntwoorden = DB::table('artefacts')->where('thread', $artefact->thread)->count();
 
 		return response()->json(['artefact' => $artefact, 'answers' => $antwoorden, 'aantalAntwoorden'=>$aantalAntwoorden, 'tags' => $tags, 'instruction' => $instruction, 'related'=>$rels]);
-	}
-
-	public function instruction($thread, $all = false) {
-		$instruction = Instruction::with('instruction_type')->where('thread', $thread);
-		if ($all) $instruction = $instruction->where('active_from', '<=', date('Y-m-d H:i:s'));
-		$instruction = $instruction->get();
-		return response()->json($instruction);
 	}
 
     public function answers($id, $author = null, $tag = null, $keyword = null) {

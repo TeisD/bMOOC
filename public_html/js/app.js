@@ -314,7 +314,6 @@ function render(div, data, quality){
 
     div.find('.artefact').hide();
     div.find('.loader').show();
-
     switch (data.type_id) {
         case 28:
             html = "<div class=\"textContainer\"><div class=\"text\"><h2>" + data.title + "</h2>" + data.content + "</div></div>";
@@ -354,7 +353,6 @@ function render(div, data, quality){
         div.stop(true, true)
         div.find('.loader').hide();
         div.find('.artefact').fadeIn();
-
 
         var img = $('.artefact img', div)[0]
 
