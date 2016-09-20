@@ -8,7 +8,7 @@ Route::get('topic/{id}', 'BmoocController@topic');
 Route::get('relation/{id}/{child?}', 'BmoocController@relation');
 Route::get('artefact/{id}', 'BmoocController@artefact');
 Route::get('instruction/{id}', 'BmoocController@instruction');
-Route::get('search/{author?}/{tag?}/{keyword?}', 'BmoocController@searchDiscussions');
+Route::get('search/{author?}/{tag?}/{keyword?}', 'BmoocController@search');
 
 Route::post('topic/new', 'BmoocController@newTopic');
 Route::patch('topic/new', 'BmoocController@newTopic');

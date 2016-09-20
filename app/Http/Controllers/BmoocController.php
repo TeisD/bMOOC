@@ -83,7 +83,7 @@ class BmoocController extends Controller {
             HAVING count > 1
         '));
 
-        $links = VisController::getLinks($links_query);
+        $links = VisController::buildLinks($links_query);
 
         return BmoocController::viewPage('index', ['topics' => $topics, 'links' => $links, 'archived' => $archived]);
     }
@@ -125,51 +125,8 @@ class BmoocController extends Controller {
 
         $tree = VisController::getTree($topic->firstAddition);
         $list = $topic->artefacts;
-
-        // some pretty crazy DB request intensive method
-        // This will match only the unique (user added) tag for each artefact
-
-        function get_tags($a) {
-            $ret = [];
-            foreach($a as $b) array_push($ret, ['tag_id' => $b->id, 'tag' => strtolower($b->tag)]);
-            return $ret;
-        }
-
-        function compare_tags($a, $b){
-            return strcmp($a['tag'],$b['tag']);
-        }
-
-        function find_tag($needle, $haystack){
-            $size = count($haystack);
-            for($i = 0; $i < $size; $i++){
-                if($haystack[$i]->tag == $needle['tag']) return $i;
-            }
-            return FALSE;
-        }
-
-        $links = [];
-
-        foreach($list as $artefact){
-            if(!$artefact->hasParent){
-                $unique_tags = get_tags($artefact->tags);
-                continue;
-            } else{
-                $artefact_tags = get_tags($artefact->tags);
-                $parent_tags = get_tags($artefact->parent->tags);
-                $unique_tags = array_udiff($artefact_tags, $parent_tags, 'App\Http\Controllers\\compare_tags');
-            }
-            foreach($unique_tags as $unique_tag){
-                $key = find_tag($unique_tag, $links);
-                if($key === FALSE){
-                    array_push($links, (object)array('tag_id' => $unique_tag['tag_id'], 'tag' => $unique_tag['tag'], 'items' => (string)$artefact->id, 'count' => 1));
-                } else {
-                    $links[$key]->items = $links[$key]->items.','.(string)$artefact->id;
-                    $links[$key]->count = $links[$key]->count + 1;
-                }
-            }
-        }
-
-        $links = VisController::getLinks($links);
+        $links = VisController::getLinks($list);
+        $links = VisController::buildLinks($links);
 
         return BmoocController::viewPage('topic', ['topic' => $topic, 'tree' => $tree, 'list' => $list, 'links' => $links]);
     }
@@ -222,50 +179,44 @@ class BmoocController extends Controller {
           }
     }
 
-    public function searchDiscussions($author = null, $tag = null, $keyword = null) {
-        $user = Auth::user();
+    public function search($author = null, $tag = null, $keyword = null) {
+        if($author == "all" && $tag == "all" && $keyword == null) return BmoocController::index();
+
+
         //filter the artefacts on author first
-        $discussies = DB::table('artefacts');
+        $results = DB::table('artefacts');
+
         if (isset($author) && $author != "all") {
-            $discussies
-                    ->where('author', $author);
+            $results->join('users', 'artefacts.author_id', '=', 'users.id')
+                ->select('artefacts.*', 'users.name')
+                ->where('users.name', $author);
         }
         // tags
         if (isset($tag) && $tag != "all") {
-            $discussies
-                    ->join('artefacts_tags', 'artefacts.id', '=', 'artefacts_tags.artefact_id')
-                    ->join('tags', 'artefacts_tags.tag_id', '=', 'tags.id')
-                    ->where('tag_id', $tag);
+            $results->join('artefact_tags', 'artefacts.id', '=', 'artefact_tags.artefact_id')
+                    ->join('tags', 'artefact_tags.tag_id', '=', 'tags.id')
+                    ->select('artefacts.*', 'tags.tag')
+                    ->where('tag', $tag);
         }
         // query
         if (isset($keyword)) {
-            $discussies
-                    ->where(function($q) use( &$keyword) {
+            $results->where(function($q) use( &$keyword) {
                         $q
                         ->where('title', 'LIKE', '%' . $keyword . '%')
-                        ->orWhere('contents', 'LIKE', '%' . $keyword . '%');
+                        ->orWhere('content', 'LIKE', '%' . $keyword . '%');
                     });
         }
-        // the current implementation is to return treads, not artefacts
-        $discussies = $discussies
-                ->select('thread')
-                ->distinct()
-                ->lists('thread');
-        // SORT?
-        //->distinct();
-        $discs = Artefact::with(['last_modifier'])
-                ->orderBy('updated_at', 'desc')
-                ->whereIn('thread', $discussies)
-                ->whereNull('parent_id')
-                ->get();
-        // extra information needed
-        $auteurs = DB::table('users')->select('name', 'id')->distinct()->get();
-        $tags = Tags::orderBy('tag')->get();
-        $aantalAntwoorden = DB::table('artefacts')
-                        ->select(DB::raw('count(*) as aantal_antwoorden, thread'))
-                        ->groupBy('thread')->get();
 
-        return view('index', ['topic' => $discs, 'user' => $user, 'auteurs' => $auteurs, 'tags' => $tags, 'titel' => "met tag '" . $tag . "'", 'aantalAntwoorden' => $aantalAntwoorden, 'search' => ['tag' => $tag, 'author' => $author, 'keyword' => $keyword]]);
+        /* make a collection so we can -> in the view */
+        $collection = new \Illuminate\Database\Eloquent\Collection;
+        foreach($results->get() as $result){
+            $collection->add(Artefact::find($result->id));
+        }
+
+        $links = VisController::getLinks($collection);
+        $links = VisController::buildLinks($links);
+
+        return BmoocController::viewPage('search', ['results'=> $collection, 'currentAuthor'=> $author, 'currentTag'=> $tag, 'currentKeyword'=>$keyword, 'links' => $links]);
     }
 
     public function newTopic(Request $request){

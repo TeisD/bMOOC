@@ -28,7 +28,11 @@
                <label for="author">Authors</label>
                <div class="field">
                    <div class="awesomplete">
+                   @if(isset($currentAuthor) && $currentAuthor != 'all')
+                    <input class="dropdown-input" autocomplete="off" aria-autocomplete="list" id="author" list="authors-list" value="{{$currentAuthor}}" />
+                    @else
                     <input class="dropdown-input" autocomplete="off" aria-autocomplete="list" id="author" list="authors-list" />
+                    @endif
                    </div>
                </div>
                <datalist id="authors-list">
@@ -45,7 +49,11 @@
                <label for="tag">Tags</label>
                <div class="field">
                    <div class="awesomplete">
+                   @if(isset($currentTag) && $currentTag != 'all')
+                    <input class="dropdown-input" autocomplete="off" aria-autocomplete="list" id="tag" list="tags-list" value="{{$currentTag}}" />
+                    @else
                     <input class="dropdown-input" autocomplete="off" aria-autocomplete="list" id="tag" list="tags-list" />
+                    @endif
                    </div>
                </div>
                <datalist id="tags-list">
@@ -61,8 +69,8 @@
           <div class="form-inline">
                <label for="keyword">Search</label>
                <div class="field">
-                @if(isset($search))
-                    <input type="text" id="keyword" value="{{ $search['keyword'] }}"/>
+                @if(isset($currentKeyword))
+                    <input type="text" id="keyword" value="{{ $currentKeyword }}"/>
                 @else
                     <input type="text" id="keyword" />
                 @endif
