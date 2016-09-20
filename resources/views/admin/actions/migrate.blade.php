@@ -10,9 +10,16 @@
     </div>
     <div class="row">
         <div class="columns">
+           <form method="post" action="/admin/actions/migrate/new" onsubmit="return confirm('Do you really want to submit the form?');">
+           {!! Form::token(); !!}
+            <input type="submit" class="button" value="Create new tables"/>
+            </form>
+        </div>
+    <div class="row">
+        <div class="columns">
            <form method="post" onsubmit="return confirm('Do you really want to submit the form?');">
            {!! Form::token(); !!}
-            <input type="submit" class="button" value="Migrate"/>
+            <input type="submit" class="button" value="Migrate from v1"/>
             </form>
         </div>
     </div>

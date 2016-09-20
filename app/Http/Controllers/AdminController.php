@@ -293,10 +293,8 @@ class AdminController extends Controller {
     }
 
     public function getThumbnails(Request $request) {
-        $user = Auth::user();
-        if (!$user || $user->role != "editor") {
-            App::abort(401, 'Not authenticated');
-        }
+        //$user = Auth::user();
+        //if (!$user || $user->role_id != 3) App::abort(401, 'Not authenticated');
 
         // get a list of all the local pdf's & images
         $artefacts = Artefact::where('artefact_type', '29')
@@ -358,8 +356,8 @@ class AdminController extends Controller {
     }
 
     public function getTags(Request $request){
-        $user = Auth::user();
-        if (!($user && $user->role == "editor")) App::abort(401, 'Not authenticated');
+        //$user = Auth::user();
+        //if (!($user && $user->role_id != 3)) App::abort(401, 'Not authenticated');
 
         $duplicates = DB::table('tags')
             ->select('tag', DB::raw('COUNT(*) as count, GROUP_CONCAT(id) as id, GROUP_CONCAT(times_used) as times_used'))
@@ -376,8 +374,8 @@ class AdminController extends Controller {
     }
 
     public function postTags(Request $request){
-        $user = Auth::user();
-        if (!($user && $user->role == "editor")) App::abort(401, 'Not authenticated');
+        //$user = Auth::user();
+        //if (!($user && $user->role_id != 3)) App::abort(401, 'Not authenticated');
 
         $duplicates = AdminController::getTags($request)->getData()['duplicates'];
 
@@ -406,16 +404,21 @@ class AdminController extends Controller {
     }
 
     public function getMigrate(){
-        $user = Auth::user();
-        if (!($user && $user->role == "editor")) App::abort(401, 'Not authenticated');
+        //$user = Auth::user();
+        //if (!($user && $user->role_id != 3)) App::abort(401, 'Not authenticated');
 
         return view('admin.actions.migrate');
 
     }
 
+    public function postMigrateNew(){
+        Artisan::call('migrate');
+        return view('admin.actions.migrate');
+    }
+
     public function postMigrate(){
-        $user = Auth::user();
-        if (!($user && $user->role == "editor")) App::abort(401, 'Not authenticated');
+        //$user = Auth::user();
+        //if (!($user && $user->role_id != 3)) App::abort(401, 'Not authenticated');
 
         /**
          *  artefact_types
