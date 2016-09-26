@@ -46,7 +46,7 @@ class BmoocController extends Controller {
 
     public function viewPage($name, $options = []){
 
-        Auth::attempt(['email' => 'test@bmooc.be', 'password' => 'testtest']);
+        Auth::attempt(['email' => 'test@bmooc.be', 'password' => 'test']);
 
         if (!Auth::check()){
             $videos = DB::table('introduction_videos')->get();
