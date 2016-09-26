@@ -152,7 +152,8 @@ class BmoocController extends Controller {
     }
 
     public function about(){
-        return BmoocController::viewModal('modals.about', ['videos'=> $video]);
+        $videos = DB::table('introduction_videos')->get();
+        return BmoocController::viewModal('modals.about', ['videos'=> $videos]);
     }
 
     public function feedback(Request $request){

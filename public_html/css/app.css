@@ -4,6 +4,9 @@
 input, select, img, button, .reveal-modal {
   outline: none; }
 
+* {
+  -moz-box-sizing: border-box; }
+
 /* HTML & BODY */
 html, body {
   background: #080808;
@@ -78,7 +81,7 @@ h1 {
   color: #878787 !important; }
 
 /* LINKS */
-a, a:hover, a:visited, a:active {
+a, a:link, a:visited, a:hover, a:active {
   color: inherit; }
 
 a:hover {
@@ -498,24 +501,26 @@ nav {
   display: table-row;
   height: 100%; }
 
-/*
-.flexbox{
-    body{
+/*.flexbox{
+    body, #wrapper{
         display: flex;
-        min-height: 100%;
+        min-height: 100vh;
         flex-direction: column;
     }
     .container{
         display: flex;
         flex: 1;
     }
-}
-*/
+    header{
+        display: block;
+    }
+}*/
 /* GRID */
 .row.full {
+  max-height: 100%;
   width: 100%;
   height: 100%;
-  overflow: hidden; }
+  position: relative; }
   .row.full .columns {
     height: 100%; }
 
@@ -601,7 +606,15 @@ nav {
 
 /* RENDERING OF ARTEFACTS */
 #artefact_left, #artefact_right {
-  overflow: hidden; }
+  position: absolute;
+  overflow: hidden;
+  top: 0; }
+
+#artefact_left {
+  left: 0; }
+
+#artefact_right {
+  right: 0; }
 
 .artefact, .loader {
   width: 100%;
@@ -609,9 +622,7 @@ nav {
   max-width: 100%;
   max-height: 100%;
   display: block;
-  position: relative;
-  -webkit-transition: background-color 0.5s ease;
-  transition: background-color 0.5s ease; }
+  position: relative; }
   .artefact img, .loader img {
     display: block;
     position: absolute;
@@ -668,10 +679,12 @@ nav {
   content: ' \25B8'; }
 
 #relation {
-  padding: 2rem;
+  padding: 4rem 3rem;
   height: 100%;
   width: 100%;
-  position: relative; }
+  position: relative;
+  display: table-cell;
+  overflow: hidden; }
   #relation nav {
     font-size: 4rem;
     font-family: sans-serif; }
@@ -683,7 +696,7 @@ nav {
 
 .relation_nav#nav_up {
   left: 75%;
-  top: -2rem;
+  top: -1rem;
   margin-left: -2rem; }
 
 .relation_nav#nav_right {
@@ -693,7 +706,7 @@ nav {
 
 .relation_nav#nav_down {
   left: 75%;
-  bottom: -2rem;
+  bottom: -1rem;
   margin-left: -2rem; }
 
 .relation_nav#nav_left {

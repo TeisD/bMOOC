@@ -65,7 +65,7 @@
                                 <a href="#" help-show="index">help</a>
                             </li>
                             <li>
-                               <a href="#" data-reveal-id="about">about</a>
+                               <a href="/about" data-reveal-id="about" data-reveal-ajax="true">about</a>
                             </li>
                             <li>
                                <a href="#" data-reveal-id="feedback">feedback</a>
@@ -102,7 +102,6 @@
         {{-- MODALS --}}
         {{-- ABOUT --}}
         <div id="about" class="reveal-modal small" data-reveal aria-labelledby="about_title" aria-hidden="true" role="dialog">
-            @include('modals.about')
         </div>
 
         {{-- FORMS --}}

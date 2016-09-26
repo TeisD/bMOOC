@@ -250,6 +250,7 @@
                     down();
                     break;
             }
+            evt.preventDefault();
         };
 
     </script>

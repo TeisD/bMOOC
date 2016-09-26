@@ -42,6 +42,7 @@ Route::get('auth/register', 'Auth\AuthController@getRegister');
 Route::post('auth/register', 'Auth\AuthController@postRegister');
 
 Route::post('feedback', 'BmoocController@feedback');
+Route::get('about', 'BmoocController@about');
 
 /**
  * ADMIN PANEL

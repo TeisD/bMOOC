@@ -108,7 +108,7 @@
     <fieldset>
       <div class="row"><div class="columns">
        <h3>Description</h3>
-       <label>Try to describe why you chose this artefact:</label>
+       <label>Describe what you see in the previous contribution:</label>
         @include('forms.elements.texteditor', ['id' => 'artefact_description', 'required' => 'required', 'error_msg' => 'Please attempt to describe your addition.'])
         </div></div>
     </fieldset>

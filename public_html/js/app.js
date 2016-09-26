@@ -313,8 +313,8 @@ function render(div, data, quality, url){
     if(url == undefined) url = 'artefact'
     if(quality == undefined) quality = 'medium'
 
-    div.find('.artefact').hide();
-    div.find('.loader').show();
+    //div.find('.artefact').hide();
+    //div.find('.loader').show();
     switch (data.type_id) {
         case 28:
             html = "<div class=\"textContainer\"><div class=\"text\"><h2>" + data.title + "</h2>" + data.content + "</div></div>";
@@ -1114,11 +1114,19 @@ var Vis = (function(){
                 });
 
             if(this.options.background){
-                a.append("text")
+                var bg = a.append("text")
                     .attr("class", "title stroke")
                     .text(function(d){
                         return d.title;
                     })
+                bg.append("tspan")
+                .attr("class", "small")
+                .text(function(d){
+                    var c = ''
+                    if(!d.active) c+= " (inactive)";
+                    if(d.archived) c+= " (archived)";
+                    return c;
+                });
             }
 
             var txt = a.append("text")
