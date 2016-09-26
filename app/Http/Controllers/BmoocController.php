@@ -40,13 +40,14 @@ abstract class Types
 class BmoocController extends Controller {
 
     public function __construct() {
-        $this->middleware('auth', ['except' => 'index']);
+        $this->middleware('auth', ['except' => 'index', 'artefact', 'instruction']);
         //$this->middleware('auth');
     }
 
     public function viewPage($name, $options = []){
         if (!Auth::check()){
-            return view('landing');
+            $videos = DB::table('introduction_videos')->get();
+            return view('landing', ['videos' => $videos]);
         }
 
         $user = Auth::user();
@@ -148,6 +149,10 @@ class BmoocController extends Controller {
         $instruction = Instruction::find($id);
 
         return BmoocController::viewModal('modals.instruction', ['instruction'=> $instruction]);
+    }
+
+    public function about(){
+        return BmoocController::viewModal('modals.about', ['videos'=> $video]);
     }
 
     public function feedback(Request $request){
@@ -517,8 +522,6 @@ class BmoocController extends Controller {
             $url .= '/0.jpg';
             $response = Response::make( file_get_contents($url), 200 );
             $response->header('Content-Type', 'image/jpeg');
-            $response->header('Content-Length' . filesize($path));
-
             return $response;
         } else if($a->type_id == 32){
             $oembed_endpoint = 'http://vimeo.com/api/oembed';

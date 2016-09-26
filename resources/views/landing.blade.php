@@ -88,9 +88,13 @@
         <script src="/js/jquery.tubular.js"></script>
 
         <script>
+
+            var videos = JSON.parse('{!! addslashes(json_encode($videos)) !!}');
+            videoId = videos[Math.floor(Math.random() * videos.length)].url;
+
             $('document').ready(function() {
                 var options = {
-                    videoId: 'ab0TSkLe-E0',
+                    videoId: videoId,
                     start: 3
                 };
                 $('#wrapper').tubular(options);

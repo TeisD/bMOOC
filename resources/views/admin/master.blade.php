@@ -4,18 +4,21 @@
     <meta charset="UTF-8">
     <title>bMOOC | @yield('title')</title>
 
-    <script src="css/foundation.css"></script>
-    <link rel="stylesheet" href="css/admin.css">
-    <script src="js/vendor/modernizr.js"></script>
+    {{-- STYLESHEETS --}}
+    <link rel="stylesheet" href="/css/normalize.min.css">
+    <link rel="stylesheet" href="/css/foundation.min.css">
+    <link rel="stylesheet" href="/css/app.css?v=@version">
+
+    <script src="/js/vendor/modernizr.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 </head>
 <body>
 
-   <header>
+   <header style="max-width: 900px; width=100%; margin: 0 auto; display: block;">
       <div class="row">
-          <div class="columns">
+          <div class="columns medium-2 large-2">
               <h1>bMOOC</h1>
-               <nav>
+               {{--<nav>
                   <div class="icon-bar two-up">
                       <a href="/admin/data" class="item @menu('data')">
                         <i title="video" class="fa fa-area-chart"></i>
@@ -26,26 +29,23 @@
                         <label>Actions</label>
                       </a>
                     </div>
-               </nav>
+               </nav>--}}
           </div>
-      </div>
-   </header>
-
-   <div class="row">
-       <div class="columns">
-           <nav class="inline slash center">
-               <ul>
-                   @yield('nav_secondary')
-                </ul>
-           </nav>
+           <div class="columns medium-10 medium-10">
+               <nav>
+                   <ul class="inline slash center">
+                       @yield('nav_secondary')
+                    </ul>
+               </nav>
+           </div>
        </div>
-   </div>
+    </header>
 
-    <div class="container">
+    <div style="max-width: 900px; width=100%; margin: 0 auto;">
             @yield('content')
     </div>
 
-    <script src="js/vendor/jquery.js"></script>
+    <script src="/js/vendor/jquery.min.js"></script>
     <script>
         var host = "{{ URL::to('/') }}";
     </script>

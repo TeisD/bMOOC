@@ -20,7 +20,7 @@
             @foreach ($artefacts as $artefact)
             <tr>
                 <td class="id">{{ $artefact->id }}</td>
-                <td class="url">{{ $artefact->url }}</td>
+                <td class="url">{{ $artefact->content }}</td>
                 <td class="type">
                     @if ($artefact->artefact_type == 29)
                         <span class="img">img</span>
@@ -59,9 +59,9 @@
 @section('scripts')
     @parent
 
-    <script src="js/foundation.min.js"></script>
-    <script src="js/pdf.js"></script>
-    <script src="js/app.js"></script>
+    <script src="/js/foundation.min.js"></script>
+    <script src="/js/pdf.js"></script>
+    <script src="/js/app.js"></script>
     <script>
         $(document).ready(function(){
             $('#generate').click(function(){

@@ -585,6 +585,20 @@ nav {
   .landing_controls i {
     font-size: 2rem; }
 
+.videoWrapper {
+  position: relative;
+  padding-bottom: 56.25%;
+  /* 16:9 */
+  padding-top: 25px;
+  height: 0;
+  margin-bottom: 1rem; }
+  .videoWrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%; }
+
 /* RENDERING OF ARTEFACTS */
 #artefact_left, #artefact_right {
   overflow: hidden; }
@@ -640,6 +654,9 @@ nav {
 .instruction {
   border: 1px solid #ffffff;
   padding: 1rem; }
+  .instruction img, .instruction object, .instruction iframe {
+    width: 100%;
+    height: auto; }
 
 .showhide {
   cursor: pointer; }

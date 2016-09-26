@@ -3,6 +3,9 @@
 @section('title', 'Actions')
 
 @section('nav_secondary')
+   <li class="@menu('actions')">
+       <a href="/admin/actions">actions</a>
+   </li>
     <li class="@menu('thumbnails')">
         <a href="/admin/actions/thumbnails">thumbnails</a>
     </li>

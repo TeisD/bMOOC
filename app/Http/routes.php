@@ -31,18 +31,11 @@ Route::get('json/topic/{id}/answers', 'BmoocJsonController@answers');
 Route::get('json/topic/{id}/answers/search/{author?}/{tag?}/{keyword?}', 'BmoocJsonController@answers');
 Route::get('json/topic/{id}', 'BmoocJsonController@discussion');
 
-//Route::get('login/{provider?}', ['uses'=>'Auth\AuthController@login', 'as' => 'login']);
-//Route::get('logout', 'Auth\AuthController@getLogout');
-
 Route::auth();
-
 Route::get('login', 'BmoocController@index');
 
 // Authentication and registration
 Route::get('auth/login', 'Auth\AuthController@getLogin');
-//Route::get('auth/error', function ()    {
-//    return view('errors/login');
-//});
 Route::post('auth/login', 'Auth\AuthController@postLogin');
 Route::get('auth/logout', 'Auth\AuthController@logout');
 Route::get('auth/register', 'Auth\AuthController@getRegister');
@@ -54,7 +47,7 @@ Route::post('feedback', 'BmoocController@feedback');
  * ADMIN PANEL
  */
 Route::get('admin', function(){
-    return Redirect::to('admin/data/basic');
+    return Redirect::to('admin/actions/');
 });
 Route::get('admin/data', function(){
     return Redirect::to('admin/data/basic');
@@ -63,9 +56,9 @@ Route::get('admin/data/basic', 'AdminController@basic');
 Route::get('admin/data/progress', 'AdminController@progress');
 Route::get('admin/data/tree', 'AdminController@tree');
 Route::get('admin/data/topics', 'AdminController@topics');
-Route::get('admin/actions', function(){
-    return Redirect::to('admin/actions/thumbnails');
-});
+Route::get('admin/actions', 'AdminController@actions');
+Route::post('admin/videos', 'AdminController@newVideo');
+Route::delete('admin/videos', 'AdminController@deleteVideo');
 Route::get('admin/actions/thumbnails', 'AdminController@getThumbnails');
 Route::post('admin/actions/thumbnails', 'AdminController@postThumbnails');
 Route::get('admin/actions/tags', 'AdminController@getTags');

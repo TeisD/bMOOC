@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Auth;
-use Request;
+use Illuminate\Http\Request;
 use App;
 use Exception;
 use Input;
@@ -17,12 +17,13 @@ use Carbon;
 use App\Http\Controllers\Controller;
 use Schema;
 use Artisan;
+use URL;
 
 class AdminController extends Controller {
 
     public function __construct() {
-        $this->middleware('auth', ['except' => 'index']);
-        //$this->middleware('auth');
+        //$this->middleware('auth', ['except' => 'index']);
+        $this->middleware('auth');
     }
 
     public function basic($topic = null) {
@@ -293,17 +294,44 @@ class AdminController extends Controller {
         }
     }
 
+    public function actions(Request $request) {
+        $videos = DB::table('introduction_videos')->get();
+        return view('admin.actions.index', ['videos' => $videos]);
+    }
+
+    public function newVideo(Request $request){
+        DB::table('introduction_videos')->insert(
+            ['url' => AdminController::parseYoutube($request->input('url'))]
+        );
+        return AdminController::actions($request);
+    }
+
+    public function deleteVideo(Request $request){
+        DB::table('introduction_videos')->where('id', intval($request->id))
+            ->delete();
+        return AdminController::actions($request);
+    }
+
+    private function parseYoutube($url){
+        $video_id = false;
+        if (preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $url, $match)) {
+            $video_id = $match[1];
+        }
+        if($video_id && $video_id != '') return $video_id;
+        else throw new Exception('The URL is not a valid link to a YouTube video');
+    }
+
     public function getThumbnails(Request $request) {
         //$user = Auth::user();
         //if (!$user || $user->role_id != 3) App::abort(401, 'Not authenticated');
 
         // get a list of all the local pdf's & images
-        $artefacts = Artefact::where('artefact_type', '29')
-            ->orWhere('artefact_type', '33')
+        $artefacts = Artefact::where('type_id', '29')
+            ->orWhere('type_id', '33')
             ->get();
 
         // check which image sizes are available
-        $basepath = base_path().'/../uploads/thumbnails';
+        $basepath = storage_path('app/artefacts/thumbnails');
         foreach($artefacts as $artefact){
             $sizes = Array();
             if (file_exists($basepath . '/../' . $artefact->url)) {
