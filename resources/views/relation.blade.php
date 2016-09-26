@@ -58,7 +58,7 @@
 
 @section('forms')
     {{-- NEW ARTEFACT FORM --}}
-    @include('forms.master', ['form' => 'new_artefact', 'class' => 'slide'])
+    @include('forms.master', ['form' => 'new_artefact', 'class' => 'slide', 'topic' => $artefact->topic])
 @stop
 
 @section('scripts')

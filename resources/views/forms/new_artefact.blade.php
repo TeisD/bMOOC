@@ -10,6 +10,27 @@
         <input type="text" hidden="hidden" id="id" name="id" value="{{$topic->id}}"/>
     @endif
 
+      @if(isset($topic->activeInstruction) || isset($artefact->topic->activeInstruction))
+       <fieldset>
+        <h3 class="showhide">Active instruction</h3>
+          <div class="row">
+              <div class="columns">
+                 <div class="instruction">
+                  @if($topic->activeInstruction->type_id == 28)
+                      <h4>{{$topic->activeInstruction->title}}</h4>
+                      {!!$topic->activeInstruction->content!!}
+                  @elseif($topic->activeInstruction->type_id == 29 || $topic->activeInstruction->type_id == 30)
+                      <img src="/instruction/{{$topic->activeInstruction->id}}/medium" alt="{{$topic->activeInstruction->title}}"/>
+                  @elseif($topic->activeInstruction->type_id == 31 || $topic->activeInstruction->type_id == 32)
+                      <iframe src="{{$topic->activeInstruction->content}}"></iframe>
+                  @elseif($topic->activeInstruction->type_id == 33)
+                  <object data="/instruction/{{$topic->activeInstruction->id}}/original" type="application/pdf"><a href="/instruction/{{$topic->activeInstruction->id}}/original">Click to view PDF</a><br/><small>(Your browser does not support viewing of PDF\'s inside bMOOC)</small></object>
+                  @endif
+                  </div>
+              </div>
+          </div>
+        </fieldset>
+      @endif
     <fieldset>
        <h3>General information</h3>
 
@@ -102,6 +123,13 @@
 <script src="/js/pdf.js"></script>
 <script src="/js/quill.min.js" async onload="quill_artefact_init();"></script>
 <script>
+
+    $(function(){
+        $('.showhide').on('click', function(){
+            $(this).toggleClass('hidden');
+            $('.instruction').slideToggle();
+        });
+    });
 
     function quill_artefact_init(){
         $(function(){

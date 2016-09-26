@@ -40,7 +40,8 @@ abstract class Types
 class BmoocController extends Controller {
 
     public function __construct() {
-        //$this->middleware('auth', ['except' => 'index']);
+        $this->middleware('auth', ['except' => 'index']);
+        //$this->middleware('auth');
     }
 
     public function viewPage($name, $options = []){
@@ -468,8 +469,9 @@ class BmoocController extends Controller {
         }
     }
 
-    public function getImage($id){
-        $a = Artefact::find($id);
+    public function getImage($id, $instruction=false){
+        if($instruction) $a = Instruction::find($id);
+        else $a = Artefact::find($id);
         $path = storage_path('app/artefacts/thumbnails/large/'.$a->content);
         if (file_exists($path)) {
             $filetype = mime_content_type( $path );
@@ -477,12 +479,13 @@ class BmoocController extends Controller {
             $response->header('Content-Type', $filetype);
             return $response;
         }
-        return BmoocController::getImageOriginal($id);
+        return BmoocController::getImageOriginal($id, $instruction);
     }
 
-    public function getImageThumbnail($id){
+    public function getImageThumbnail($id, $instruction=false){
         // get url from id
-        $a = Artefact::find($id);
+        if($instruction) $a = Instruction::find($id);
+        else $a = Artefact::find($id);
         $path = storage_path('app/artefacts/thumbnails/small/'.$a->content);
         // check if the artefact has a thumbnail based on id
         if (file_exists($path)) {
@@ -491,23 +494,31 @@ class BmoocController extends Controller {
             $response->header('Content-Type', $filetype);
             return $response;
         }
-        return BmoocController::getImage($id);
+        return BmoocController::getImage($id, $instruction);
 
     }
 
-    public function getImageOriginal($id){
-        $a = Artefact::find($id);
+    public function getImageOriginal($id, $instruction=false){
+        if($instruction) $a = Instruction::find($id);
+        else $a = Artefact::find($id);
         $path = storage_path('app/artefacts/'.$a->content);
         if (file_exists($path)) {
             $filetype = mime_content_type( $path );
-            $response = Response::make( File::get( $path ) , 200 );
-            $response->header('Content-Type', $filetype);
-            return $response;
+            // new implementation
+            $fp = fopen($path, 'rb');
+            header("Content-Type: ".$filetype);
+            header("Content-Length: " . filesize($path));
+            fpassthru($fp);
+            //$response = Response::make( File::get( $path ) , 200 );
+            //$response->header('Content-Type', $filetype);
+            //return $response;
         } else if($a->type_id == 31){
             $url = str_replace('www.youtube.com/embed', 'img.youtube.com/vi', $a->content);
             $url .= '/0.jpg';
             $response = Response::make( file_get_contents($url), 200 );
             $response->header('Content-Type', 'image/jpeg');
+            $response->header('Content-Length' . filesize($path));
+
             return $response;
         } else if($a->type_id == 32){
             $oembed_endpoint = 'http://vimeo.com/api/oembed';
@@ -519,6 +530,16 @@ class BmoocController extends Controller {
             return $response;
         }
         abort(404, 'Image not found');
+    }
+
+    public function getInstructionImage($id){
+        BmoocController::getImage($id, true);
+    }
+    public function getInstructionImageThumbnail($id){
+        BmoocController::getImageThumbnail($id, true);
+    }
+    public function getInstructionImageOriginal($id){
+        BmoocController::getImageOriginal($id, true);
     }
 
     private function parseYoutube($url){

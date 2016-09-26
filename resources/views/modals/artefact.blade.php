@@ -11,14 +11,14 @@
                </div>
                <div class="small-6 medium-3 large-12 columns">
                 <dt>By</dt>
-                <dd data-attr="author"><a href="/search/{{$artefact->author->id}}">{{$artefact->author->name}}</a></dd>
+                <dd data-attr="author"><a href="/search/{{$artefact->author->name}}">{{$artefact->author->name}}</a></dd>
                </div>
                 <div class="small-6 medium-3 large-12 columns">
                 <dt>Tags</dt>
                 <dd>
                     <ul class="inline slash" data-attr="tags">
                        @foreach($artefact->tags as $tag)
-                        <li><a href="/search/all/{{$tag->id}}">{{$tag->tag}}</a></li>
+                        <li><a href="/search/all/{{$tag->tag}}">{{$tag->tag}}</a></li>
                         @endforeach
                     </ul>
                 </dd>

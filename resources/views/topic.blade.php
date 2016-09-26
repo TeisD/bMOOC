@@ -83,6 +83,7 @@
            @foreach($topic->artefacts as $artefact)
            <li>
                 <div class="row">
+                    <a href="/relation/{{$artefact->id}}">
                    <div class="columns large-12" vis-grid>
                       @if($artefact->type_id > 28)
                        <img src="/artefact/{{$artefact->id}}/thumbnail" alt="{{$artefact->title}}"/>
@@ -90,6 +91,7 @@
                        <h3>{{$artefact->title}}</h3>
                        @endif
                    </div>
+                    </a>
                     <div class="columns large-4" vis-list>
                         <h3 class="title inline">
                             <a href="/relation/{{$artefact->id}}">{{ $artefact->title }}</a>

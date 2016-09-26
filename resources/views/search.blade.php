@@ -1,6 +1,6 @@
 @extends('master')
 
-@section('title', 'bMOOC')
+@section('title', 'Search results')
 
 @section('header_actions')
 @stop
@@ -77,8 +77,9 @@
           </div>
           <ul class="list grid">
            @foreach($results as $artefact)
-           <li><a href="/relation/{{$artefact->id}}">
+           <li>
                 <div class="row">
+                    <a href="/relation/{{$artefact->id}}">
                    <div class="columns large-12" vis-grid>
                       @if($artefact->type_id > 28)
                        <img src="/artefact/{{$artefact->id}}/thumbnail" alt="{{$artefact->title}}"/>
@@ -86,16 +87,17 @@
                        <h3>{{$artefact->title}}</h3>
                        @endif
                    </div>
+                       </a>
                     <div class="columns large-3" vis-list>
                         <h3 class="title inline">
-                            {{ $artefact->title }}&nbsp;
+                            <a href="/relation/{{$artefact->id}}">{{ $artefact->title }}</a>
                         </h3>
                         <span class="title_clean" hidden="hidden" style="display:none"><?php
                             $s = str_replace(' ', '_', $artefact->title);
                             echo preg_replace('/[^A-Za-z0-9\_]/', '', $s) ?></span>
                     </div>
                     <div class="columns large-3" vis-list>
-                        <span class="topic">{{$artefact->topic->title}}</span>
+                        <span class="topic"><a href="/topic/{{$artefact->topic->id}}">{{$artefact->topic->title}}</a></span>
                     </div>
                     <div class="columns large-1" vis-list>
                         <span class="type">{{ $artefact->type->type }}</span>
@@ -105,26 +107,32 @@
                         <span class="date">{{date('d/m/Y', strtotime($artefact->created_at))}}</span>
                         <span class="date_ts" hidden="hidden" style="display: none;">{{$artefact->created_at}}</span>
                         <span class="light">by</span>
-                        <span class="author">{{$artefact->author->name}}</span>
+                        <a href="/search/{{$artefact->author->name}}"><span class="author">{{$artefact->author->name}}</span></a>
                     </div>
                     <div class="columns large-1" vis-list>
                         <span class="tag_1">
                            @if(isset($artefact->tags[0]))
+                           <a href="/search/all/{{$artefact->tags[0]->tag}}">
                             {{ $artefact->tags[0]->tag }}
+                            </a>
                             @endif
                         </span>
                     </div>
                     <div class="columns large-1" vis-list>
                         <span class="tag_2">
                            @if(isset($artefact->tags[1]))
+                           <a href="/search/all/{{$artefact->tags[1]->tag}}">
                             {{ $artefact->tags[1]->tag }}
+                            </a>
                             @endif
                         </span>
                     </div>
                     <div class="columns large-1 end" vis-list>
                         <span class="tag_3">
                             @if(isset($artefact->tags[2]))
+                            <a href="/search/all/{{$artefact->tags[2]->tag}}">
                             {{ $artefact->tags[2]->tag }}
+                            </a>
                             @endif
                         </span>
                     </div>

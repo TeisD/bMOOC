@@ -17,7 +17,7 @@
                @endif
                <div class="small-6 medium-3 large-12 columns">
                 <dt>By</dt>
-                <dd data-attr="author"><a href="/search/{{$instruction->author->id}}">{{$instruction->author->name}}</a></dd>
+                <dd data-attr="author"><a href="/search/{{$instruction->author->name}}">{{$instruction->author->name}}</a></dd>
                </div>
             </div>
         </dl>

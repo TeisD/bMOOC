@@ -19,6 +19,10 @@ Route::get('artefact/{id}/thumbnail', 'BmoocController@getImageThumbnail');
 Route::get('artefact/{id}/medium', 'BmoocController@getImage');
 Route::get('artefact/{id}/original', 'BmoocController@getImageOriginal');
 
+Route::get('instruction/{id}/thumbnail', 'BmoocController@getInstructionImageThumbnail');
+Route::get('instruction/{id}/medium', 'BmoocController@getInstructionImage');
+Route::get('instruction/{id}/original', 'BmoocController@getInstructionImageOriginal');
+
 Route::get('json/artefact/{id}', 'BmoocJsonController@artefact');
 Route::get('json/artefact/{id}/children', 'BmoocJsonController@children');
 
@@ -29,6 +33,10 @@ Route::get('json/topic/{id}', 'BmoocJsonController@discussion');
 
 //Route::get('login/{provider?}', ['uses'=>'Auth\AuthController@login', 'as' => 'login']);
 //Route::get('logout', 'Auth\AuthController@getLogout');
+
+Route::auth();
+
+Route::get('login', 'BmoocController@index');
 
 // Authentication and registration
 Route::get('auth/login', 'Auth\AuthController@getLogin');

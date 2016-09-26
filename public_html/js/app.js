@@ -306,10 +306,11 @@ function formSubmit(form, parent){
  * @param data The artefact
  * @param data An optinal parameter describing the quality of the artefact
  */
-function render(div, data, quality){
+function render(div, data, quality, url){
     var html;
     var loadImg = false;
     var expandable = false;
+    if(url == undefined) url = 'artefact'
     if(quality == undefined) quality = 'medium'
 
     div.find('.artefact').hide();
@@ -320,7 +321,7 @@ function render(div, data, quality){
             break;
         case 29:
         case 30:
-            html = '&nbsp;<img src="/artefact/' + data.id + '/'+quality+'">';
+            html = '&nbsp;<img src="/'+url+'/' + data.id + '/'+quality+'">';
             if(quality == 'original') expandable = true;
             loadImg = true;
             break;
@@ -332,7 +333,7 @@ function render(div, data, quality){
             break;
         case 33:
         case 34:
-            html = '<object data="/artefact/' + data.id + '/original" type="application/pdf"><a href="/artefact/' + data.id + '/original">Click to view PDF</a><br/><small>(Your browser does not support viewing of PDF\'s inside bMOOC)</small></object>';
+            html = '<object data="/'+url+'/' + data.id + '/original" type="application/pdf"><a href="/'+url+'/' + data.id + '/original">Click to view PDF</a><br/><small>(Your browser does not support viewing of PDF\'s inside bMOOC)</small></object>';
             break;
         default:
             html = '<p>Oops, there was an error loading the artefact.<br />Please try reloading this page.</p>';

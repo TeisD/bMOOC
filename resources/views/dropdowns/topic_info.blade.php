@@ -35,9 +35,11 @@
 
 <div id="instruction_lightbox" class="reveal-modal full" data-reveal aria-hidden="true" role="dialog"></div>
 
+<script src="/js/imagesloaded.min.js"></script>
 <script>
-
-    currentInstruction = parseInt('{!! $topic->activeInstruction->title !!}');
+    @if(isset($topic->activeInstruction))
+    currentInstruction = parseInt('{!! $topic->activeInstruction->id !!}');
+    @endif
 
     $(function(){
        $('[data-reveal-id=instruction_lightbox]').on('click', function(){
@@ -47,7 +49,8 @@
 
         $(document).on('opened.fndtn.reveal', '#instruction_lightbox', function (event) {
             $.getJSON("/json/instruction/"+currentInstruction, function(data){
-                render($('#instruction_lightbox'), data, 'original');
+                console.log(data);
+                render($('#instruction_lightbox'), data, 'original', 'instruction');
             });
         });
     });

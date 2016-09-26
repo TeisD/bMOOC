@@ -781,10 +781,30 @@ nav{
     .artefact.expanded{
         overflow: scroll;
         img{
+            position: relative;
             max-width: none;
             max-height: none;
+            width: auto;
+            height: auto;
         }
     }
+}
+
+.instruction{
+    border: 1px solid $text;
+    padding: 1rem;
+}
+
+.showhide{
+    cursor: pointer;
+}
+
+.showhide::after{
+    content: ' \25BE';
+}
+
+.showhide.hidden::after{
+    content: ' \25B8';
 }
 
 #relation{
