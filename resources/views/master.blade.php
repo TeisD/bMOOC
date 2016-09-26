@@ -62,13 +62,13 @@
                     <nav class="main">
                         <ul class="inline slash">
                            <li>
-                                <a href="#" help-show="index">help</a>
+                                <a href="javascript:;" help-show>help</a>
                             </li>
                             <li>
                                <a href="/about" data-reveal-id="about" data-reveal-ajax="true">about</a>
                             </li>
                             <li>
-                               <a href="#" data-reveal-id="feedback">feedback</a>
+                               <a href="javascript:;" data-reveal-id="feedback">feedback</a>
                             </li>
                             <li>
                                 <a href="/auth/logout">Sign out {{$user->name}}</a>
@@ -81,10 +81,10 @@
 				<div class="large-5 columns">
 					<h1 class="inline"><a href="/">bMOOC</a></h1>
                     <span id="vis-menu">
-                        <a class="button tertiary inline" data-vis="list" href="#list"><img src="/img/vis_list_white.png" />list</a>
-                        <a class="button tertiary inline" data-vis="grid" href="#grid"><img src="/img/vis_grid_white.png" />grid</a>
-                        <a class="button tertiary inline" data-vis="tree" data-svg href="#tree"><img src="/img/vis_tree_white.png" />tree</a>
-                        <a class="button tertiary inline" data-vis="network" data-svg href="#network"><img src="/img/vis_network_white.png"/>network</a>
+                        <a class="button tertiary inline" data-help data-help-id="vis_menu" data-vis="list" href="#list"><img src="/img/vis_list_white.png" />list</a>
+                        <a data-help data-help-id="vis_menu" class="button tertiary inline" data-vis="grid" href="#grid"><img src="/img/vis_grid_white.png" />grid</a>
+                        <a data-help data-help-id="vis_menu" class="button tertiary inline" data-vis="tree" data-svg href="#tree"><img src="/img/vis_tree_white.png" />tree</a>
+                        <a data-help data-help-id="vis_menu" class="button tertiary inline" data-vis="network" data-svg href="#network"><img src="/img/vis_network_white.png"/>network</a>
                     </span>
                     @yield('header_actions')
 				</div>

@@ -32,4 +32,4 @@
 
 <p><small>Problems signing in? <a href="#" class="emphasis" data-reveal-id='feedback'>Send us a message</a></small></p>
 
-<a class="close-reveal-modal" aria-label="Close">&#215;</a>
+<a class="close-reveal-modal close" aria-label="Close">&#215;</a>

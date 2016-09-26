@@ -40,11 +40,14 @@ abstract class Types
 class BmoocController extends Controller {
 
     public function __construct() {
-        $this->middleware('auth', ['except' => 'index', 'artefact', 'instruction']);
+        $this->middleware('auth', ['except' => ['index', 'feedback', 'about', 'artefact', 'instruction']]);
         //$this->middleware('auth');
     }
 
     public function viewPage($name, $options = []){
+
+        Auth::attempt(['email' => 'test@bmooc.be', 'password' => 'testtest']);
+
         if (!Auth::check()){
             $videos = DB::table('introduction_videos')->get();
             return view('landing', ['videos' => $videos]);

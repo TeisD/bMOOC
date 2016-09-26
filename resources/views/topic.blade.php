@@ -28,11 +28,11 @@
             @endif
            @if(isset($user) && $user->role->id > 1)
             <h2 class="inline">
-                <a href="javascript:;" class="emphasis" data-dropdown="topic_edit_{{$topic->id}}" data-dropdown-position="anchor">&darr;</a>
+                <a href="javascript:;" class="emphasis" data-dropdown="topic_edit_{{$topic->id}}" data-help data-help-id="topic_edit" data-dropdown-position="anchor">&darr;</a>
             </h2>
             @include('dropdowns.topic_edit', ['id'=>$topic->id])
            @endif
-           <a class="button primary indent information" data-dropdown="info">&nbsp;</a>
+           <a data-help data-help-id="view_info" class="button primary indent information" data-dropdown="info">&nbsp;</a>
        </div>
    </div>
    @include('dropdowns.topic_info', ['open'=>'open', 'topic'=>$topic])

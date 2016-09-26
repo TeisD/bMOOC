@@ -16,7 +16,12 @@ var text = {
     new_instruction: "<p>Use this button to add a new instruction. If existing, the previous instruction will be disabled and replaced.</p>",
     details: "<p>Use this button to get more detailed information about the artefact above.</p>",
     new_artefact: "<p>Use this button to add (some)thing to the artefact above. Your addition will appear next to it, like a tree getting a new branch.</p>",
-    topic_title: "<p>This is a topic.<p><p>Click the title to expand the topic and see a visualisation of all the artefacts inside the topic.</p>"
+    topic_title: "<p>This is a topic.<p><p>Click the title to expand the topic and see a visualisation of all the artefacts inside the topic.</p>",
+    vis_menu: "<p>Use these four buttons to select how contributions or topics are being shown.</p><p>The underlying data of each of these visualisation is the same, but the way some elements are shown, hidden or connected allows you to explore and discover new relations and insights.</p>",
+    new_log: "<p>Use this button to create a new log.</p><p>Logs are used to record a sequence of actions on the platform. The resulting log is a detailed list of button clicks and commands which other users can execute to reconstruct, understand and get inspired by a way of reading, navigating and exploring a topic.</p>",
+    archive: "<p>The archive contains old topics.</p>",
+    view_info: "<p>Use this button to show a topic's info and instructions.</p>",
+    topic_edit: "<p>Use this button to edit, archive or delete a topic.</p>"
 
 }
 
@@ -26,11 +31,11 @@ $(document).ready(function(){
 
     $("[help-show]").click(function(e){
         e.stopImmediatePropagation();
-        show($(this).attr('help-show'));
+        show();
     });
 
     function show(h){
-        $("[data-help]").filter("[data-help='"+h+"']").addClass('help');
+        $("[data-help]").addClass('help');
 
         // disable modals
         $("[data-reveal-id]").each(function(){
@@ -65,7 +70,7 @@ $(document).ready(function(){
         $(div_msg).css('display', 'none');
         $('body').append(div_msg);
 
-        $("[data-help]").filter("[data-help='"+h+"']").bind('click', showMessage);
+        $("[data-help]").bind('click', showMessage);
 
     }
 

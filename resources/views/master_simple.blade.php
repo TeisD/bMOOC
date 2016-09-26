@@ -41,13 +41,13 @@
                     <nav class="main">
                         <ul class="inline slash">
                            <li>
-                                <a href="#" help-show="index">help</a>
+                                <a href="javascript;" help-show>help</a>
                             </li>
                             <li>
-                               <a href="#" data-reveal-id="about">about</a>
+                               <a href="/about" data-reveal-id="about" data-reveal-ajax="true">about</a>
                             </li>
                             <li>
-                               <a href="#" data-reveal-id="feedback">feedback</a>
+                               <a href="javacript;" data-reveal-id="feedback">feedback</a>
                             </li>
                             <li>
                                 <a href="/auth/login" data-reveal-id="signin" data-reveal-ajax="true">Sign in</a>
@@ -63,7 +63,6 @@
        {{-- MODALS --}}
         {{-- ABOUT --}}
         <div id="about" class="reveal-modal small" data-reveal aria-labelledby="about_title" aria-hidden="true" role="dialog">
-            @include('modals.about')
         </div>
         <div id="signin" class="reveal-modal small" aria-hidden="true" role="dialog">
         </div>
@@ -81,6 +80,6 @@
 
         @yield('scripts')
 
-            </body>
+    </body>
 </html>
 

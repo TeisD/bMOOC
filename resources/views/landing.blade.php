@@ -1,5 +1,6 @@
 @extends('master_simple')
-@section('content)
+
+@section('content')
 
         <button class="giant centered" data-reveal-id="signin" data-reveal-ajax="/auth/login">Sign in</button>
 
@@ -10,28 +11,28 @@
         </div>
 @endsection
 
-        @section('scripts')
-        <script src="/js/jquery.tubular.js"></script>
+@section('scripts')
+    <script src="/js/jquery.tubular.js"></script>
 
-        <script>
+    <script>
 
-            var videos = JSON.parse('{!! addslashes(json_encode($videos)) !!}');
-            videoId = videos[Math.floor(Math.random() * videos.length)].url;
+        var videos = JSON.parse('{!! addslashes(json_encode($videos)) !!}');
+        videoId = videos[Math.floor(Math.random() * videos.length)].url;
 
-            $('document').ready(function() {
-                var options = {
-                    videoId: videoId,
-                    start: 3
-                };
-                $('#wrapper').tubular(options);
+        $('document').ready(function() {
+            var options = {
+                videoId: videoId,
+                start: 3
+            };
+            $('#wrapper').tubular(options);
 
-                $(".tubular-play-pause").on('click', function(){
-                    $(".tubular-play-pause").toggle();
-                })
-                $(".tubular-mute").on('click', function(){
-                    $('i', $(this)).toggleClass("fi-volume-strike");
-                    $('i', $(this)).toggleClass("fi-volume");
-                })
-            });
-        </script>
-        @endsection
+            $(".tubular-play-pause").on('click', function(){
+                $(".tubular-play-pause").toggle();
+            })
+            $(".tubular-mute").on('click', function(){
+                $('i', $(this)).toggleClass("fi-volume-strike");
+                $('i', $(this)).toggleClass("fi-volume");
+            })
+        });
+    </script>
+@endsection
