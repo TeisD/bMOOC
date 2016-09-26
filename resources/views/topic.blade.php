@@ -81,7 +81,7 @@
           </div>
           <ul class="list grid">
            @foreach($topic->artefacts as $artefact)
-           <li><a href="/relation/{{$artefact->id}}">
+           <li>
                 <div class="row">
                    <div class="columns large-12" vis-grid>
                       @if($artefact->type_id > 28)
@@ -92,7 +92,7 @@
                    </div>
                     <div class="columns large-4" vis-list>
                         <h3 class="title inline">
-                            {{ $artefact->title }}&nbsp;
+                            <a href="/relation/{{$artefact->id}}">{{ $artefact->title }}</a>
                         </h3>
                         <span class="title_clean" hidden="hidden" style="display:none"><?php
                             $s = str_replace(' ', '_', $artefact->title);
@@ -106,31 +106,31 @@
                         <span class="date">{{date('d/m/Y', strtotime($artefact->created_at))}}</span>
                         <span class="date_ts" hidden="hidden" style="display: none;">{{$artefact->created_at}}</span>
                         <span class="light">by</span>
-                        <span class="author">{{$artefact->author->name}}</span>
+                        <a href="/search/{{$artefact->author->name}}"><span class="author">{{$artefact->author->name}}</span></a>
                     </div>
                     <div class="columns large-1" vis-list>
                         <span class="tag_1">
                            @if(isset($artefact->tags[0]))
-                            {{ $artefact->tags[0]->tag }}
+                            <a href="/search/all/{{$artefact->tags[0]->tag}}">{{ $artefact->tags[0]->tag }}</a>
                             @endif
                         </span>
                     </div>
                     <div class="columns large-1" vis-list>
                         <span class="tag_2">
                            @if(isset($artefact->tags[1]))
-                            {{ $artefact->tags[1]->tag }}
+                            <a href="/search/all/{{$artefact->tags[1]->tag}}">{{ $artefact->tags[1]->tag }}</a>
                             @endif
                         </span>
                     </div>
                     <div class="columns large-1 end" vis-list>
                         <span class="tag_3">
                             @if(isset($artefact->tags[2]))
-                            {{ $artefact->tags[2]->tag }}
+                            <a href="/search/all/{{$artefact->tags[2]->tag}}">{{ $artefact->tags[2]->tag }}</a>
                             @endif
                         </span>
                     </div>
                 </div>
-            </a></li>
+            </li>
             @endforeach
           </ul>
         </div>

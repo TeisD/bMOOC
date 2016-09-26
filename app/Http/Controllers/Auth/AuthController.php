@@ -29,7 +29,7 @@ class AuthController extends Controller
      * @var string
      */
     protected $redirectTo = '/';
-    protected $loginPath = '/auth/login';
+    //protected $loginPath = '/auth/login';
     //protected $redirectAfterLogout = '/';
 
     /**
@@ -39,6 +39,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
+        $this->middleware($this->guestMiddleware(), ['except' => 'logout']);
         //$this->middleware('guest', ['except' => 'logout']);
     }
 

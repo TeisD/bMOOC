@@ -9,7 +9,7 @@
       @else
    <div class="columns">
     @endif
-       <p><span class="light">topic initiated</span> {{date('d/m/Y', strtotime($topic->created_at))}} <span class="light">by</span> {{$topic->author->name}}</p>
+       <p><span class="light">topic initiated</span> {{date('d/m/Y', strtotime($topic->created_at))}} <span class="light">by</span>  <a href="/search/{{$topic->author->name}}">{{$topic->author->name}}</a></p>
        <h3>Description</h3>
        {!!$topic->description!!}<p></p>
        <h3>Goal</h3>

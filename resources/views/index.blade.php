@@ -101,7 +101,7 @@
                          @endif
                 </div>
                 <div class="columns medium-6 large-2">
-                    <span class="light">initiated by</span> <span class="initiator">{{$topic->author->name}}</span>
+                    <span class="light">initiated by</span> <a href="/search/{{$topic->author->name}}"><span class="initiator">{{$topic->author->name}}</span></a>
                 </div>
                 <div class="columns medium-6 large-2">
                     <span class="light">active from</span>
@@ -117,7 +117,7 @@
                     <span class="last_addition">{{date('d/m/Y', strtotime($topic->lastAddition->created_at))}}</span>
                     <span class="last_addition_ts" hidden="hidden" style="display: none;">{{$topic->lastAddition->created_at}}</span>
                     <span class="light">by</span>
-                    <span class="last_author">{{$topic->lastAddition->author->name}}</span>
+                    <a href="/search/{{$topic->lastAddition->author->name}}"><span class="last_author">{{$topic->lastAddition->author->name}}</span></a>
                     @else
                     <span class="light">no additions yet</span>
                     @endif
