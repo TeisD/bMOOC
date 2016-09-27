@@ -1059,6 +1059,10 @@ svg{
 .help{
     cursor: help !important;
     z-index: 9999;
+    //position: relative;
+}
+
+a.emphasis.help{
     position: relative;
 }
 
@@ -1136,6 +1140,12 @@ svg{
 .help-msg.right:after{
    left: auto;
     right: 15px;
+}
+
+.help-msg.bottom:after{
+    top: auto;
+    bottom: -15px;
+    border-width: 15px 15px 0 15px;
 }
 
 .help-txt{

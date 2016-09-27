@@ -18,6 +18,7 @@ use App\Http\Controllers\Controller;
 use Schema;
 use Artisan;
 use URL;
+use Response;
 
 class AdminController extends Controller {
 
@@ -296,7 +297,8 @@ class AdminController extends Controller {
 
     public function actions(Request $request) {
         $videos = DB::table('introduction_videos')->get();
-        return view('admin.actions.index', ['videos' => $videos]);
+        $users = User::orderBy('name')->get();
+        return view('admin.actions.index', ['videos' => $videos, 'users' => $users]);
     }
 
     public function newVideo(Request $request){
@@ -319,6 +321,16 @@ class AdminController extends Controller {
         }
         if($video_id && $video_id != '') return $video_id;
         else throw new Exception('The URL is not a valid link to a YouTube video');
+    }
+
+    public function userRole(Request $request){
+        $user = User::find($request->id);
+        $user->role_id = $request->role;
+        $user->save();
+        return Response::json( [
+            'status' => '200',
+            'message' => $request->role
+        ], 200);
     }
 
     public function getThumbnails(Request $request) {

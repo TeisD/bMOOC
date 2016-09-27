@@ -114,9 +114,10 @@
         <script src="/js/foundation/foundation.reveal.js"></script>
         <script src="/js/foundation/foundation.abide.js"></script>
         <script src="/js/app.js?v=@version"></script>
-        <script src="/js/help.js?v=@version"></script>
 
         <script>
+            $.ajaxSetup({ headers: { 'csrftoken' : '{{ csrf_token() }}' } });
+
             $(document).on('opened.fndtn.reveal', '[data-reveal]', function () {
                 var modal = $(this);
                 $(document).foundation('equalizer', 'reflow');
@@ -147,6 +148,8 @@
         </script>
 
         @yield('scripts')
+
+        <script src="/js/help.js?v=@version"></script>
 
     </body>
 </html>

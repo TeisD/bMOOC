@@ -719,6 +719,8 @@ var Vis = (function(){
             // GUI
             var gui = d3.select(this.el).append('div')
                 .attr('class', 'vis-gui zoom')
+                .attr('data-help', 'all')
+                .attr('data-help-id', 'vis_gui');
             var pointer = this;
             gui.append('button')
                 .attr('class', 'secondary square rotate')
@@ -1370,6 +1372,8 @@ var Timeline = (function(){
         // BUTTONS
             var gui = d3.select(vis.el).append('div')
                 .attr('class', 'vis-gui timeline')
+                .attr('data-help', 'all')
+                .attr('data-help-id', 'vis_timeline');
             var pointer = this;
             gui.append('button')
                 .attr('class', 'secondary square rewind inline')

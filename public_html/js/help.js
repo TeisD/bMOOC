@@ -10,7 +10,7 @@
 
 // messages
 var text = {
-    new_topic: "<p>Use this button to create a topic.</p><p>A topic is a cluster, a collection of online things that join into some form or shape. This can be a conversation, a discussion, a tension or a kind of unspeakable resonance.</p><p>After creating a topic, all users can add (some)thing to the topic. You can specify or modify an instruction by opening the topic and clicking 'add instruction'.</p>",
+    new_topic: "<p>Use this button to create a topic.</p><p>A topic is an imaginary thinking space. It is a cluster, a collection of online things that join into some form or shape. This can be a conversation, a discussion, a tension or a kind of unspeakable resonance.</p><p>After creating a topic, all users can add (some)thing to the topic. You can specify or modify an instruction by opening the topic and clicking 'add instruction'.</p>",
     search: "<p>Use these fields to search for contributions by (a combination of) author, tag or keyword.</p>",
     view_current_instruction: "<p>Use this button to see the latest instruction for the current topic.</p>",
     new_instruction: "<p>Use this button to add a new instruction. If existing, the previous instruction will be disabled and replaced.</p>",
@@ -20,9 +20,10 @@ var text = {
     vis_menu: "<p>Use these four buttons to select how contributions or topics are being shown.</p><p>The underlying data of each of these visualisation is the same, but the way some elements are shown, hidden or connected allows you to explore and discover new relations and insights.</p>",
     new_log: "<p>Use this button to create a new log.</p><p>Logs are used to record a sequence of actions on the platform. The resulting log is a detailed list of button clicks and commands which other users can execute to reconstruct, understand and get inspired by a way of reading, navigating and exploring a topic.</p>",
     archive: "<p>The archive contains old topics.</p>",
-    view_info: "<p>Use this button to show a topic's info and instructions.</p>",
-    topic_edit: "<p>Use this button to edit, archive or delete a topic.</p>"
-
+    view_info: "<p>Use this button to show a topic's info and instructions.</p><p>A topic is an imaginary thinking space. It is a cluster, a collection of online things that join into some form or shape. This can be a conversation, a discussion, a tension or a kind of unspeakable resonance.</p>",
+    topic_edit: "<p>Use this button to edit, archive or delete a topic.</p>",
+    vis_gui: "<p>Use these buttons to control the visualisation.</p><p>You can zoom in and out by using the zoom buttons or by scrolling up and down on the visualisation. Click and drag  the tree to move it around or click the rotate button to turn the tree 90 degrees.</p>",
+    vis_timeline: "<p>The timeline allows you to see the visualisation of a topic as it was at any moment in time.</p><p>Navigate through time by clicking anywhere on the timeline, or by dragging the slider left or right. You can also use the play and stop buttons to scroll through time automatically.</p>"
 }
 
 $(document).ready(function(){
@@ -30,7 +31,7 @@ $(document).ready(function(){
     var help = false;
 
     $("[help-show]").click(function(e){
-        e.stopImmediatePropagation();
+        //e.stopImmediatePropagation();
         show();
     });
 
@@ -38,11 +39,11 @@ $(document).ready(function(){
         $("[data-help]").addClass('help');
 
         // disable modals
-        $("[data-reveal-id]").each(function(){
+        /*$("[data-reveal-id]").each(function(){
             var d = $(this).attr("data-reveal-id");
             $(this).removeAttr("data-reveal-id");
             $(this).attr("data-rev-id", d);
-        });
+        });*/
 
         // create bg
         var div_bg = document.createElement("div");
@@ -80,26 +81,42 @@ $(document).ready(function(){
         });
 
         // enable modals
-        $("[data-rev-id]").each(function(){
+        /*$("[data-rev-id]").each(function(){
             var d = $(this).attr("data-rev-id");
             $(this).removeAttr("data-rev-id");
             $(this).attr("data-reveal-id", d);
-        });
+        });*/
 
         $(".help-bg").fadeOut(function(){
             $(this).remove();
             $("[data-help]").removeClass('help');
         });
+
+        $("[data-help]").unbind('click', showMessage);
+
     }
 
     function showMessage(e){
-        e.preventDefault();
-        e.stopImmediatePropagation();
         $('.help-msg').hide();
         $('.help-msg').removeClass('right');
+        $('.help-msg').removeClass('top');
+        $('.help-msg').removeClass('bottom');
         $('.help-msg').removeClass('left');
 
-        $('.help-msg').css('top', $(this).offset().top + $(this).height() + 10 + 'px');
+        console.log($(this).offset());
+        console.log($(window).height()/2);
+
+        if($(this).offset().top < $(window).height()/2){
+            console.log('top');
+            $('.help-msg').css('bottom', '');
+            $('.help-msg').addClass('top');
+            $('.help-msg').css('top', $(this).offset().top + $(this).height() + 10 + 'px');
+        } else{
+            console.log('bottom');
+            $('.help-msg').css('top', '');
+            $('.help-msg').addClass('bottom');
+            $('.help-msg').css('bottom', $(window).height() - $(this).offset().top - 10 + 'px');
+        }
 
         if($(this).offset().left > $(window).width() - 250 ) {
             $('.help-msg').addClass('right');
@@ -110,6 +127,8 @@ $(document).ready(function(){
         }
         $('.msg-content').html(text[$(this).data('help-id')]);
         $('.help-msg').fadeIn();
+
+        e.stopImmediatePropagation();
     }
 
 });

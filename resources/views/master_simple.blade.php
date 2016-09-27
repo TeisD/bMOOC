@@ -76,9 +76,12 @@
         <script src="/js/foundation/foundation.reveal.js"></script>
         <script src="/js/foundation/foundation.abide.js"></script>
         <script src="/js/app.js?v=@version"></script>
-        <script src="/js/help.js?v=@version"></script>
+
+           $.ajaxSetup({ headers: { 'csrftoken' : '{{ csrf_token() }}' } });
 
         @yield('scripts')
+
+        <script src="/js/help.js?v=@version"></script>
 
     </body>
 </html>

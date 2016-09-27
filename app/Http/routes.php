@@ -59,6 +59,7 @@ Route::get('admin/data/tree', 'AdminController@tree');
 Route::get('admin/data/topics', 'AdminController@topics');
 Route::get('admin/actions', 'AdminController@actions');
 Route::post('admin/videos', 'AdminController@newVideo');
+Route::post('admin/users', 'AdminController@userRole');
 Route::delete('admin/videos', 'AdminController@deleteVideo');
 Route::get('admin/actions/thumbnails', 'AdminController@getThumbnails');
 Route::post('admin/actions/thumbnails', 'AdminController@postThumbnails');

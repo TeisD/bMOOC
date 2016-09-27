@@ -852,7 +852,9 @@ svg .lbl {
 /** HELP **/
 .help {
   cursor: help !important;
-  z-index: 9999;
+  z-index: 9999; }
+
+a.emphasis.help, .artefact .textContainer a.help, .loader .textContainer a.help {
   position: relative; }
 
 .help a, .help label, .help input {
@@ -922,6 +924,11 @@ svg .lbl {
 .help-msg.right:after {
   left: auto;
   right: 15px; }
+
+.help-msg.bottom:after {
+  top: auto;
+  bottom: -15px;
+  border-width: 15px 15px 0 15px; }
 
 .help-txt {
   position: relative;
