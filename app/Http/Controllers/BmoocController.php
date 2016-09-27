@@ -442,7 +442,7 @@ class BmoocController extends Controller {
                 $url = $request->af_url;
                 if (strpos($url, 'youtube') !== false || strpos($url, 'youtu.be') !== false) {
                     // Youtube video
-                    $af->content = '//youtube.com/embed/' . BmoocController::parseYoutube($url);
+                    $af->content = 'http://www.youtube.com/embed/' . BmoocController::parseYoutube($url);
                     $af->type = Types::VIDEO_YOUTUBE;
                 } elseif (strpos($url, 'vimeo.com') !== false) {
                     // Vimeo video
