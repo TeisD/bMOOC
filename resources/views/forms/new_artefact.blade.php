@@ -1,7 +1,7 @@
 <div class="row">
     <div class="columns large-10 large-offset-1">
 <h2>Add (some)thing</h2>
-<p>Add something to the topic. Your artefact will be linked to the preceding additions, and to artefacts from different topics using tags, descriptions and keywords</p>
+<p>Add something to the topic. Your addition will be linked to the preceding additions, and to additions from different topics using tags, descriptions and keywords.</p>
 {{ Form::open(array('id'=>'new_artefact_form', 'data-abide'=>'ajax', 'url'=>'artefact/new','method'=>'POST', 'files'=>true)) }}
     @if(isset($artefact))
         <input type="text" hidden="hidden" id="parent_id" name="parent_id"/>

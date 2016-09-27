@@ -3,13 +3,11 @@
    <h2 id="about_title">bMOOC</h2>
     <h3>A Massive, Open, Online Course to think with eyes and hands</h3>
 
-    <p>The point of departure and finality of <strong>b</strong>MOOC is that, whether you are a teacher or a student, you are intrigued by 'images'.</p>
+<p>bMOOC is an educational, visual and digital platform designed for studio art education in the bachelor’s and master’s programs in visual arts. The platform aims to assist the development of a visual language.</p>
 
-    <p>The structure of bMOOC is simple: the course consists of topics. A topic is a collection of online artefacts that are placed next to each other. A topic opens a space for gathering. The first question is: how to relate to this topic?</p>
+<p>These introductory videos introduce the platform and can help you get started.</p>
 
-    <p>Topics may have specific instructions. They do not determine the contribution, but ask the contributor to disclose the gaze and to become attentive for (some)thing(s).</p>
-
-    <p>Login/register in order to join. Feel free to contribute to any topic. Click <a href="#" class="emphasis" help-show="index">help</a> for assistance and <a href="#" class="emphasis" data-reveal-id="about">about</a> for more information.</p>
+<p>See <a href="#" class="emphasis">our manual</a> for details on how to use the platform and for context and clarification.</p>
 
     @foreach($videos as $video)
     <div class="videoWrapper">
