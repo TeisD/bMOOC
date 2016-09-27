@@ -1406,8 +1406,8 @@ var Timeline = (function(){
             .duration(function(){
                 return (5000 + 200 * d3.select(this.parentNode).selectAll("g.node").size()) * Math.abs((pointer.max - pointer.brush.extent()[0]) / (pointer.max - pointer.min));
             })
-            .call(this.brush.extent([this.max, this.max]))
-            .call(this.brush.event);
+        this.brush.extent([this.max, this.max]);
+        d3.select('.slider').call(this.brush.event);
     }
 
     /**

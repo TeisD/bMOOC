@@ -9,7 +9,7 @@
 {{ Form::open(array('id'=>'new_topic_form', 'data-abide'=>'ajax', 'url'=>'topic/new','method'=>'POST', 'files'=>true)) }}
    @if(isset($edit))
    {{ method_field('PATCH') }}
-   <input type="text" hidden="hidden" id="topic_id" name="id" value="{{$topic->id}}"/>
+   <input type="text" hidden="hidden" id="topic_id" name="topic_id" value="{{$topic->id}}"/>
    @endif
     {{-- INPUT: topic_title --}}
     <div class="row"><div class="columns">

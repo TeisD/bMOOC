@@ -194,7 +194,10 @@ class BmoocController extends Controller {
 
 
         //filter the artefacts on author first
-        $results = DB::table('artefacts');
+        $results = DB::table('artefacts')
+            ->join('topics', 'artefacts.topic_id', '=', 'topics.id')
+            ->select('artefacts.*')
+            ->where('topics.deleted_at', null);
 
         if (isset($author) && $author != "all") {
             $results->join('users', 'artefacts.author_id', '=', 'users.id')
@@ -212,15 +215,16 @@ class BmoocController extends Controller {
         if (isset($keyword)) {
             $results->where(function($q) use( &$keyword) {
                         $q
-                        ->where('title', 'LIKE', '%' . $keyword . '%')
-                        ->orWhere('content', 'LIKE', '%' . $keyword . '%');
+                        ->where('artefacts.title', 'LIKE', '%' . $keyword . '%')
+                        ->orWhere('artefacts.content', 'LIKE', '%' . $keyword . '%');
                     });
         }
 
         /* make a collection so we can -> in the view */
         $collection = new \Illuminate\Database\Eloquent\Collection;
         foreach($results->get() as $result){
-            $collection->add(Artefact::find($result->id));
+            $af = Artefact::find($result->id);
+            $collection->add($af);
         }
 
         $links = VisController::getLinks($collection);
@@ -257,6 +261,7 @@ class BmoocController extends Controller {
             if($request->isMethod('patch')){
                 $topic = Topic::find($request->topic_id);
             }
+
 
             $topic->title = $request->title;
             $topic->description = $request->topic_description_raw;

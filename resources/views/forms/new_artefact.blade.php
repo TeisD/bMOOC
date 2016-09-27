@@ -44,14 +44,15 @@
 
         @if(isset($first))
             {{-- INPUT: new tags --}}
-            <div class="row form-inline"><div class="columns large-6">
+            <div class="form-inline">
+            <div class="row"><div class="columns large-6">
                 <label for="topic_end_date">tag 1:</label>
                 <div class="field">
                     <input type="text" required data-abide-validator="tag_new" id="new_tag-1" name="new_tags[]" />
                     <small class="error">3 unique tags are required.</small>
                 </div>
             </div></div>
-            <div class="row form-inline">
+            <div class="row">
                <div class="columns large-6">
                 <label for="topic_end_date">tag 2:</label>
                 <div class="field">
@@ -60,7 +61,7 @@
                 </div>
                 </div>
             </div>
-            <div class="row form-inline">
+            <div class="row">
                <div class="columns large-6">
                 <label for="topic_end_date">tag 3:</label>
                 <div class="field">
@@ -69,6 +70,7 @@
                 </div>
                 </div>
             </div>
+        </div>
         @else
             {{-- INPUT: old_tags --}}
             <div class="row">

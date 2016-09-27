@@ -108,6 +108,15 @@
             a = $(this).data('artefact');
         });
 
+        // stop youtube and vimeo playback
+        $(document).on('open.fndtn.reveal', '[data-reveal]', function () {
+            $('iframe').each(function(){
+                var src = $(this).attr("src");
+                $(this).attr("src", "");
+                $(this).attr("src", src);
+            });
+        });
+
         $(document).on('open.fndtn.reveal', '#new_artefact', function (event) {
             $("#parent_id", $(this)).attr('value', (a ? children[child_id].id : artefact_id));
             // update tags
@@ -250,7 +259,7 @@
                     down();
                     break;
             }
-            evt.preventDefault();
+            //evt.preventDefault();
         };
 
     </script>

@@ -90,14 +90,14 @@
                        </a>
                     <div class="columns large-3" vis-list>
                         <h3 class="title inline">
-                            <a href="/relation/{{$artefact->id}}">{{ $artefact->title }}</a>
+                            <a href="/relation/{{$artefact->id}}">{{ $artefact->title }}</a>&nbsp;
                         </h3>
                         <span class="title_clean" hidden="hidden" style="display:none"><?php
                             $s = str_replace(' ', '_', $artefact->title);
                             echo preg_replace('/[^A-Za-z0-9\_]/', '', $s) ?></span>
                     </div>
                     <div class="columns large-3" vis-list>
-                        <span class="topic"><a href="/topic/{{$artefact->topic->id}}">{{$artefact->topic->title}}</a></span>
+                        <span class="topic"><a href="/topic/{{$artefact->topic['id']}}">{{$artefact->topic->title}}</a></span>
                     </div>
                     <div class="columns large-1" vis-list>
                         <span class="type">{{ $artefact->type->type }}</span>

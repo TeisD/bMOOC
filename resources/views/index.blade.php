@@ -71,7 +71,7 @@
             @endif
                <div class="row">
                 <div class="columns large-3">
-                    <h3 class="title inline"><a href="/topic/{{$topic->id}}">{{ $topic->title }}</a></h3>
+                    <h3 class="title inline"><a href="/topic/{{$topic->id}}">{{ $topic->title }}</a>&nbsp;</h3>
                     @if(!$topic->active)
                         <small>(inactive)</small>
                     @endif

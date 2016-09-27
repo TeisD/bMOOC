@@ -94,7 +94,7 @@
                     </a>
                     <div class="columns large-4" vis-list>
                         <h3 class="title inline">
-                            <a href="/relation/{{$artefact->id}}">{{ $artefact->title }}</a>
+                            <a href="/relation/{{$artefact->id}}">{{ $artefact->title }}</a>&nbsp;
                         </h3>
                         <span class="title_clean" hidden="hidden" style="display:none"><?php
                             $s = str_replace(' ', '_', $artefact->title);
