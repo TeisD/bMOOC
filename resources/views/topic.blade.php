@@ -171,7 +171,7 @@
             resize: true,
             rotate: true
         });
-        var timeline = new Timeline(vis)
+        var timeline = new Timeline(vis, "{!!$topic->start_date!!}", "{!!$topic->end_date!!}")
 
         $(document).ready(function(){
             if($('html').hasClass('svg')){
@@ -183,14 +183,14 @@
                 var lastVisit = new Date(parseInt(readCookie({{$topic->id}})));
                 // start from beginning
                 if(isNaN( lastVisit.getTime() )){
-                    lastVisit = new Date({{strtotime($topic->start_date)*1000}});
+                    lastVisit = timeline.min;
                 }
                 // start from stored time
                 if (lastVisit.getTime() < Date.now()){
                     timeline.mark(lastVisit);
                     timeline.mark(new Date());
                     timeline.setDate(lastVisit);
-                    setTimeout(function(){ timeline.forward(); }, 3000);
+                    setTimeout(function(){ timeline.forward(); }, 500);
                 }
 
                 /* store a new cookie for the last visit mark */

@@ -1190,7 +1190,7 @@ var Timeline = (function(){
      * Create a Timeline.
      * @param {Vis} vis - The visualisation to be associated with the timeline. Requires  data.list to be set.
      */
-    function Timeline(vis){
+    function Timeline(vis, start_date, end_date){
 
         var pointer = this;
 
@@ -1200,16 +1200,24 @@ var Timeline = (function(){
         this.formatDate = d3.time.format("%d %b %Y");
 
         this.max = d3.max(this.vis.data.list, function(d){
-                  var date = d3.time.format("%Y-%m-%d %H:%M:%S").parse(d.created_at);
-                  return date;
-              });
+            var date = d3.time.format("%Y-%m-%d %H:%M:%S").parse(d.created_at);
+            return date;
+        });
+        if(typeof end_date !== 'undefined'){
+            this.max = d3.max([this.max, d3.time.format("%Y-%m-%d %H:%M:%S").parse(end_date)]);
+        }
 
         this.min = d3.min(this.vis.data.list, function(d){
-                  var date = d3.time.format("%Y-%m-%d %H:%M:%S").parse(d.created_at);
-                  return date;
-              });
+            var date = d3.time.format("%Y-%m-%d %H:%M:%S").parse(d.created_at);
+            return date;
+        });
+        if(typeof start_date !== 'undefined'){
+            this.min = d3.min([this.min, d3.time.format("%Y-%m-%d %H:%M:%S").parse(start_date)]);
+        }
 
-        this.startingValue = this.max;
+        this.end = d3.min([this.max, new Date()]);
+
+        this.startingValue = this.end;
 
         this.timeScale = d3.time.scale()
           .domain([this.min, this.max])
@@ -1253,18 +1261,22 @@ var Timeline = (function(){
     Timeline.prototype.brushed = function(e){
         var pointer = this;
 
-        if(this.brush.extent()[0] < this.min) this.brush.extent([this.min, this.min]);
-        if(this.brush.extent()[0] > this.max) this.brush.extent([this.max, this.max]);
-
-        var value = this.brush.extent()[0];
+        //if(this.brush.extent()[0] < this.min) this.brush.extent([this.min, this.min]);
+        //if(this.brush.extent()[0] > this.end) this.brush.extent([this.end, this.end]);
 
         if(e){
             // put the brush to a new value
             if (d3.event.sourceEvent) { // not a programmatic event
-                value = this.timeScale.invert(d3.mouse(e)[0]);
+                var value = this.timeScale.invert(d3.mouse(e)[0]);
                 this.brush.extent([value, value]);
             }
         }
+
+        if(this.brush.extent()[0] > this.end){
+            this.brush.extent([this.end, this.end]);
+        }
+
+        var value = this.brush.extent()[0];
 
         d3.select(this.vis.el).select(".handle").attr("transform", "translate(" + this.timeScale(value) + ",0)");
         d3.select(this.vis.el).select(".handle").select('text').text(this.formatDate(value));
@@ -1400,14 +1412,15 @@ var Timeline = (function(){
      */
     Timeline.prototype.forward = function(){
         var pointer = this;
+        var prevBrush = this.brush.extent();
 
-        d3.select(d3.select('.slider').node()).transition()
+        this.brush.extent([this.end, this.end]);
+
+        d3.select('.slider').transition()
             .ease(d3.ease("linear"))
             .duration(function(){
-                return (5000 + 200 * d3.select(this.parentNode).selectAll("g.node").size()) * Math.abs((pointer.max - pointer.brush.extent()[0]) / (pointer.max - pointer.min));
-            })
-        this.brush.extent([this.max, this.max]);
-        d3.select('.slider').call(this.brush.event);
+                return (5000 + 200 * d3.select(this.parentNode).selectAll("g.node").size()) * Math.abs((pointer.end - prevBrush[0]) / (pointer.max - pointer.min));
+            }).call(this.brush.event);
     }
 
     /**
@@ -1415,22 +1428,23 @@ var Timeline = (function(){
      */
     Timeline.prototype.rewind = function(){
         var pointer = this;
+        var prevBrush = this.brush.extent();
 
-        d3.select(d3.select('.slider').node()).transition()
+        this.brush.extent([this.min, this.min]);
+
+        d3.select('.slider').transition()
             .ease(d3.ease("linear"))
             .duration(function(){
-                return (5000 + 200 * d3.select(this.parentNode).selectAll("g.node").size()) * Math.abs((pointer.brush.extent()[0] - pointer.min) / (pointer.max - pointer.min));
-            })
-            .call(this.brush.extent([this.min, this.min]))
-            .call(this.brush.event);
+                return (5000 + 200 * d3.select(this.parentNode).selectAll("g.node").size()) * Math.abs((prevBrush[0] - pointer.min) / (pointer.max - pointer.min));
+            }).call(this.brush.event);
     }
 
     Timeline.prototype.stop = function(){
-        d3.select(d3.select('.slider').node()).transition();
+        d3.select('.slider').transition();
     }
 
     Timeline.prototype.update = function(){
-        d3.select(d3.select('.slider').node()).call(this.brush.event);
+        d3.select('.slider').call(this.brush.event);
     }
 
     /**
