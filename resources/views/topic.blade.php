@@ -40,9 +40,15 @@
 
 @section('content')
    @if($topic->artefactCount < 1)
-    <div class="row full">
-        <button class="primary plus centered" data-reveal-id="new_artefact">add (some)thing</button>
-    </div>
+       @if($topic->active || $user->role->id > 1)
+        <div class="row full">
+            <button class="primary plus centered" data-reveal-id="new_artefact">add (some)thing</button>
+        </div>
+        @else
+        <div class="row text-center">
+            This topic is empty &amp; inactive.<br />You can add some(thing) to it from <strong>{{date('d/m/Y', strtotime($topic->start_date))}}</strong> untill <strong>{{date('d/m/Y', strtotime($topic->end_date))}}</strong>.
+        </div>
+        @endif
    @else
     <div class="row full" id="vis-container">
         <div class="vis-gui render">
