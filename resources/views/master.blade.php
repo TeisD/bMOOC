@@ -71,7 +71,7 @@
                                <a href="javascript:;" data-reveal-id="feedback">feedback</a>
                             </li>
                             <li>
-                                <a href="/auth/logout">Sign out {{$user->name}}</a>
+                                <a href="/logout">Sign out {{$user->name}}</a>
                             </li>
                         </ul>
                     </nav>

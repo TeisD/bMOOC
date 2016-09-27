@@ -2,7 +2,7 @@
 
 @section('content')
 
-        <button class="giant centered" data-reveal-id="signin" data-reveal-ajax="/auth/login">Sign in</button>
+        <a class="button giant centered" href="/login">Sign in</a>
 
         <div class="landing_controls">
             <button class="tubular-play-pause tubular-pause"><i class="fi-pause"></i></button>

@@ -162,7 +162,7 @@ button.eye, .button.eye {
   background: url(../img/eye.png) no-repeat left center;
   background-size: contain; }
 
-button.centered {
+button.centered, .button.centered {
   position: absolute;
   left: 50%;
   top: 50%;
@@ -292,6 +292,13 @@ form input:focus, form textarea:focus, form select:focus {
   background: inherit;
   border-width: 2px;
   border-color: inherit; }
+form input[type='checkbox'].clean {
+  -webkit-appearance: checkbox;
+  padding: initial;
+  margin: initial;
+  height: auto;
+  width: auto;
+  display: initial; }
 form label, form label.error {
   color: #ffffff;
   font-size: 0.875rem;
@@ -319,6 +326,13 @@ form .tag-button label input {
   display: none; }
 form .tag-button input:checked + span {
   border: 2px solid #ffffff; }
+form .laravel_error {
+  background: red;
+  padding: 0.375rem;
+  margin-bottom: 1rem;
+  font-size: .75rem;
+  font-style: italic;
+  font-weight: 400; }
 
 form .error label, form .error label.error {
   color: inherit; }

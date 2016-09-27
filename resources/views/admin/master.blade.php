@@ -17,7 +17,7 @@
    <header style="max-width: 900px; width=100%; margin: 0 auto; display: block;">
       <div class="row">
           <div class="columns medium-2 large-2">
-              <h1>bMOOC</h1>
+              <h1><a href="/">bMOOC</a></h1>
                {{--<nav>
                   <div class="icon-bar two-up">
                       <a href="/admin/data" class="item @menu('data')">
