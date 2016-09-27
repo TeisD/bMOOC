@@ -154,7 +154,7 @@
         data.list = JSON.parse('{!! addslashes(json_encode($results)) !!}');
         data.links = JSON.parse('{!! addslashes(json_encode($links)) !!}');
 
-        var vis = new Vis($('#vis-container').get(0), data, 'topic', {
+        var vis = new Vis($('#vis-container').get(0), data, 'relation', {
             interactive: true,
             type: 'network',
             rotate: false,

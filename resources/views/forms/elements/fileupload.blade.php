@@ -1,7 +1,7 @@
-<div>
-  <label for="{{$id}}" class="form-inline">
+<div class="fileupload">
+  <label for="{{$id}}" class="form-inline" data-random={{rand(0,100)}}>
     <span class="filetype_label">Select a file to upload <small>(&lt;5MB)</small></span>:
-    <input data-abide-validator="filesize" type="file" id="{{$id}}" name="{{$id}}" class="inputfile"/>
+    <input data-abide-validator="filesize" type="file" id="{{$id}}" name="{{$name or $id}}" class="inputfile"/>
     <div>
        <span class="file_reset">
             remove

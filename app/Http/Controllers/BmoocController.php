@@ -361,6 +361,8 @@ class BmoocController extends Controller {
             ]);
         }
 
+        DB::beginTransaction();
+
         try{
             $artefact = new Artefact;
             $tags = [];
@@ -390,6 +392,8 @@ class BmoocController extends Controller {
 
             $artefact->tags()->saveMany($tags);
 
+            DB::commit();
+
             if ( $request->isXmlHttpRequest() ) {
                 if($parent_id){
                     return Response::json( [
@@ -405,11 +409,11 @@ class BmoocController extends Controller {
             }
             if($parent_id) return BmoocController::relation($artefact->id);
             else return BmoocController::relation($parent_id, Artefact::find($parent_id)->children()->count());
+
         } catch (Exception $e) {
             DB::rollback();
             throw $e;
         }
-
     }
 
     private function parseArtefact(Request $request){
@@ -457,7 +461,7 @@ class BmoocController extends Controller {
                     'af_upload' => 'required|mimes:pdf'
                 ]);
                 //TODO: make pdf validator
-                Storage::put('artefacts/'.$filename, $request->af_upload);
+                $request->file('af_upload')->move(base_path().'/storage/app/artefacts', $filename);
                 BmoocController::storeThumbnails($request, $filename);
                 $af->content = $filename;
                 $af->type = Types::FILE;

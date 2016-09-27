@@ -37,7 +37,7 @@
         @if(isset($content)) {!! $content !!} @endif
     </div>
 
-    <textarea name="{{$id}}_raw" id="{{$id}}_raw" @if(isset($required)) required data-abide-validator="quill" @endif style="display:none">
+    <textarea name="{{$name or $id}}_raw" id="{{$id}}_raw" @if(isset($required)) required data-abide-validator="quill" @endif style="display:none">
         @if(isset($content)) {!! $content !!} @endif
     </textarea>
 

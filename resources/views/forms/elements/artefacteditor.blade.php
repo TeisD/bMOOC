@@ -29,25 +29,25 @@
         </div>
 
         {{-- INPUT: TEXT --}}
-        <div class="row type_input" style="display: none" id="text">
+        <div class="row type_input text" style="display: none" id="{{$id}}_text">
            <div class="columns">
-                @include('forms.elements.texteditor', ['id' => 'af_text', 'required' => 'required', 'error_msg' => 'Please enter some text.'])
+                @include('forms.elements.texteditor', ['id' => $id.'_af_text', 'name' => 'af_text', 'required' => 'required', 'error_msg' => 'Please enter some text.'])
             </div>
         </div>
 
         {{-- INPUT: FILE --}}
-        <div class="row type_input" style="display: none;" id="upload">
+        <div class="row type_input upload" style="display: none;" id="{{$id}}_upload">
             <div class="columns">
-                @include('forms.elements.fileupload', ['id' => 'af_upload', 'required' => 'required'])
+                @include('forms.elements.fileupload', ['id' => $id.'_af_upload', 'name' => 'af_upload', 'required' => 'required'])
             </div>
         </div>
 
         {{-- INPUT: URL --}}
 
-        <div class="row type_input" style="display: none"; id="url">
+        <div class="row type_input url" style="display: none"; id="{{$id}}_url">
             <div class="columns">
                 <label>Upload or find a video on YouTube or Vimeo and paste the link to the video here:
-                    <input type="text" required id="af_url" name="af_url"/>
+                    <input type="text" required id="{{$id}}_af_url" name="af_url"/>
                 </label>
                 <small class="error">Please enter a link to a video on youtube or vimeo.</small>
             </div>
@@ -56,7 +56,7 @@
         {{-- HIDDEN FILETYPE FIELD + ERROR MSG --}}
         <div class="row">
             <div class="columns">
-                <input type="hidden" name="filetype" required id="filetype" />
+                <input type="hidden" name="filetype" required id="{{$id}}_filetype"  class="filetype"/>
                 <small class="error filetype_error">Please choose one of the file types.</small>
             </div>
         </div>

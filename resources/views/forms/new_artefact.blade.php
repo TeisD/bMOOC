@@ -16,8 +16,8 @@
           <div class="row">
               <div class="columns">
                  <div class="instruction">
+                    <h4>{{$topic->activeInstruction->title}}</h4>
                   @if($topic->activeInstruction->type_id == 28)
-                      <h4>{{$topic->activeInstruction->title}}</h4>
                       {!!$topic->activeInstruction->content!!}
                   @elseif($topic->activeInstruction->type_id == 29 || $topic->activeInstruction->type_id == 30)
                       <img src="/instruction/{{$topic->activeInstruction->id}}/medium" alt="{{$topic->activeInstruction->title}}"/>
@@ -46,7 +46,7 @@
             {{-- INPUT: new tags --}}
             <div class="form-inline">
             <div class="row"><div class="columns large-6">
-                <label for="topic_end_date">tag 1:</label>
+                <label for="new_tag-1">tag 1:</label>
                 <div class="field">
                     <input type="text" required data-abide-validator="tag_new" id="new_tag-1" name="new_tags[]" />
                     <small class="error">3 unique tags are required.</small>
@@ -54,7 +54,7 @@
             </div></div>
             <div class="row">
                <div class="columns large-6">
-                <label for="topic_end_date">tag 2:</label>
+                <label for="new_tag-2">tag 2:</label>
                 <div class="field">
                     <input type="text" required data-abide-validator="tag_new" id="new_tag-2" name="new_tags[]" />
                     <small class="error">3 unique tags are required.</small>
@@ -63,7 +63,7 @@
             </div>
             <div class="row">
                <div class="columns large-6">
-                <label for="topic_end_date">tag 3:</label>
+                <label for="new_tag-3">tag 3:</label>
                 <div class="field">
                     <input type="text" required data-abide-validator="tag_new" id="new_tag-3" name="new_tags[]" />
                     <small class="error">3 unique tags are required.</small>
@@ -80,9 +80,9 @@
             </div>
             {{-- INPUT: old_tags --}}
             <div class="row">
-                <div class="columns">
+                <div class="columns large-6">
                     <label>Add one new tag:
-                        <input type="text" required id="new_tag" name="new_tag" />
+                        <input type="text" required data-abide-validator="tag_existing" id="new_tag" name="new_tag" />
                     </label>
                     <small class="error">The new tag can not be empty and cannot be the same as the selected tags.</small>
                 </div>
@@ -111,7 +111,7 @@
       <div class="row"><div class="columns">
        <h3>Description</h3>
        <label>Describe what you see in the previous contribution:</label>
-        @include('forms.elements.texteditor', ['id' => 'artefact_description', 'required' => 'required', 'error_msg' => 'Please attempt to describe your addition.'])
+        @include('forms.elements.texteditor', ['id' => 'artefact_description', 'required' => 'required', 'error_msg' => 'Please attempt to describe what you see in the previous contribution.'])
         </div></div>
     </fieldset>
 

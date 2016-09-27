@@ -136,7 +136,7 @@
             $("#old_tags div", $(this)).remove();
             console.log(children[child_id]);
             $.each((a ? children[child_id].tags : artefact.tags), function (k, tag) {
-                $('#old_tags').append('<div class="tag-button purple"><label><input  type="checkbox" data-abide-validator="tag_select" name="old_tags[]" value="' + tag.tag + '"><span>' + tag.tag + '</span></label></div>\n');
+                $('#old_tags').prepend('<div class="tag-button purple"><label><input  type="checkbox" data-abide-validator="tag_select" name="old_tags[]" value="' + tag.tag + '"><span>' + tag.tag + '</span></label></div>\n');
             });
         });
 

@@ -26,7 +26,7 @@ $(document).foundation({
             tag_existing: function(el, required, parent){
                 var tags = [];
                 var valid = true;
-                $('#answer_tags input[type=checkbox]:checked').each(function() {
+                $('#old_tags input[type=checkbox]:checked').each(function() {
                     if ($.inArray($(this).next().text(), tags) > -1) {
                         valid = false;
                     }
@@ -108,28 +108,28 @@ function showAnswerType(e, el) {
 
     switch(el.data('type')){
         case 'text':
-            $('#text textarea', parent).prop('required', true);
-            $('#text', parent).slideDown();
+            $('.text textarea', parent).prop('required', true);
+            $('.text', parent).slideDown();
             break;
         case 'image':
-            $('#upload .label', parent).html('Select an image to upload <small>(JPG, PNG or GIF, &lt;5MB)</small>');
-            $('#upload input', parent).prop('required', true);
-            parent.find('#upload').slideDown();
+            $('.upload .label', parent).html('Select an image to upload <small>(JPG, PNG or GIF, &lt;5MB)</small>');
+            $('.upload input', parent).prop('required', true);
+            parent.find('.upload').slideDown();
             break;
         case 'video':
-            $('#url input', parent).prop('required', true);
-            $('#url', parent).slideDown();
+            $('.url input', parent).prop('required', true);
+            $('.url', parent).slideDown();
             break;
         case 'file':
-            parent.find('#upload .label').html('Select a PDF to upload. <small>(&lt;5MB. If the file is too large you can use <a href="http://smallpdf.com/compress-pdf">this free tool</a> to resize your PDF)</small>');
-            $('#upload input', parent).prop('required', true);
-            $('#upload', parent).slideDown();
+            parent.find('.upload .label').html('Select a PDF to upload. <small>(&lt;5MB. If the file is too large you can use <a href="http://smallpdf.com/compress-pdf">this free tool</a> to resize your PDF)</small>');
+            $('.upload input', parent).prop('required', true);
+            $('.upload', parent).slideDown();
             break;
         default:
             break;
     }
 
-    $('#filetype', parent).val(el.data('type'));
+    $('.filetype', parent).val(el.data('type'));
 
     return false;
 }
@@ -137,6 +137,44 @@ function showAnswerType(e, el) {
 /********
 * FORMS *
 ********/
+
+var Input = (function(){
+
+    function Input(input){
+        this.el = input;
+        this.input = this.el.find('.inputfile');
+        this.filename = this.el.find('.file_filename');
+
+        var pointer = this;
+
+        this.el.find('.file_reset').on('click', function (e){
+            e.preventDefault();
+
+            pointer.input.wrap('<form></form>').closest('form').get(0).reset();
+            pointer.input.unwrap();
+            pointer.input.trigger('change');
+        });
+
+		this.input.on( 'change', function( e ){
+			var fileName = '';
+
+			if( this.files && this.files.length > 1 )
+				fileName = ( this.getAttribute( 'data-multiple-caption' ) || '' ).replace( '{count}', this.files.length );
+			else if( e.target.value )
+				fileName = e.target.value.split( '\\' ).pop();
+
+            pointer.filename.html( fileName );
+            console.log(pointer.filename.html());
+		});
+
+		// Firefox bug fix
+		this.input
+		.on( 'focus', function(){ $input.addClass( 'has-focus' ); })
+		.on( 'blur', function(){ $input.removeClass( 'has-focus' ); });
+    }
+
+    return Input;
+})();
 
 /* CLEAR FILE UPLOAD */
 $(function(){
@@ -146,38 +184,11 @@ $(function(){
     });
 });
 
-;( function( $, window, document, undefined ){
-	$( '.inputfile' ).each( function(){
-		var $input	   = $( this ),
-			$el  	   = $input.parent( 'label' ),
-            $filename  = $el.find('.file_filename');
-
-        $el.find('.file_reset').on('click', function (e){
-            e.preventDefault();
-
-            $input.wrap('<form></form>').closest('form').get(0).reset();
-            $input.unwrap();
-            $input.trigger('change');
-        });
-
-		$input.on( 'change', function( e ){
-			var fileName = '';
-
-			if( this.files && this.files.length > 1 )
-				fileName = ( this.getAttribute( 'data-multiple-caption' ) || '' ).replace( '{count}', this.files.length );
-			else if( e.target.value )
-				fileName = e.target.value.split( '\\' ).pop();
-
-            $filename.html( fileName );
-		});
-
-		// Firefox bug fix
-		$input
-		.on( 'focus', function(){ $input.addClass( 'has-focus' ); })
-		.on( 'blur', function(){ $input.removeClass( 'has-focus' ); });
-	});
-})( jQuery, window, document );
-
+$(function(){
+  $('.fileupload').each( function(){
+        new Input($(this));
+  });
+});
 
 /* FEEDBACK */
 $(function(){
