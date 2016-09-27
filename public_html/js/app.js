@@ -313,8 +313,8 @@ function render(div, data, quality, url){
     if(url == undefined) url = 'artefact'
     if(quality == undefined) quality = 'medium'
 
-    //div.find('.artefact').hide();
-    //div.find('.loader').show();
+    div.find('.artefact').hide();
+    div.find('.loader').show();
     switch (data.type_id) {
         case 28:
             html = "<div class=\"textContainer\"><div class=\"text\"><h2>" + data.title + "</h2>" + data.content + "</div></div>";
