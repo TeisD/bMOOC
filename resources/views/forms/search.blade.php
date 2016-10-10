@@ -29,9 +29,9 @@
                <div class="field">
                    <div class="awesomplete">
                    @if(isset($currentAuthor) && $currentAuthor != 'all')
-                    <input class="dropdown-input" autocomplete="off" aria-autocomplete="list" id="author" list="authors-list" value="{{$currentAuthor}}" />
+                    <input class="dropdown-input" data-log="10" data-log-keyboard autocomplete="off" aria-autocomplete="list" id="author" list="authors-list" value="{{$currentAuthor}}" />
                     @else
-                    <input class="dropdown-input" autocomplete="off" aria-autocomplete="list" id="author" list="authors-list" />
+                    <input class="dropdown-input" data-log="10" data-log-keyboard autocomplete="off" aria-autocomplete="list" id="author" list="authors-list" />
                     @endif
                    </div>
                </div>
@@ -40,7 +40,7 @@
                         <option>{{ $author->name }}</option>
                     @endforeach
                 </datalist>
-                <button class="dropdown-btn form-input" type="button">&darr;</button>
+                <button class="dropdown-btn form-input" data-log="11" type="button">&darr;</button>
            </div>
        </div>
 
@@ -50,9 +50,9 @@
                <div class="field">
                    <div class="awesomplete">
                    @if(isset($currentTag) && $currentTag != 'all')
-                    <input class="dropdown-input" autocomplete="off" aria-autocomplete="list" id="tag" list="tags-list" value="{{$currentTag}}" />
+                    <input class="dropdown-input" data-log="12" data-log-keyboard autocomplete="off" aria-autocomplete="list" id="tag" list="tags-list" value="{{$currentTag}}" />
                     @else
-                    <input class="dropdown-input" autocomplete="off" aria-autocomplete="list" id="tag" list="tags-list" />
+                    <input class="dropdown-input" data-log="12" data-log-keyboard autocomplete="off" aria-autocomplete="list" id="tag" list="tags-list" />
                     @endif
                    </div>
                </div>
@@ -61,7 +61,7 @@
                         <option>{{ $tag->tag }}</option>
                     @endforeach
                 </datalist>
-                <button class="dropdown-btn form-input" type="button">&darr;</button>
+                <button class="dropdown-btn form-input" data-log="13" type="button">&darr;</button>
            </div>
        </div>
 
@@ -70,9 +70,9 @@
                <label for="keyword">Search</label>
                <div class="field">
                 @if(isset($currentKeyword))
-                    <input type="text" id="keyword" value="{{ $currentKeyword }}"/>
+                    <input type="text" id="keyword" data-log="14" data-log-keyboard value="{{ $currentKeyword }}"/>
                 @else
-                    <input type="text" id="keyword" />
+                    <input type="text" id="keyword" data-log="14" data-log-keyboard />
                 @endif
                </div>
            </div>

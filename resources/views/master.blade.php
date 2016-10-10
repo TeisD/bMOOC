@@ -62,16 +62,16 @@
                     <nav class="main">
                         <ul class="inline slash">
                            <li>
-                                <a href="javascript:;" help-show>help</a>
+                                <a href="javascript:;" data-log="1" help-show>help</a>
                             </li>
                             <li>
-                               <a href="/about" data-reveal-id="about" data-reveal-ajax="true">about</a>
+                               <a href="/about" data-reveal-id="about" data-log="2" data-reveal-ajax="true">about</a>
                             </li>
                             <li>
-                               <a href="javascript:;" data-reveal-id="feedback">feedback</a>
+                               <a href="javascript:;" data-log="3" data-reveal-id="feedback">feedback</a>
                             </li>
                             <li>
-                                <a href="/logout">Sign out {{$user->name}}</a>
+                                <a href="/logout" data-log="4">Sign out {{$user->name}}</a>
                             </li>
                         </ul>
                     </nav>
@@ -79,12 +79,12 @@
             </div>
             <div class="row space">
 				<div class="large-5 columns">
-					<h1 class="inline"><a href="/">bMOOC</a></h1>
+					<h1 class="inline"><a href="/" data-log="5">bMOOC</a></h1>
                     <span id="vis-menu">
-                        <a class="button tertiary inline" data-help data-help-id="vis_menu" data-vis="list" href="#list"><img src="/img/vis_list_white.png" />list</a>
-                        <a data-help data-help-id="vis_menu" class="button tertiary inline" data-vis="grid" href="#grid"><img src="/img/vis_grid_white.png" />grid</a>
-                        <a data-help data-help-id="vis_menu" class="button tertiary inline" data-vis="tree" data-svg href="#tree"><img src="/img/vis_tree_white.png" />tree</a>
-                        <a data-help data-help-id="vis_menu" class="button tertiary inline" data-vis="network" data-svg href="#network"><img src="/img/vis_network_white.png"/>network</a>
+                        <a class="button tertiary inline" data-log="6" data-help data-help-id="vis_menu" data-vis="list" href="#list"><img src="/img/vis_list_white.png" />list</a>
+                        <a data-help data-help-id="vis_menu" data-log="7"  class="button tertiary inline" data-vis="grid" href="#grid"><img src="/img/vis_grid_white.png" />grid</a>
+                        <a data-help data-help-id="vis_menu" data-log="8" class="button tertiary inline" data-vis="tree" data-svg href="#tree"><img src="/img/vis_tree_white.png" />tree</a>
+                        <a data-help data-help-id="vis_menu" data-log="9" class="button tertiary inline" data-vis="network" data-svg href="#network"><img src="/img/vis_network_white.png"/>network</a>
                     </span>
                     @yield('header_actions')
 				</div>
