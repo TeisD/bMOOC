@@ -555,8 +555,6 @@ ul.grid{
         float: left;
         width: 10%;
         height: 10vw;
-        margin-top: .9375rem;
-        margin-bottom: .9375rem;
         overflow: hidden;
     }
     .row, .columns{
@@ -564,12 +562,28 @@ ul.grid{
         height: 100%;
         line-height: inherit;
         position: relative;
+        float: none;
     }
+
+    .row{
+        padding: 1rem !important
+    }
+
     img{
         display: block;
         margin: 0 auto;
     }
 }
+
+.row ul.grid .row {
+    margin: 0 !important;
+}
+
+.columns ul.grid .columns {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
 ul.inline li{
     display: inline-block;
 }
@@ -612,7 +626,7 @@ dl dd{
         margin-bottom: 1rem;
         line-height: 2.8rem;
     }
-    li:hover{
+    li:hover .row{
         background: $purple;
     }
 }

@@ -444,17 +444,25 @@ ul.grid li {
   float: left;
   width: 10%;
   height: 10vw;
-  margin-top: .9375rem;
-  margin-bottom: .9375rem;
   overflow: hidden; }
 ul.grid .row, ul.grid .columns {
   width: 100%;
   height: 100%;
   line-height: inherit;
-  position: relative; }
+  position: relative;
+  float: none; }
+ul.grid .row {
+  padding: 1rem !important; }
 ul.grid img {
   display: block;
   margin: 0 auto; }
+
+.row ul.grid .row {
+  margin: 0 !important; }
+
+.columns ul.grid .columns {
+  margin: 0 !important;
+  padding: 0 !important; }
 
 ul.inline li {
   display: inline-block; }
@@ -493,7 +501,7 @@ dl dd {
 .list .row {
   margin-bottom: 1rem;
   line-height: 2.8rem; }
-.list li:hover {
+.list li:hover .row {
   background: #751e82; }
 
 /* MAIN */
