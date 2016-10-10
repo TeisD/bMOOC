@@ -161,7 +161,6 @@
   <script src="/js/d3.min.js"></script>
   <script src="/js/d3plus.min.js"></script>
   <script src="/js/list.min.js"></script>
-   <script src="/js/cookie.js"></script>
     <script>
         var data = {};
         data.tree = JSON.parse('{!! addslashes(json_encode($tree)) !!}');

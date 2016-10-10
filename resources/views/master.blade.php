@@ -32,9 +32,10 @@
           ga('create', 'UA-71362622-1', 'auto');
           ga('send', 'pageview');
         </script>
-        {{--
-        <div data-alert class="alert-box">
-            <ul class="inline slash">
+
+        <div data-alert class="alert-box modernizr-alert logging-gui">
+            <div class="toggle options">
+                <ul class="inline slash">
                 <li>
                     <a href="javascript:;">add comment</a>
                 </li>
@@ -42,8 +43,12 @@
                     <a href="javascript:;">stop logging</a>
                 </li>
             </ul>
+            </div>
+            <div class="toggle saving" style="display: none">
+                <img src="img/loader_overlay_big.gif" style="height: 1rem; width: auto;" alt="loading..."> saving...
+            </div>
         </div>
-        --}}
+
         <div data-alert class="alert-box alert modernizr-alert js-alert">
             <strong>JavaScript appears to be disabled in your browser.</strong><br />
             For full functionality of this site, it is necessary to enable JavaScript. Here are <a href="http://enable-javascript.com" class="emphasis">instructions how to enable Javascript</a>.
@@ -113,11 +118,14 @@
         <script src="/js/foundation/foundation.js"></script>
         <script src="/js/foundation/foundation.reveal.js"></script>
         <script src="/js/foundation/foundation.abide.js"></script>
+        <script src="/js/cookie.js"></script>
+        <script>
+            $.ajaxSetup({ headers: { 'csrftoken' : '{{ csrf_token() }}' } });
+        </script>
+
         <script src="/js/app.js?v=@version"></script>
 
         <script>
-            $.ajaxSetup({ headers: { 'csrftoken' : '{{ csrf_token() }}' } });
-
             $(document).on('opened.fndtn.reveal', '[data-reveal]', function () {
                 var modal = $(this);
                 $(document).foundation('equalizer', 'reflow');

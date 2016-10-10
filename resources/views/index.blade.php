@@ -6,7 +6,9 @@
     @if (isset($user) && $user->role->id > 1)
         <button class="primary plus indent" data-help="index" data-help-id="new_topic" data-reveal-id="new_topic">new topic</button>
     @endif
-    {{--<button class="primary plus indent" data-help="index" data-help-id="new_log" data-reveal-id="new_log">new log</button>--}}
+    @if (isset($user))
+    <button class="primary plus indent" data-help="index" data-help-id="new_log" data-reveal-id="new_log">new log</button>
+    @endif
 @stop
 
 @section('header_search')
@@ -138,6 +140,7 @@
 @section('forms')
     {{-- NEW TOPIC FORM --}}
     @include('forms.master', ['form' => 'new_topic', 'class' => 'slide'])
+    @include('forms.master', ['form' => 'new_log', 'class' => 'small'])
 @stop
 
 @section('scripts')

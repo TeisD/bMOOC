@@ -233,6 +233,24 @@ class BmoocController extends Controller {
         return BmoocController::viewPage('search', ['results'=> $collection, 'currentAuthor'=> $author, 'currentTag'=> $tag, 'currentKeyword'=>$keyword, 'links' => $links]);
     }
 
+    public function newLog(Request $request){
+        $user = Auth::user();
+
+        DB::beginTransaction();
+
+        try{
+            if ( $request->isXmlHttpRequest() ) {
+                return Response::json( [
+                    'status' => '200',
+                    'refresh' => true
+                ], 200);
+            }
+        } catch (Exception $e) {
+            DB::rollback();
+            throw $e;
+        }
+    }
+
     public function newTopic(Request $request){
         $user = Auth::user();
         if(!$user) return false;

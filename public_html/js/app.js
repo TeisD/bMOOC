@@ -669,6 +669,10 @@ var Vis = (function(){
             .on("zoom", this.zoomed);
         this.hasZoom = false;
 
+        d3.select(this.el).attr('data-log-scroll', '')
+            .attr('data-log-scroll-up', '19')
+            .attr('data-log-scroll-down', '20');
+
         this.svg = d3.select(this.el).append("svg")
                 .attr("width", '100%')
                 .attr("height", '100%')
@@ -724,6 +728,7 @@ var Vis = (function(){
             var pointer = this;
             gui.append('button')
                 .attr('class', 'secondary square rotate')
+                .attr('data-log', '18')
                 .html('&#x21bb;&#xfe0e;')
                 .on('click', function(){
                     pointer.options.rotate = !pointer.options.rotate;
@@ -731,10 +736,12 @@ var Vis = (function(){
                 });
             gui.append('button')
                 .attr('class', 'secondary square zoom-in')
+                .attr('data-log', '19')
                 .html('<i class="fi-plus"></i>')
                 .on('click', function(){ pointer.zoom(0.1) });
             gui.append('button')
                 .attr('class', 'secondary square zoom-out')
+                .attr('data-log', '20')
                 .html('<i class="fi-minus"></i>')
                 .on('click', function(){ pointer.zoom(-0.1) });
         }
@@ -1069,6 +1076,9 @@ var Vis = (function(){
             nodeEnter.filter(function(d) { return d.type_id > 28; })
                 .filter(function(d) { return !d.hidden })
                 .append("a")
+                .attr("data-log", function(d){
+                    return d.title;
+                })
                 .attr("xlink:href", function(d) {
                     return "/"+pointer.url+"/"+d.id;
                 })
@@ -1093,6 +1103,9 @@ var Vis = (function(){
             nodeEnter.filter(function(d) { return d.type_id == 28 })
                 .filter(function(d) { return !d.hidden })
                 .append("a")
+                .attr("data-log", function(d){
+                    return d.title;
+                })
                 .attr("xlink:href", function(d) {
                     return "/"+pointer.url+"/"+d.id;
                 })
@@ -1122,6 +1135,9 @@ var Vis = (function(){
         } else if(this.options.mode == 'text') {
             var a = nodeEnter.append("g")
                 .append("a")
+                .attr("data-log", function(d){
+                    return d.title;
+                })
                 .attr("xlink:href", function(d) {
                     return "/"+pointer.url+"/"+d.id;
                 });
@@ -1163,6 +1179,7 @@ var Vis = (function(){
         }
 
         this.updateZoom();
+        initLogging();
     }
     
     Vis.prototype.drawLinks = function(){
@@ -1377,14 +1394,17 @@ var Timeline = (function(){
             var pointer = this;
             gui.append('button')
                 .attr('class', 'secondary square rewind inline')
+                .attr('data-log', '15')
                 .html('<i class="fi-rewind"></i>')
                 .on('click', function(){ pointer.rewind() });
             gui.append('button')
                 .attr('class', 'secondary square stop inline')
+                .attr('data-log', '16')
                 .html('<i class="fi-stop"></i>')
                 .on('click', function(){ pointer.stop() });
             gui.append('button')
                 .attr('class', 'secondary square forward inline')
+                .attr('data-log', '17')
                 .html('<i class="fi-fast-forward"></i>')
                 .on('click', function(){ pointer.forward() });
 
@@ -1394,6 +1414,8 @@ var Timeline = (function(){
                 pointer.vis.fit();
             });
         }
+
+        initLogging();
     }
 
     /**
@@ -1584,6 +1606,85 @@ var Menu = (function(){
 
 })();
 
+
+/**********
+* LOGGING *
+**********/
+
+function initLogging(){
+    logging = readCookie("logging");
+
+    if(logging != null){
+
+        // show the logging bar
+        $('.logging-gui').show();
+        $('[data-reveal-id=new_log]').hide();
+
+        // date.now shim
+        if (!Date.now) {
+            Date.now = function() { return new Date().getTime(); }
+        }
+
+        var log = [];
+
+        // save on page move
+        window.onbeforeunload = saveLog;
+        // save every minute
+        autosave = setInterval(saveLog, 60000);
+
+        /* EVENTS */
+        var scrolling = '';
+        addCommand({"event": "page", "description": window.location.href});
+
+        $("[data-log]").on('click', function(){
+            var id = parseInt($(this).data('log'))
+            if(isNaN(id)){
+                addCommand({"event": "click", "description": $(this).data('log')});
+            } else {
+                addCommand({"event": "click", "button": id});
+            }
+            scrolling = ''
+        })
+
+        $("[data-log-keyboard]").on('keypress', function(e){
+            addCommand({"event": "keyboard", "description": String.fromCharCode(e.which)});
+            scrolling = ''
+        });
+
+        $("[data-log-scroll]").on('mousewheel', function(e){
+            var d = e.originalEvent.wheelDelta < 0 ? 'down' : 'up'
+            if(scrolling != d){
+                console.log('scrolling');
+                var up_msg = $(this).data('log-scroll-up');
+                var down_msg = $(this).data('log-scroll-down');
+                if(up_msg != undefined && down_msg != undefined){
+                    addCommand({"event": "scroll", "button": e.originalEvent.wheelDelta < 0 ? down_msg : up_msg});
+                } else {
+                    addCommand({"event": "scroll", "description": d});
+                }
+                scrolling = d
+            }
+        });
+
+        function addCommand(command){
+            command.timestamp = Date.now()
+            log.push(command)
+        }
+
+        function saveLog(){
+            if(log.length > 0){
+                $('.logging-gui .toggle').toggle();
+                var log_ = log
+                log = []
+                console.log(log_)
+                $('.logging-gui .toggle').toggle();
+            }
+        }
+    }
+
+}
+
+$(initLogging);
 
 /*******************
 * HELPER FUNCTIONS *

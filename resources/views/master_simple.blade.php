@@ -70,14 +70,15 @@
 
         {{-- SCRIPTS --}}
         {{-- <script src="/js/foundation.min.js"></script> --}}
+
         <script src="/js/foundation/foundation.js"></script>
         <script src="/js/foundation/foundation.reveal.js"></script>
         <script src="/js/foundation/foundation.abide.js"></script>
-        <script src="/js/app.js?v=@version"></script>
-
         <script>
             $.ajaxSetup({ headers: { 'csrftoken' : '{{ csrf_token() }}' } });
         </script>
+
+        <script src="/js/app.js?v=@version"></script>
 
         @yield('scripts')
 
