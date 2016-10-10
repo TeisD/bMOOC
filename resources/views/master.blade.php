@@ -45,7 +45,7 @@
             </ul>
             </div>
             <div class="toggle saving" style="display: none">
-                <img src="img/loader_overlay_big.gif" style="height: 1rem; width: auto;" alt="loading..."> saving...
+                <img src="/img/loader_overlay_big.gif" style="height: 1rem; width: auto;" alt="loading..."> saving...
             </div>
         </div>
 

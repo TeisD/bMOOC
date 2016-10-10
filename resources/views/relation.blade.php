@@ -20,7 +20,7 @@
             @if($artefact->topic->archived)
                 <small>(archived)</small>
             @endif
-           <a data-help data-help-id="view_info" class="button primary indent information" data-dropdown="info">&nbsp;</a>
+           <a data-help data-help-id="view_info" data-log="24" class="button primary indent information" data-dropdown="info">&nbsp;</a>
        </div>
    </div>
    @include('dropdowns.topic_info', ['open'=>'open', 'topic'=>$artefact->topic])
@@ -39,24 +39,24 @@
                 <div class="loader">
                     <img src="/img/loader_dark_big.gif" alt="loading..." />
                 </div>
-                <div class="artefact" data-reveal-id="artefact_lightbox_left" style="cursor: pointer !important"></div>
+                <div class="artefact" data-log="28" data-reveal-id="artefact_lightbox_left" style="cursor: pointer !important"></div>
             </div>
             <div class="small-6 columns artefact_right" id="artefact_right">
                 <div class="loader">
                     <img src="/img/loader_dark_big.gif" alt="loading..." />
                 </div>
-                <div class="artefact" data-reveal-id="artefact_lightbox_right" style="cursor:pointer !important;"></div>
+                <div class="artefact" data-log="29" data-reveal-id="artefact_lightbox_right" style="cursor:pointer !important;"></div>
             </div>
         </div>
         <div class="row">
             <div class="small-6 columns">
-               <button class="primary eye" data-help data-help-id="details" data-reveal-id="artefact_lightbox_left">details</button>
+               <button class="primary eye" data-help data-help-id="details" data-reveal-id="artefact_lightbox_left" data-log="26">details</button>
                 @if($artefact->topic->active || $user->role->id > 1)
                 <button class="primary plus indent" data-help data-help-id="new_artefact" data-artefact=0 data-reveal-id="new_artefact">add (some)thing</button>
                 @endif
             </div>
             <div class="small-6 columns">
-               <button class="primary eye artefact_right" data-reveal-id="artefact_lightbox_right" data-help data-help-id="details">details</button>
+               <button class="primary eye artefact_right" data-reveal-id="artefact_lightbox_right" data-help data-help-id="details" data-log="27">details</button>
                @if($artefact->topic->active || $user->role->id > 1)
                 <button class="primary plus indent artefact_right" data-artefact=1 data-reveal-id="new_artefact" data-help data-help-id="new_artefact">add (some)thing</button>
                 @endif

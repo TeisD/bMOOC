@@ -3,7 +3,7 @@
 @else
   <div class="row dropdown" id="info">
 @endif
-    <a class="close" aria-label="Close">&#215;</a>
+    <a class="close" data-log="21" aria-label="Close">&#215;</a>
    <div class="columns">
        <span class="light">found</span> {{count($results)}} <span class="light">results</span>
        {{--<p><span class="light">topic initiated</span> {{date('d/m/Y', strtotime($topic->created_at))}} <span class="light">by</span> {{$topic->author->name}}</p>

@@ -369,7 +369,7 @@ function render(div, data, quality, url){
         var img = $('.artefact img', div)[0]
 
         if(expandable && (img.naturalHeight > $('.artefact img', div).height() || img.naturalWidth > $('.artefact img', div).width())){
-            div.find('#artefact').append('<button class="secondary square expand"><i class="fi-arrows-out"></i></button>');
+            div.find('#artefact').append('<button class="secondary square expand" data-log-scroll data-log="30"><i class="fi-arrows-out"></i></button>');
 
             div.find('.expand').on('click', function(){
                 div.find('.artefact').toggleClass('expanded');
@@ -1179,7 +1179,6 @@ var Vis = (function(){
         }
 
         this.updateZoom();
-        initLogging();
     }
     
     Vis.prototype.drawLinks = function(){
@@ -1415,7 +1414,6 @@ var Timeline = (function(){
             });
         }
 
-        initLogging();
     }
 
     /**
@@ -1611,7 +1609,7 @@ var Menu = (function(){
 * LOGGING *
 **********/
 
-function initLogging(){
+$(function(){
     logging = readCookie("logging");
 
     if(logging != null){
@@ -1630,13 +1628,13 @@ function initLogging(){
         // save on page move
         window.onbeforeunload = saveLog;
         // save every minute
-        autosave = setInterval(saveLog, 60000);
+        autosave = setInterval(function(){saveLog(true)}, 60000);
 
         /* EVENTS */
         var scrolling = '';
         addCommand({"event": "page", "description": window.location.href});
 
-        $("[data-log]").on('click', function(){
+        $(document).on('click', '[data-log]', function(){
             var id = parseInt($(this).data('log'))
             if(isNaN(id)){
                 addCommand({"event": "click", "description": $(this).data('log')});
@@ -1646,15 +1644,25 @@ function initLogging(){
             scrolling = ''
         })
 
-        $("[data-log-keyboard]").on('keypress', function(e){
+        $(document).on('click', '.sort', function(){
+            addCommand({"event": "click", "description": "sort by " + $(this).text().toLowerCase()});
+            scrolling = ''
+        });
+
+        $(document).on('click', 'a:not([data-log])', function(){
+            addCommand({"event": "click", "description": $(this).text()});
+            scrolling = ''
+        });
+
+        $(document).on('keypress', '[data-log-keyboard]', function(e){
             addCommand({"event": "keyboard", "description": String.fromCharCode(e.which)});
             scrolling = ''
         });
 
-        $("[data-log-scroll]").on('mousewheel', function(e){
+        $(document).on('mousewheel', '[data-log-scroll]', function(e){
             var d = e.originalEvent.wheelDelta < 0 ? 'down' : 'up'
             if(scrolling != d){
-                console.log('scrolling');
+                scrolling = d
                 var up_msg = $(this).data('log-scroll-up');
                 var down_msg = $(this).data('log-scroll-down');
                 if(up_msg != undefined && down_msg != undefined){
@@ -1662,7 +1670,6 @@ function initLogging(){
                 } else {
                     addCommand({"event": "scroll", "description": d});
                 }
-                scrolling = d
             }
         });
 
@@ -1671,20 +1678,21 @@ function initLogging(){
             log.push(command)
         }
 
-        function saveLog(){
+        function saveLog(autosave){
+            if(autosave && log.length == 0){
+                addCommand({"event": "idle", "description": "nothing happened for 1 minute"});
+            }
             if(log.length > 0){
                 $('.logging-gui .toggle').toggle();
                 var log_ = log
-                log = []
                 console.log(log_)
+                log = []
                 $('.logging-gui .toggle').toggle();
             }
         }
     }
 
-}
-
-$(initLogging);
+});
 
 /*******************
 * HELPER FUNCTIONS *

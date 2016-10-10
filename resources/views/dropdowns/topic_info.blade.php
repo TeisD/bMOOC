@@ -3,7 +3,7 @@
 @else
   <div class="row dropdown" id="info">
 @endif
-    <a class="close" aria-label="Close">&#215;</a>
+    <a class="close" aria-label="Close" data-log="23">&#215;</a>
     @if(count($topic->instructions) > 0)
    <div class="columns medium-6">
       @else
@@ -44,12 +44,10 @@
     $(function(){
        $('[data-reveal-id=instruction_lightbox]').on('click', function(){
            currentInstruction = $(this).data('instruction');
-           console.log(currentInstruction);
        });
 
         $(document).on('opened.fndtn.reveal', '#instruction_lightbox', function (event) {
             $.getJSON("/json/instruction/"+currentInstruction, function(data){
-                console.log(data);
                 render($('#instruction_lightbox'), data, 'original', 'instruction');
             });
         });

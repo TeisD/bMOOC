@@ -32,7 +32,7 @@
             </h2>
             @include('dropdowns.topic_edit', ['id'=>$topic->id])
            @endif
-           <a data-help data-help-id="view_info" class="button primary indent information" data-dropdown="info">&nbsp;</a>
+           <a data-help data-help-id="view_info" data-log="24" class="button primary indent information" data-dropdown="info">&nbsp;</a>
        </div>
    </div>
    @include('dropdowns.topic_info', ['open'=>'open', 'topic'=>$topic])
@@ -89,7 +89,7 @@
            @foreach($topic->artefacts as $artefact)
            <li>
                 <div class="row">
-                    <a href="/relation/{{$artefact->id}}">
+                    <a href="/relation/{{$artefact->id}}" data-log="{{$artefact->title}}">
                    <div class="columns large-12" vis-grid>
                       @if($artefact->type_id > 28)
                        <img src="/artefact/{{$artefact->id}}/thumbnail" alt="{{$artefact->title}}"/>
