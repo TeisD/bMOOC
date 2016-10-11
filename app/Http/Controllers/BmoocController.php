@@ -238,6 +238,17 @@ class BmoocController extends Controller {
         return BmoocController::search($author);
     }
 
+    public function manual(Request $request){
+        //PDF file is stored under project/public/download/info.pdf
+        $file = storage_path('app/public/manual.pdf');;
+
+        $headers = array(
+              'Content-Type: application/pdf',
+            );
+
+        return response()->file($file, $headers);
+    }
+
     public function log($id){
         $log = Log::find($id);
         return BmoocController::viewPage('log', ['log'=> $log]);

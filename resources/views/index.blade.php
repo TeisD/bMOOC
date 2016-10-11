@@ -131,7 +131,7 @@
         </div>
         <div class="columns margin-bottom">
             <div class="columns text-center">
-                <a href="/archive" data-help data-help-id="archive">view archived topics</a>
+                <br /><a href="/archive" data-help data-help-id="archive">view archived topics</a>
             </div>
         </div>
     </div>

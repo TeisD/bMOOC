@@ -11,6 +11,7 @@ Route::get('instruction/{id}', 'BmoocController@instruction');
 Route::get('search/{author?}/{tag?}/{keyword?}', 'BmoocController@search');
 Route::get('log/{id}', 'BmoocController@log');
 Route::get('me', 'BmoocController@me');
+Route::get('manual', 'BmoocController@manual');
 
 Route::post('topic/new', 'BmoocController@newTopic');
 Route::patch('topic/new', 'BmoocController@newTopic');

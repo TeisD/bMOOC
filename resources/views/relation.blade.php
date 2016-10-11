@@ -23,7 +23,7 @@
            <a data-help data-help-id="view_info" data-log="24" class="button primary indent information" data-dropdown="info">&nbsp;</a>
        </div>
    </div>
-   @include('dropdowns.topic_info', ['open'=>'open', 'topic'=>$artefact->topic])
+   @include('dropdowns.topic_info', ['topic'=>$artefact->topic])
 @stop
 
 @section('content')

@@ -1,4 +1,4 @@
-@import url(https://fonts.googleapis.com/css?family=Roboto:400,700,900);
+//@import url(https://fonts.googleapis.com/css?family=Roboto:400,500,700,900);
 @import url(https://fonts.googleapis.com/css?family=Inconsolata:400,700);
 
 $background: #080808;
@@ -11,8 +11,9 @@ $blur: #031F20;
 $blur-img: url('/img/bg.png');
 
 $font: 'Inconsolata', sans-serif;
-$font2: 'Roboto', sans-serif;
+$font2: 'Helvetica Neue', 'helvetica', 'arial', sans-serif;
 $regular: 400;
+$medium: 500;
 $bold: 700;
 $ultrabold: 900;
 $mobile: 8pt;
@@ -94,7 +95,7 @@ p{
 }
 h1, h2, h3, h4, h5, h6 {
     font-family: $font2;
-    font-weight: $bold;
+    font-weight: $medium;
 }
 strong{
     font-weight: $bold;
@@ -104,7 +105,8 @@ h1{
     display: inline-block;
     vertical-align: top;
     margin-right: 4%;
-    font-weight: $ultrabold;
+    font-weight: 'medium', normal;
+    font-size: 2.5rem;
 }
 .sub:before{
     content: "\21aa\00a0";
@@ -653,12 +655,26 @@ dl dd{
 }
 .list {
     .row{
-        margin-bottom: 1rem;
+        padding-top: 0.25rem;
+        padding-bottom: 0.25rem;
         line-height: 2.8rem;
+        border-bottom: 1px solid $text-light;
+    }
+    li:last-child .row{
+        border: none;
     }
     li:hover .row{
         background: $purple;
     }
+
+    li:hover .row.dropdown{
+        background: $blur-img;
+        border-bottom: none;
+    }
+}
+
+.list.grid .row{
+    border: none;
 }
 
 /* MAIN */
@@ -971,7 +987,7 @@ svg{
     text.title{
         font-size: 1.75rem;
         font-family: $font2;
-        font-weight: $bold;
+        font-weight: $medium;
         text-anchor: middle;
     }
     text.title.stroke{

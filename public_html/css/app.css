@@ -1,4 +1,3 @@
-@import url(https://fonts.googleapis.com/css?family=Roboto:400,700,900);
 @import url(https://fonts.googleapis.com/css?family=Inconsolata:400,700);
 /* SOME STARTERS */
 input, select, img, button, .reveal-modal {
@@ -55,8 +54,8 @@ p {
   font-weight: 400; }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: "Roboto", sans-serif;
-  font-weight: 700; }
+  font-family: "Helvetica Neue", "helvetica", "arial", sans-serif;
+  font-weight: 500; }
 
 strong {
   font-weight: 700; }
@@ -66,7 +65,8 @@ h1 {
   display: inline-block;
   vertical-align: top;
   margin-right: 4%;
-  font-weight: 900; }
+  font-weight: 'medium', normal;
+  font-size: 2.5rem; }
 
 .sub:before {
   content: "\21aa\00a0"; }
@@ -271,7 +271,7 @@ button.giant, .button.giant {
   font-size: 3rem;
   border: 5px solid #ffffff;
   color: #ffffff;
-  font-family: "Roboto", sans-serif;
+  font-family: "Helvetica Neue", "helvetica", "arial", sans-serif;
   font-weight: 700;
   text-transform: uppercase; }
 
@@ -522,10 +522,20 @@ dl dd {
   content: " \2191"; }
 
 .list .row {
-  margin-bottom: 1rem;
-  line-height: 2.8rem; }
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  line-height: 2.8rem;
+  border-bottom: 1px solid #d9d9d9; }
+.list li:last-child .row {
+  border: none; }
 .list li:hover .row {
   background: #751e82; }
+.list li:hover .row.dropdown {
+  background: url("/img/bg.png");
+  border-bottom: none; }
+
+.list.grid .row {
+  border: none; }
 
 /* MAIN */
 #wrapper {
@@ -777,8 +787,8 @@ svg rect.filled {
   stroke: none; }
 svg text.title {
   font-size: 1.75rem;
-  font-family: "Roboto", sans-serif;
-  font-weight: 700;
+  font-family: "Helvetica Neue", "helvetica", "arial", sans-serif;
+  font-weight: 500;
   text-anchor: middle; }
 svg text.title.stroke {
   stroke: #080808;
