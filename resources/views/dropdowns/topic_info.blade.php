@@ -9,7 +9,7 @@
       @else
    <div class="columns">
     @endif
-       <p><span class="light">topic initiated</span> {{date('d/m/Y', strtotime($topic->created_at))}} <span class="light">by</span>  <a href="/search/{{$topic->author->name}}">{{$topic->author->name}}</a></p>
+       <p><span class="light">topic initiated</span> {{date('d/m/Y', strtotime($topic->created_at))}} <span class="light">by</span>  <a href="/search/{{$topic->author->name}}" data-log="topic author: {{$topic->author->name}}">{{$topic->author->name}}</a></p>
        <h3>Description</h3>
        {!!$topic->description!!}<p></p>
        <h3>Goal</h3>
@@ -20,13 +20,13 @@
    --><div class="columns medium-6">
        @if(isset($topic->activeInstruction))
        <h3>Active instruction</h3>
-      <p><a href="javascript:;" data-reveal-id="instruction_lightbox" data-reveal-ajax="/instruction/{{$topic->activeInstruction->id}}" data-instruction="{{$topic->activeInstruction->id}}">{{$topic->activeInstruction->title}}</a></p>
+      <p><a href="javascript:;" data-log="active instruction: {{$topic->activeInstruction->title}}" data-reveal-id="instruction_lightbox" data-reveal-ajax="/instruction/{{$topic->activeInstruction->id}}" data-instruction="{{$topic->activeInstruction->id}}">{{$topic->activeInstruction->title}}</a></p>
       @endif
       @if(count($topic->prevInstructions) > 0)
       <h3>Previous instructions</h3>
       @foreach($topic->prevInstructions as $instruction)
        <ul class="no-list">
-           <li><a href="javascript:;" data-reveal-id="instruction_lightbox" data-reveal-ajax="/instruction/{{$instruction->id}}" data-instruction="{{$instruction->id}}" class="emphasis">{{$instruction->title}}</a></li>
+           <li><a href="javascript:;" data-reveal-id="instruction_lightbox" data-reveal-ajax="/instruction/{{$instruction->id}}" data-log="previous instruction: {{$instruction->title}}" data-instruction="{{$instruction->id}}" class="emphasis">{{$instruction->title}}</a></li>
         </ul>
        @endforeach
        @endif

@@ -1623,12 +1623,10 @@ $(function(){
             Date.now = function() { return new Date().getTime(); }
         }
 
-        var log = [];
+        if (localStorage.log == "undefined" || localStorage.log == undefined){ localStorage.log = JSON.stringify([]); }
 
-        // save on page move
-        window.onbeforeunload = saveLog;
-        // save every minute
-        autosave = setInterval(function(){saveLog(true)}, 60000);
+        $(".logging_stop").on('click', saveLog);
+        $(".logging_comment").on('click', addComment);
 
         /* EVENTS */
         var scrolling = '';
@@ -1639,7 +1637,7 @@ $(function(){
             if(isNaN(id)){
                 addCommand({"event": "click", "description": $(this).data('log')});
             } else {
-                addCommand({"event": "click", "button": id});
+                addCommand({"event": "click", "button_id": id});
             }
             scrolling = ''
         })
@@ -1649,7 +1647,7 @@ $(function(){
             scrolling = ''
         });
 
-        $(document).on('click', 'a:not([data-log])', function(){
+        $(document).on('click', 'a:not([data-log]):not(.sort)', function(){
             addCommand({"event": "click", "description": $(this).text()});
             scrolling = ''
         });
@@ -1666,7 +1664,7 @@ $(function(){
                 var up_msg = $(this).data('log-scroll-up');
                 var down_msg = $(this).data('log-scroll-down');
                 if(up_msg != undefined && down_msg != undefined){
-                    addCommand({"event": "scroll", "button": e.originalEvent.wheelDelta < 0 ? down_msg : up_msg});
+                    addCommand({"event": "scroll", "button_id": e.originalEvent.wheelDelta < 0 ? down_msg : up_msg});
                 } else {
                     addCommand({"event": "scroll", "description": d});
                 }
@@ -1674,20 +1672,37 @@ $(function(){
         });
 
         function addCommand(command){
-            command.timestamp = Date.now()
-            log.push(command)
+            command.timestamp = Date.now()/1000;
+            var log = JSON.parse(localStorage.log);
+            log.push(command);
+            localStorage.log = JSON.stringify(log);
         }
 
-        function saveLog(autosave){
-            if(autosave && log.length == 0){
-                addCommand({"event": "idle", "description": "nothing happened for 1 minute"});
+        function saveLog(){
+            var log = localStorage.log;
+            if(log != undefined && log.length > 0){
+                $('.logging-gui .toggle').toggle();
+                $.ajax({
+                    type: "POST",
+                    url: '/log/save',
+                    data: {'log': log},
+                    success: function(data){
+                        eraseCookie('logging');
+                        localStorage.removeItem('log');
+                        window.location.replace("/me");
+                    },
+                    fail: function(data){
+                        console.log(data);
+                    },
+                    dataType: 'JSON'
+                })
             }
-            if(log.length > 0){
-                $('.logging-gui .toggle').toggle();
-                var log_ = log
-                console.log(log_)
-                log = []
-                $('.logging-gui .toggle').toggle();
+        }
+
+        function addComment(){
+            var comment = prompt("Comment:", "");
+            if (comment != null){
+                addCommand({"event": "comment", "description": comment});
             }
         }
     }

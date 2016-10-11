@@ -9,12 +9,14 @@ Route::get('relation/{id}/{child?}', 'BmoocController@relation');
 Route::get('artefact/{id}', 'BmoocController@artefact');
 Route::get('instruction/{id}', 'BmoocController@instruction');
 Route::get('search/{author?}/{tag?}/{keyword?}', 'BmoocController@search');
+Route::get('me', 'BmoocController@me');
 
 Route::post('topic/new', 'BmoocController@newTopic');
 Route::patch('topic/new', 'BmoocController@newTopic');
 Route::post('instruction/new', 'BmoocController@newInstruction');
 Route::post('artefact/new', 'BmoocController@newArtefact');
 Route::post('log/new', 'BmoocController@newLog');
+Route::post('log/save', 'BmoocController@saveLog');
 
 Route::get('artefact/{id}/thumbnail', 'BmoocController@getImageThumbnail');
 Route::get('artefact/{id}/medium', 'BmoocController@getImage');

@@ -45,7 +45,6 @@ class BmoocController extends Controller {
     }
 
     public function viewPage($name, $options = []){
-
         //Auth::attempt(['email' => 'test@bmooc.be', 'password' => 'test']);
 
         if (!Auth::check()){
@@ -233,12 +232,71 @@ class BmoocController extends Controller {
         return BmoocController::viewPage('search', ['results'=> $collection, 'currentAuthor'=> $author, 'currentTag'=> $tag, 'currentKeyword'=>$keyword, 'links' => $links]);
     }
 
+    public function me(Request $request){
+        $author = Auth::user()->name;
+        return BmoocController::search($author);
+    }
+
     public function newLog(Request $request){
         $user = Auth::user();
 
         DB::beginTransaction();
 
         try{
+            DB::table('logs')->insert([
+                'user_id' => $user->id,
+                'title' => $request->title,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+            ]);
+
+            DB::commit();
+
+            if ( $request->isXmlHttpRequest() ) {
+                return Response::json( [
+                    'status' => '200',
+                    'refresh' => true
+                ], 200);
+            }
+        } catch (Exception $e) {
+            DB::rollback();
+            throw $e;
+        }
+    }
+
+    public function saveLog(Request $request){
+        $user = Auth::user();
+
+        DB::beginTransaction();
+
+        try{
+
+            $log_id = DB::table('logs')
+                ->where('user_id', '=', $user->id)
+                ->orderBy('id', 'desc')
+                ->first();
+
+            $commands = json_decode($request->log, true);
+
+            foreach($commands as $key => $command){
+                $command["log_id"] = $log_id->id;
+                if(!array_key_exists("button_id", $command)){
+                    $command["button_id"] = 'NULL';
+                }
+                if(!array_key_exists("description", $command)){
+                    $command["description"] = 'NULL';
+                }
+                $command["created_at"] = Carbon::createFromTimestamp($command["timestamp"])->toDateTimeString();
+                $command["updated_at"] = $command["created_at"];
+                unset($command["timestamp"]);
+                ksort($command);
+                $commands[$key] = $command;
+            }
+
+            DB::table('log_commands')->insert($commands);
+
+            DB::commit();
+
             if ( $request->isXmlHttpRequest() ) {
                 return Response::json( [
                     'status' => '200',

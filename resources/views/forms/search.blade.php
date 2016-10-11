@@ -1,4 +1,4 @@
-<form class="sort">
+<form class="search">
     <div class="row">
       {{--
        <div class="medium-4 columns form-inline">
