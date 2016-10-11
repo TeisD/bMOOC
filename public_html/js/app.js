@@ -675,7 +675,7 @@ var Vis = (function(){
 
         this.svg = d3.select(this.el).append("svg")
                 .attr("width", '100%')
-                .attr("height", '100%')
+                .attr("height", '99%')
                 .attr("class", "vis");
         // add one g to capture events
         this.container = this.svg.append("g")
@@ -1639,22 +1639,22 @@ $(function(){
             } else {
                 addCommand({"event": "click", "button_id": id});
             }
-            scrolling = ''
+            scrolling = '';
         })
 
         $(document).on('click', '.sort', function(){
             addCommand({"event": "click", "description": "sort by " + $(this).text().toLowerCase()});
-            scrolling = ''
+            scrolling = '';
         });
 
         $(document).on('click', 'a:not([data-log]):not(.sort)', function(){
             addCommand({"event": "click", "description": $(this).text()});
-            scrolling = ''
+            scrolling = '';
         });
 
         $(document).on('keypress', '[data-log-keyboard]', function(e){
             addCommand({"event": "keyboard", "description": String.fromCharCode(e.which)});
-            scrolling = ''
+            scrolling = '';
         });
 
         $(document).on('mousewheel', '[data-log-scroll]', function(e){

@@ -133,6 +133,13 @@ p a, a.emphasis{
 p a:hover, a.emphasis:hover{
     border-bottom-style: solid;
 }
+a.external{
+    background: url('/img/external.png');
+    background-repeat: no-repeat;
+    background-position: right center;
+    padding-right: 1.2rem;
+}
+
 a.close:hover{
     border: none;
     opacity: 0.8;
@@ -337,6 +344,29 @@ button.giant, .button.giant{
 button.giant:hover, .button.giant:hover{
     background: $text;
     color: $background;
+}
+
+/* TABLES */
+table.clean{
+    background: none;
+    border: none;
+    tr{
+        background: none;
+        color: $text;
+    }
+    tr.light{
+        color: $text-medium;
+    }
+    tr:hover{
+        background: $purple;
+    }
+    td{
+        color: inherit;
+    }
+}
+
+table.center{
+    margin: 0 auto;
 }
 
 /* FORMS */

@@ -9,6 +9,8 @@ use App\Instruction;
 use App\Tag;
 use App\Topic;
 use App\UserRole;
+use App\Log;
+use App\LogCommand;
 use App\Http\Controllers\Controller;
 use Input;
 use Validator;
@@ -23,7 +25,6 @@ use Mail;
 use Response;
 use File;
 use URL;
-use Log;
 use stdClass;
 use Storage;
 
@@ -237,18 +238,21 @@ class BmoocController extends Controller {
         return BmoocController::search($author);
     }
 
+    public function log($id){
+        $log = Log::find($id);
+        return BmoocController::viewPage('log', ['log'=> $log]);
+    }
+
     public function newLog(Request $request){
         $user = Auth::user();
 
         DB::beginTransaction();
 
         try{
-            DB::table('logs')->insert([
-                'user_id' => $user->id,
-                'title' => $request->title,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now()
-            ]);
+            $log = new Log;
+            $log->author_id = $user->id;
+            $log->title = $request->title;
+            $log->save();
 
             DB::commit();
 
@@ -272,7 +276,7 @@ class BmoocController extends Controller {
         try{
 
             $log_id = DB::table('logs')
-                ->where('user_id', '=', $user->id)
+                ->where('author_id', '=', $user->id)
                 ->orderBy('id', 'desc')
                 ->first();
 

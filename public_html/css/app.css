@@ -93,6 +93,12 @@ p a, a.emphasis, .artefact .textContainer a, .loader .textContainer a {
 p a:hover, a.emphasis:hover, .artefact .textContainer a:hover, .loader .textContainer a:hover {
   border-bottom-style: solid; }
 
+a.external {
+  background: url("/img/external.png");
+  background-repeat: no-repeat;
+  background-position: right center;
+  padding-right: 1.2rem; }
+
 a.close:hover {
   border: none;
   opacity: 0.8; }
@@ -272,6 +278,23 @@ button.giant, .button.giant {
 button.giant:hover, .button.giant:hover {
   background: #ffffff;
   color: #080808; }
+
+/* TABLES */
+table.clean {
+  background: none;
+  border: none; }
+  table.clean tr {
+    background: none;
+    color: #ffffff; }
+  table.clean tr.light {
+    color: #878787; }
+  table.clean tr:hover {
+    background: #751e82; }
+  table.clean td {
+    color: inherit; }
+
+table.center {
+  margin: 0 auto; }
 
 /* FORMS */
 form fieldset {

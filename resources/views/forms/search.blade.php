@@ -106,29 +106,29 @@
                 $(el).html("&darr;");
             });
             $(this).on('awesomplete-selectcomplete', function(){
-                $(".sort").submit();
+                $(".search").submit();
             });
         });
     }
 
-    $(".sort input").keypress(function(event) {
+    $(".search input").keypress(function(event) {
         if (event.which == 13) {
             event.preventDefault();
-            $(".sort").submit();
+            $(".search").submit();
         }
     });
 
-    $(".sort").submit(function(e){
+    $(".search").submit(function(e){
         e.preventDefault();
         search();
     });
 
     function search(){
-        var author = $(".sort input#author").val();
+        var author = $(".search input#author").val();
         if (author.trim() == "") author = "all";
-        var tag = $(".sort input#tag").val();
+        var tag = $(".search input#tag").val();
         if (tag.trim() == "") tag = "all";
-        var keyword = $(".sort input#keyword").val();
+        var keyword = $(".search input#keyword").val();
         window.location = "{{ URL::to('/') }}" + '/search/' + author + '/' + tag + (keyword?'/' + keyword:'');
     }
 </script>
