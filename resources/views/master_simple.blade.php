@@ -83,6 +83,7 @@
             });
         </script>
 
+        <script src="/js/cookie.js"></script>
         <script src="/js/app.js?v=@version"></script>
 
         @yield('scripts')
