@@ -56,19 +56,27 @@
         <table>
             <thead>
                 <tr>
-                    <td>Name</td><td>Role</td>
+                    <td>Name</td><td># contributions</td><td>Role</td><td>Delete</td>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($users as $user)
                 <tr>
                     <td>{{$user->name}}</td>
+                    <td>{{$user->artefacts->count()}}</td>
                     <td>
                         <select id="{{$user->id}}">
                             <option value="1" @if($user->role->id == 1) selected @endif >author</option>
                             <option value="2" @if($user->role->id == 2) selected @endif >moderator</option>
                             <option value="3" @if($user->role->id == 3) selected @endif >admin</option>
                         </select>
+                    </td>
+                    <td>
+                       @if ($user->artefacts->count() == 0)
+                        <button data-id="{{$user->id}}" class="button alert delete">delete</button>
+                        @else
+                        <button disabled class="button alert">delete</button>
+                        @endif
                     </td>
                 </tr>
                 @endforeach
@@ -92,6 +100,22 @@
             }, function(data){
                 console.log(data);
             });
+        })
+
+        $('.delete').on('click', function(){
+            var id = $(this).data('id');
+            var c = confirm('Are you sure you want to delete this user?');
+            if(c){
+                $.ajax({
+                  type: "POST",
+                  url: '/admin/users/delete',
+                  data: {
+                    'id': id,
+                    '_token': '{{ csrf_token() }}'
+                  },
+                  success: function(){ location.reload() }
+                });
+            }
         })
     </script>
 @endsection
