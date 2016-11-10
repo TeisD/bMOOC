@@ -227,10 +227,11 @@ class BmoocController extends Controller {
             $collection->add($af);
         }
 
+
         $links = VisController::getLinks($collection);
         $links = VisController::buildLinks($links);
 
-        return BmoocController::viewPage('search', ['results'=> $collection, 'currentAuthor'=> $author, 'currentTag'=> $tag, 'currentKeyword'=>$keyword, 'links' => $links]);
+        return BmoocController::viewPage('search', ['results'=> $collection, 'currentAuthor'=> $author, 'currentTag'=> $tag, 'currentKeyword'=>$keyword, 'author'=>User::where('name', $author)->first(), 'links' => $links]);
     }
 
     public function me(Request $request){

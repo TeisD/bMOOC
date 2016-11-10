@@ -7,11 +7,11 @@
    <div class="columns">
        <p><span class="light">found</span> {{count($results)}} <span class="light">results</span></p>
        <h3>Logs</h3>
-       @if ($user->logs->count() == 0)
+       @if ($author->logs->count() == 0)
         <p>This user did not make any logs yet.</p>
         @else
         <ul class="no-list">
-        @foreach ($user->logs as $log)
+        @foreach ($author->logs as $log)
             <li><a href="/log/{{$log->id}}" target="_blank" class="show-log external" data-log-id="{{$log->id}}">{{$log->created_at->format('d/m/Y')}} - {{$log->title}}</a></li>
         @endforeach
         </ul>
