@@ -26,6 +26,7 @@
 
     {{-- SCRIPTS --}}
     <script src="/js/vendor/modernizr.js"></script>
+    <script src="/js/vendor/jquery.min.js"></script>
 
   </head>
 	<body>
@@ -78,7 +79,6 @@
 
         {{-- SCRIPTS --}}
         {{-- <script src="/js/foundation.min.js"></script> --}}
-        <script src="/js/vendor/jquery.min.js"></script>
         <script src="/js/foundation/foundation.js"></script>
         <script src="/js/foundation/foundation.reveal.js"></script>
         <script src="/js/foundation/foundation.abide.js"></script>

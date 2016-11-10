@@ -27,6 +27,8 @@
 
     {{-- SCRIPTS --}}
     <script src="/js/vendor/modernizr.js"></script>
+    <script src="/js/vendor/jquery.min.js"></script>
+
   </head>
 	<body id="wrapper">
         {{-- JS: Google Analytics --}}
@@ -122,7 +124,6 @@
 
         {{-- SCRIPTS --}}
         {{-- <script src="/js/foundation.min.js"></script> --}}
-        <script src="/js/vendor/jquery.min.js"></script>
         <script>
             $.ajaxSetup({
                 headers: {
