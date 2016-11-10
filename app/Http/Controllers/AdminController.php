@@ -333,6 +333,13 @@ class AdminController extends Controller {
         ], 200);
     }
 
+    public function userDelete(Request $request){
+        $user = User::find($request->id);
+        if($user->artefacts->count() == 0){
+            $user->delete();
+        }
+    }
+
     public function getThumbnails(Request $request) {
         //$user = Auth::user();
         //if (!$user || $user->role_id != 3) App::abort(401, 'Not authenticated');
