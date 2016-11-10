@@ -2,6 +2,7 @@
 <html class="no-js" lang="en">
   <head>
     <meta charset="utf-8" />
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>bMOOC - LUCA School of Arts</title>
     <link rel="icon" type="img/ico" href="/img/favicon.ico">
@@ -70,14 +71,20 @@
 
         {{-- SCRIPTS --}}
         {{-- <script src="/js/foundation.min.js"></script> --}}
+
         <script src="/js/foundation/foundation.js"></script>
         <script src="/js/foundation/foundation.reveal.js"></script>
         <script src="/js/foundation/foundation.abide.js"></script>
-        <script src="/js/app.js?v=@version"></script>
-
         <script>
-            $.ajaxSetup({ headers: { 'csrftoken' : '{{ csrf_token() }}' } });
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
         </script>
+
+        <script src="/js/cookie.js"></script>
+        <script src="/js/app.js?v=@version"></script>
 
         @yield('scripts')
 

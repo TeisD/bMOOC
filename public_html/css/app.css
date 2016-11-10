@@ -1,4 +1,3 @@
-@import url(https://fonts.googleapis.com/css?family=Roboto:400,700,900);
 @import url(https://fonts.googleapis.com/css?family=Inconsolata:400,700);
 /* SOME STARTERS */
 input, select, img, button, .reveal-modal {
@@ -55,8 +54,8 @@ p {
   font-weight: 400; }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: "Roboto", sans-serif;
-  font-weight: 700; }
+  font-family: "Helvetica Neue", "helvetica", "arial", sans-serif;
+  font-weight: 500; }
 
 strong {
   font-weight: 700; }
@@ -66,7 +65,8 @@ h1 {
   display: inline-block;
   vertical-align: top;
   margin-right: 4%;
-  font-weight: 900; }
+  font-weight: 'medium', normal;
+  font-size: 2.5rem; }
 
 .sub:before {
   content: "\21aa\00a0"; }
@@ -92,6 +92,12 @@ p a, a.emphasis, .artefact .textContainer a, .loader .textContainer a {
 
 p a:hover, a.emphasis:hover, .artefact .textContainer a:hover, .loader .textContainer a:hover {
   border-bottom-style: solid; }
+
+a.external {
+  background: url("/img/external.png");
+  background-repeat: no-repeat;
+  background-position: right center;
+  padding-right: 1.2rem; }
 
 a.close:hover {
   border: none;
@@ -265,13 +271,30 @@ button.giant, .button.giant {
   font-size: 3rem;
   border: 5px solid #ffffff;
   color: #ffffff;
-  font-family: "Roboto", sans-serif;
+  font-family: "Helvetica Neue", "helvetica", "arial", sans-serif;
   font-weight: 700;
   text-transform: uppercase; }
 
 button.giant:hover, .button.giant:hover {
   background: #ffffff;
   color: #080808; }
+
+/* TABLES */
+table.clean {
+  background: none;
+  border: none; }
+  table.clean tr {
+    background: none;
+    color: #ffffff; }
+  table.clean tr.light {
+    color: #878787; }
+  table.clean tr:hover {
+    background: #751e82; }
+  table.clean td {
+    color: inherit; }
+
+table.center {
+  margin: 0 auto; }
 
 /* FORMS */
 form fieldset {
@@ -499,10 +522,20 @@ dl dd {
   content: " \2191"; }
 
 .list .row {
-  margin-bottom: 1rem;
-  line-height: 2.8rem; }
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  line-height: 2.8rem;
+  border-bottom: 1px solid #d9d9d9; }
+.list li:last-child .row {
+  border: none; }
 .list li:hover .row {
   background: #751e82; }
+.list li:hover .row.dropdown {
+  background: url("/img/bg.png");
+  border-bottom: none; }
+
+.list.grid .row {
+  border: none; }
 
 /* MAIN */
 #wrapper {
@@ -754,8 +787,8 @@ svg rect.filled {
   stroke: none; }
 svg text.title {
   font-size: 1.75rem;
-  font-family: "Roboto", sans-serif;
-  font-weight: 700;
+  font-family: "Helvetica Neue", "helvetica", "arial", sans-serif;
+  font-weight: 500;
   text-anchor: middle; }
 svg text.title.stroke {
   stroke: #080808;

@@ -29,7 +29,7 @@
             keyword: <em>{{$currentKeyword}}</em>
             @endif
             </a></h2>
-           <a class="button primary indent information" data-dropdown="info">&nbsp;</a>
+           <a class="button primary indent information" data-log="25" data-dropdown="info">&nbsp;</a>
        </div>
    </div>
    @include('dropdowns.search_info', ['open'=>'open'])

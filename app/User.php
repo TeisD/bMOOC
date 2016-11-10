@@ -45,4 +45,8 @@ class User extends Model implements AuthenticatableContract,
     public function instructions() {
 		  return $this->hasMany('App\Instruction', 'author_id');
 	}
+
+    public function logs(){
+        return $this->hasMany('App\Log', 'author_id');
+    }
 }

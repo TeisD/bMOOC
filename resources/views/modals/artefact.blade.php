@@ -18,7 +18,7 @@
                 <dd>
                     <ul class="inline slash" data-attr="tags">
                        @foreach($artefact->tags as $tag)
-                        <li><a href="/search/all/{{$tag->tag}}">{{$tag->tag}}</a></li>
+                        <li><a data-log="tag: {{$tag->tag}}" href="/search/all/{{$tag->tag}}">{{$tag->tag}}</a></li>
                         @endforeach
                     </ul>
                 </dd>

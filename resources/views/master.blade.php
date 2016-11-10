@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
     <title>@yield('title') - bMOOC - LUCA School of Arts</title>
     <link rel="icon" type="img/ico" href="/img/favicon.ico">
     {{-- NON BLOCKING STYLESHEETS --}}
@@ -32,18 +33,23 @@
           ga('create', 'UA-71362622-1', 'auto');
           ga('send', 'pageview');
         </script>
-        {{--
-        <div data-alert class="alert-box">
-            <ul class="inline slash">
+
+        <div data-alert class="alert-box modernizr-alert logging-gui">
+            <div class="toggle options">
+                <ul class="inline slash">
                 <li>
-                    <a href="javascript:;">add comment</a>
+                    <a href="javascript:;" class="logging_comment">add comment</a>
                 </li>
                 <li>
-                    <a href="javascript:;">stop logging</a>
+                    <a href="javascript:;" class="logging_stop">stop logging</a>
                 </li>
             </ul>
+            </div>
+            <div class="toggle saving" style="display: none">
+                <img src="/img/loader_overlay_big.gif" style="height: 1rem; width: auto;" alt="loading..."> saving...
+            </div>
         </div>
-        --}}
+
         <div data-alert class="alert-box alert modernizr-alert js-alert">
             <strong>JavaScript appears to be disabled in your browser.</strong><br />
             For full functionality of this site, it is necessary to enable JavaScript. Here are <a href="http://enable-javascript.com" class="emphasis">instructions how to enable Javascript</a>.
@@ -62,16 +68,16 @@
                     <nav class="main">
                         <ul class="inline slash">
                            <li>
-                                <a href="javascript:;" help-show>help</a>
+                                <a href="javascript:;" data-log="1" help-show>help</a>
                             </li>
                             <li>
-                               <a href="/about" data-reveal-id="about" data-reveal-ajax="true">about</a>
+                               <a href="/about" data-reveal-id="about" data-log="2" data-reveal-ajax="true">about</a>
                             </li>
                             <li>
-                               <a href="javascript:;" data-reveal-id="feedback">feedback</a>
+                               <a href="javascript:;" data-log="3" data-reveal-id="feedback">feedback</a>
                             </li>
                             <li>
-                                <a href="/logout">Sign out {{$user->name}}</a>
+                                <a href="/logout" data-log="4">Sign out {{$user->name}}</a>
                             </li>
                         </ul>
                     </nav>
@@ -79,12 +85,12 @@
             </div>
             <div class="row space">
 				<div class="large-5 columns">
-					<h1 class="inline"><a href="/">bMOOC</a></h1>
+					<h1 class="inline"><a href="/" data-log="5">bMOOC</a></h1>
                     <span id="vis-menu">
-                        <a class="button tertiary inline" data-help data-help-id="vis_menu" data-vis="list" href="#list"><img src="/img/vis_list_white.png" />list</a>
-                        <a data-help data-help-id="vis_menu" class="button tertiary inline" data-vis="grid" href="#grid"><img src="/img/vis_grid_white.png" />grid</a>
-                        <a data-help data-help-id="vis_menu" class="button tertiary inline" data-vis="tree" data-svg href="#tree"><img src="/img/vis_tree_white.png" />tree</a>
-                        <a data-help data-help-id="vis_menu" class="button tertiary inline" data-vis="network" data-svg href="#network"><img src="/img/vis_network_white.png"/>network</a>
+                        <a class="button tertiary inline" data-log="6" data-help data-help-id="vis_menu" data-vis="list" href="#list"><img src="/img/vis_list_white.png" />list</a>
+                        <a data-help data-help-id="vis_menu" data-log="7"  class="button tertiary inline" data-vis="grid" href="#grid"><img src="/img/vis_grid_white.png" />grid</a>
+                        <a data-help data-help-id="vis_menu" data-log="8" class="button tertiary inline" data-vis="tree" data-svg href="#tree"><img src="/img/vis_tree_white.png" />tree</a>
+                        <a data-help data-help-id="vis_menu" data-log="9" class="button tertiary inline" data-vis="network" data-svg href="#network"><img src="/img/vis_network_white.png"/>network</a>
                     </span>
                     @yield('header_actions')
 				</div>
@@ -110,14 +116,20 @@
 
         {{-- SCRIPTS --}}
         {{-- <script src="/js/foundation.min.js"></script> --}}
+        <script>
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+        </script>
         <script src="/js/foundation/foundation.js"></script>
         <script src="/js/foundation/foundation.reveal.js"></script>
         <script src="/js/foundation/foundation.abide.js"></script>
+        <script src="/js/cookie.js"></script>
         <script src="/js/app.js?v=@version"></script>
 
         <script>
-            $.ajaxSetup({ headers: { 'csrftoken' : '{{ csrf_token() }}' } });
-
             $(document).on('opened.fndtn.reveal', '[data-reveal]', function () {
                 var modal = $(this);
                 $(document).foundation('equalizer', 'reflow');

@@ -369,7 +369,7 @@ function render(div, data, quality, url){
         var img = $('.artefact img', div)[0]
 
         if(expandable && (img.naturalHeight > $('.artefact img', div).height() || img.naturalWidth > $('.artefact img', div).width())){
-            div.find('#artefact').append('<button class="secondary square expand"><i class="fi-arrows-out"></i></button>');
+            div.find('#artefact').append('<button class="secondary square expand" data-log-scroll data-log="30"><i class="fi-arrows-out"></i></button>');
 
             div.find('.expand').on('click', function(){
                 div.find('.artefact').toggleClass('expanded');
@@ -669,9 +669,13 @@ var Vis = (function(){
             .on("zoom", this.zoomed);
         this.hasZoom = false;
 
+        d3.select(this.el).attr('data-log-scroll', '')
+            .attr('data-log-scroll-up', '19')
+            .attr('data-log-scroll-down', '20');
+
         this.svg = d3.select(this.el).append("svg")
                 .attr("width", '100%')
-                .attr("height", '100%')
+                .attr("height", '99%')
                 .attr("class", "vis");
         // add one g to capture events
         this.container = this.svg.append("g")
@@ -724,6 +728,7 @@ var Vis = (function(){
             var pointer = this;
             gui.append('button')
                 .attr('class', 'secondary square rotate')
+                .attr('data-log', '18')
                 .html('&#x21bb;&#xfe0e;')
                 .on('click', function(){
                     pointer.options.rotate = !pointer.options.rotate;
@@ -731,10 +736,12 @@ var Vis = (function(){
                 });
             gui.append('button')
                 .attr('class', 'secondary square zoom-in')
+                .attr('data-log', '19')
                 .html('<i class="fi-plus"></i>')
                 .on('click', function(){ pointer.zoom(0.1) });
             gui.append('button')
                 .attr('class', 'secondary square zoom-out')
+                .attr('data-log', '20')
                 .html('<i class="fi-minus"></i>')
                 .on('click', function(){ pointer.zoom(-0.1) });
         }
@@ -1069,6 +1076,9 @@ var Vis = (function(){
             nodeEnter.filter(function(d) { return d.type_id > 28; })
                 .filter(function(d) { return !d.hidden })
                 .append("a")
+                .attr("data-log", function(d){
+                    return d.title;
+                })
                 .attr("xlink:href", function(d) {
                     return "/"+pointer.url+"/"+d.id;
                 })
@@ -1093,6 +1103,9 @@ var Vis = (function(){
             nodeEnter.filter(function(d) { return d.type_id == 28 })
                 .filter(function(d) { return !d.hidden })
                 .append("a")
+                .attr("data-log", function(d){
+                    return d.title;
+                })
                 .attr("xlink:href", function(d) {
                     return "/"+pointer.url+"/"+d.id;
                 })
@@ -1122,6 +1135,9 @@ var Vis = (function(){
         } else if(this.options.mode == 'text') {
             var a = nodeEnter.append("g")
                 .append("a")
+                .attr("data-log", function(d){
+                    return d.title;
+                })
                 .attr("xlink:href", function(d) {
                     return "/"+pointer.url+"/"+d.id;
                 });
@@ -1377,14 +1393,17 @@ var Timeline = (function(){
             var pointer = this;
             gui.append('button')
                 .attr('class', 'secondary square rewind inline')
+                .attr('data-log', '15')
                 .html('<i class="fi-rewind"></i>')
                 .on('click', function(){ pointer.rewind() });
             gui.append('button')
                 .attr('class', 'secondary square stop inline')
+                .attr('data-log', '16')
                 .html('<i class="fi-stop"></i>')
                 .on('click', function(){ pointer.stop() });
             gui.append('button')
                 .attr('class', 'secondary square forward inline')
+                .attr('data-log', '17')
                 .html('<i class="fi-fast-forward"></i>')
                 .on('click', function(){ pointer.forward() });
 
@@ -1394,6 +1413,7 @@ var Timeline = (function(){
                 pointer.vis.fit();
             });
         }
+
     }
 
     /**
@@ -1584,6 +1604,110 @@ var Menu = (function(){
 
 })();
 
+
+/**********
+* LOGGING *
+**********/
+
+$(function(){
+    logging = readCookie("logging");
+
+    if(logging != null){
+
+        // show the logging bar
+        $('.logging-gui').show();
+        $('[data-reveal-id=new_log]').hide();
+
+        // date.now shim
+        if (!Date.now) {
+            Date.now = function() { return new Date().getTime(); }
+        }
+
+        if (localStorage.log == "undefined" || localStorage.log == undefined){ localStorage.log = JSON.stringify([]); }
+
+        $(".logging_stop").on('click', saveLog);
+        $(".logging_comment").on('click', addComment);
+
+        /* EVENTS */
+        var scrolling = '';
+        addCommand({"event": "page", "description": window.location.href});
+
+        $(document).on('click', '[data-log]', function(){
+            var id = parseInt($(this).data('log'))
+            if(isNaN(id)){
+                addCommand({"event": "click", "description": $(this).data('log')});
+            } else {
+                addCommand({"event": "click", "button_id": id});
+            }
+            scrolling = '';
+        })
+
+        $(document).on('click', '.sort', function(){
+            addCommand({"event": "click", "description": "sort by " + $(this).text().toLowerCase()});
+            scrolling = '';
+        });
+
+        $(document).on('click', 'a:not([data-log]):not(.sort)', function(){
+            addCommand({"event": "click", "description": $(this).text()});
+            scrolling = '';
+        });
+
+        $(document).on('keypress', '[data-log-keyboard]', function(e){
+            addCommand({"event": "keyboard", "description": String.fromCharCode(e.which)});
+            scrolling = '';
+        });
+
+        $(document).on('mousewheel', '[data-log-scroll]', function(e){
+            var d = e.originalEvent.wheelDelta < 0 ? 'down' : 'up'
+            if(scrolling != d){
+                scrolling = d
+                var up_msg = $(this).data('log-scroll-up');
+                var down_msg = $(this).data('log-scroll-down');
+                if(up_msg != undefined && down_msg != undefined){
+                    addCommand({"event": "scroll", "button_id": e.originalEvent.wheelDelta < 0 ? down_msg : up_msg});
+                } else {
+                    addCommand({"event": "scroll", "description": d});
+                }
+            }
+        });
+
+        function addCommand(command){
+            command.timestamp = Date.now()/1000;
+            var log = JSON.parse(localStorage.log);
+            log.push(command);
+            localStorage.log = JSON.stringify(log);
+        }
+
+        function saveLog(){
+            var log = localStorage.log;
+            if(log != undefined && log.length > 0){
+                $('.logging-gui .toggle').toggle();
+                $.ajax({
+                    type: "POST",
+                    url: '/log/save',
+                    data: {'log': log},
+                    success: function(data){
+                        eraseCookie('logging');
+                        localStorage.removeItem('log');
+                        window.location.replace("/me");
+                    },
+                    fail: function(data){
+                        console.log(data);
+                    },
+                    dataType: 'JSON'
+                })
+            }
+        }
+
+        function addComment(){
+            var comment = prompt("Comment:", "");
+            if (comment != null){
+                addCommand({"event": "comment", "description": comment});
+            }
+        }
+    }
+
+});
 
 /*******************
 * HELPER FUNCTIONS *

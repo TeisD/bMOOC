@@ -9,6 +9,8 @@ use App\Instruction;
 use App\Tag;
 use App\Topic;
 use App\UserRole;
+use App\Log;
+use App\LogCommand;
 use App\Http\Controllers\Controller;
 use Input;
 use Validator;
@@ -23,7 +25,6 @@ use Mail;
 use Response;
 use File;
 use URL;
-use Log;
 use stdClass;
 use Storage;
 
@@ -45,7 +46,6 @@ class BmoocController extends Controller {
     }
 
     public function viewPage($name, $options = []){
-
         //Auth::attempt(['email' => 'test@bmooc.be', 'password' => 'test']);
 
         if (!Auth::check()){
@@ -231,6 +231,97 @@ class BmoocController extends Controller {
         $links = VisController::buildLinks($links);
 
         return BmoocController::viewPage('search', ['results'=> $collection, 'currentAuthor'=> $author, 'currentTag'=> $tag, 'currentKeyword'=>$keyword, 'links' => $links]);
+    }
+
+    public function me(Request $request){
+        $author = Auth::user()->name;
+        return BmoocController::search($author);
+    }
+
+    public function manual(Request $request){
+        //PDF file is stored under project/public/download/info.pdf
+        $file = storage_path('app/public/manual.pdf');;
+
+        $headers = array(
+              'Content-Type: application/pdf',
+            );
+
+        return response()->file($file, $headers);
+    }
+
+    public function log($id){
+        $log = Log::find($id);
+        return BmoocController::viewPage('log', ['log'=> $log]);
+    }
+
+    public function newLog(Request $request){
+        $user = Auth::user();
+
+        DB::beginTransaction();
+
+        try{
+            $log = new Log;
+            $log->author_id = $user->id;
+            $log->title = $request->title;
+            $log->save();
+
+            DB::commit();
+
+            if ( $request->isXmlHttpRequest() ) {
+                return Response::json( [
+                    'status' => '200',
+                    'refresh' => true
+                ], 200);
+            }
+        } catch (Exception $e) {
+            DB::rollback();
+            throw $e;
+        }
+    }
+
+    public function saveLog(Request $request){
+        $user = Auth::user();
+
+        DB::beginTransaction();
+
+        try{
+
+            $log_id = DB::table('logs')
+                ->where('author_id', '=', $user->id)
+                ->orderBy('id', 'desc')
+                ->first();
+
+            $commands = json_decode($request->log, true);
+
+            foreach($commands as $key => $command){
+                $command["log_id"] = $log_id->id;
+                if(!array_key_exists("button_id", $command)){
+                    $command["button_id"] = 'NULL';
+                }
+                if(!array_key_exists("description", $command)){
+                    $command["description"] = 'NULL';
+                }
+                $command["created_at"] = Carbon::createFromTimestamp($command["timestamp"])->toDateTimeString();
+                $command["updated_at"] = $command["created_at"];
+                unset($command["timestamp"]);
+                ksort($command);
+                $commands[$key] = $command;
+            }
+
+            DB::table('log_commands')->insert($commands);
+
+            DB::commit();
+
+            if ( $request->isXmlHttpRequest() ) {
+                return Response::json( [
+                    'status' => '200',
+                    'refresh' => true
+                ], 200);
+            }
+        } catch (Exception $e) {
+            DB::rollback();
+            throw $e;
+        }
     }
 
     public function newTopic(Request $request){
