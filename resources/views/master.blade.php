@@ -23,10 +23,10 @@
     {{-- STYLESHEETS --}}
     <link rel="stylesheet" href="/css/normalize.min.css">
     <link rel="stylesheet" href="/css/foundation.min.css">
-    <link rel="stylesheet" href="/css/app.css?v=@version">
+    <link rel="stylesheet" href="/css/app.min.css?v=@version">
 
     {{-- SCRIPTS --}}
-    <script src="/js/vendor/modernizr.js"></script>
+    <script src="/js/vendor/modernizr.min.js"></script>
     <script src="/js/vendor/jquery.min.js"></script>
 
   </head>
@@ -131,11 +131,11 @@
                 }
             });
         </script>
-        <script src="/js/foundation/foundation.js"></script>
-        <script src="/js/foundation/foundation.reveal.js"></script>
-        <script src="/js/foundation/foundation.abide.js"></script>
-        <script src="/js/cookie.js"></script>
-        <script src="/js/app.js?v=@version"></script>
+        <script src="/js/foundation/foundation.min.js"></script>
+        <script src="/js/foundation/foundation.reveal.min.js"></script>
+        <script src="/js/foundation/foundation.abide.min.js"></script>
+        <script src="/js/cookie.min.js"></script>
+        <script src="/js/app.min.js?v=@version"></script>
 
         <script>
             $(document).on('opened.fndtn.reveal', '[data-reveal]', function () {
@@ -169,7 +169,7 @@
 
         @yield('scripts')
 
-        <script src="/js/help.js?v=@version"></script>
+        <script src="/js/help.min.js?v=@version"></script>
 
     </body>
 </html>
