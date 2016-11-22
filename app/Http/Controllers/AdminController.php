@@ -19,6 +19,7 @@ use Schema;
 use Artisan;
 use URL;
 use Response;
+use Storage;
 
 class AdminController extends Controller {
 
@@ -350,16 +351,17 @@ class AdminController extends Controller {
             ->get();
 
         // check which image sizes are available
-        $basepath = storage_path('app/artefacts/thumbnails');
+        //$basepath = storage_path('app/artefacts/thumbnails');
+        $basepath = base_path().'/storage/app/artefacts/thumbnails';
         foreach($artefacts as $artefact){
             $sizes = Array();
-            if (file_exists($basepath . '/../' . $artefact->url)) {
+            if (file_exists($basepath . '/../' . $artefact->content)) {
                 array_push($sizes, 'original');
             }
-            if (file_exists($basepath . '/small/' . $artefact->url)) {
+            if (file_exists($basepath . '/small/' . $artefact->content)) {
                 array_push($sizes, 'small');
             }
-            if (file_exists($basepath . '/large/' . $artefact->url)) {
+            if (file_exists($basepath . '/large/' . $artefact->content)) {
                 array_push($sizes, 'large');
             }
             $artefact->setAttribute('sizes', $sizes);
@@ -371,25 +373,15 @@ class AdminController extends Controller {
 
     public function postThumbnails(Request $request){
         try{
-            if(Input::get('size') && Input::get('file') && Input::get('filename')){
-                $size = Input::get('size');
-                $file = Input::get('file');
-                $filename = Input::get('filename');
-                $destinationPath = 'uploads/thumbnails/';
-                switch($size){
-                    case 'small':
-                        $destinationPath .= 'small/' . $filename;
-                        break;
-                    case 'large':
-                        $destinationPath .= 'large/' . $filename;
-                        break;
-                    default:
-                        throw new Exception ('Unrecognized file size.');
-                        break;
-                }
+            $size = $request->size;
+            $file = $request->file;
+            $filename = $request->filename;
+            if($size && $file && $filename){
+                //$destinationPath = 'uploads/thumbnails/';
+                //$destinationPath = base_path().'/storage/app/artefacts/thumbnails/';
                 $data = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $file));
                 try {
-                    file_put_contents($destinationPath, $data);
+                    Storage::put('artefacts/thumbnails/'.$size.'/'.$filename, $data);
                     return Response::json( [
                         'status' => '200',
                         'message' => 'Succes!'

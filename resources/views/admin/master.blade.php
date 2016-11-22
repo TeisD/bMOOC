@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="/css/normalize.min.css">
     <link rel="stylesheet" href="/css/foundation.min.css">
     <link rel="stylesheet" href="/css/app.css?v=@version">
+            <script src="/js/cookie.js"></script>
+
 
     <script src="/js/vendor/modernizr.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">

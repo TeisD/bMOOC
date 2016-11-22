@@ -16,7 +16,7 @@
                 <th width="50">LARGE</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody class="artefacts">
             @foreach ($artefacts as $artefact)
             <tr>
                 <td class="id">{{ $artefact->id }}</td>
@@ -65,13 +65,14 @@
     <script>
         $(document).ready(function(){
             $('#generate').click(function(){
+                console.log('generating');
 
                 // loop through
                 $('.artefacts tr').each(function (i, row) {
                     var filename = $('td.url', row).html();
                     if($('td.original', row).find('.ok').length > 0){
                         //var url = host + '/uploads/' + $('td.url', row).html();
-                        var url = host + '/artefact/' + $('td.id', row).html() + '/original';
+                        var url = '/artefact/' + $('td.id', row).html() + '/original';
                         if(!$('td.small .ok', row).length > 0){
                             var t_100 = new ThumbnailFromURL(url, 100);
                             var small = $('td.small', row);
@@ -80,7 +81,7 @@
                                 if(t_100.hasData) {
                                     $.ajax({
                                         type: "POST",
-                                        url: host + '/admin/thumbnails',
+                                        url: '/admin/actions/thumbnails',
                                         data: {
                                             size: 'small',
                                             filename: filename,
@@ -112,7 +113,7 @@
                                 if(t_1000.hasData) {
                                     $.ajax({
                                         type: "POST",
-                                        url: host + '/admin/thumbnails',
+                                        url: '/admin/actions/thumbnails',
                                         data: {
                                             size: 'large',
                                             filename: filename,
