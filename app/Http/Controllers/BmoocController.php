@@ -587,6 +587,7 @@ class BmoocController extends Controller {
             $filetype = mime_content_type( $path );
             $response = Response::make( File::get( $path ) , 200 );
             $response->header('Content-Type', $filetype);
+            $response->header('Cache-Control', 'max-age=31536000');
             return $response;
         }
         return BmoocController::getImageOriginal($id, $instruction);
@@ -602,6 +603,7 @@ class BmoocController extends Controller {
             $filetype = mime_content_type( $path );
             $response = Response::make( File::get( $path ) , 200 );
             $response->header('Content-Type', $filetype);
+            $response->header('Cache-Control', 'max-age=31536000');
             return $response;
         }
         return BmoocController::getImage($id, $instruction);
@@ -618,6 +620,7 @@ class BmoocController extends Controller {
             $fp = fopen($path, 'rb');
             header("Content-Type: ".$filetype);
             header("Content-Length: " . filesize($path));
+            header("Cache-Control: max-age=31536000");
             fpassthru($fp);
             //$response = Response::make( File::get( $path ) , 200 );
             //$response->header('Content-Type', $filetype);
@@ -627,6 +630,7 @@ class BmoocController extends Controller {
             $url .= '/0.jpg';
             $response = Response::make( file_get_contents($url), 200 );
             $response->header('Content-Type', 'image/jpeg');
+            $response->header('Cache-Control', 'max-age=31536000');
             return $response;
         } else if($a->type_id == 32){
             $oembed_endpoint = 'http://vimeo.com/api/oembed';
@@ -635,6 +639,7 @@ class BmoocController extends Controller {
             $obj = json_decode($json);
             $response = Response::make( file_get_contents($obj->thumbnail_url), 200 );
             $response->header('Content-Type', 'image/jpeg');
+            $response->header('Cache-Control', 'max-age=31536000');
             return $response;
         }
         abort(404, 'Image not found');
