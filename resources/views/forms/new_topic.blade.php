@@ -45,7 +45,7 @@
         <div class="row"><div class="columns large-6">
             <label for="topic_start_date">Start date:</label>
             <div class="field">
-                <input type="date" id="topic_start_date" pattern="day_month_year" placeholder="dd/mm/yyyy" @if(isset($edit)) value="{{ date_format(new DateTime($topic->start_date), 'd/m/Y')}}" @endif data-date-format="dd/mm/yyyy" name="start_date" required />
+                <input type="text" id="topic_start_date" pattern="day_month_year" placeholder="dd/mm/yyyy" @if(isset($edit)) value="{{ date_format(new DateTime($topic->start_date), 'd/m/Y')}}" @endif data-date-format="dd/mm/yyyy" name="start_date" required />
                 <small class="error">Please select a start date for the topic.</small>
             </div>
         </div></div>
@@ -53,7 +53,7 @@
         <div class="row"><div class="columns large-6">
             <label for="topic_end_date">End date:</label>
             <div class="field">
-                <input type="date" id="topic_end_date" pattern="day_month_year" placeholder="dd/mm/yyyy" @if(isset($edit)) value="{{ date_format(new DateTime($topic->end_date), 'd/m/Y')}}" @endif data-date-format="dd/mm/yyyy" name="end_date" required />
+                <input type="text" id="topic_end_date" pattern="day_month_year" placeholder="dd/mm/yyyy" @if(isset($edit)) value="{{ date_format(new DateTime($topic->end_date), 'd/m/Y')}}" @endif data-date-format="dd/mm/yyyy" name="end_date" required />
                 <small class="error">Please select an end date for the topic.</small>
             </div>
         </div></div>

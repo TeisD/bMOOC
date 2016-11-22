@@ -630,7 +630,7 @@ class BmoocController extends Controller {
             return $response;
         } else if($a->type_id == 32){
             $oembed_endpoint = 'http://vimeo.com/api/oembed';
-            $url = $oembed_endpoint . '.json?url=' . rawurlencode($a->content);
+            $url = $oembed_endpoint . '.json?url=' . rawurlencode($a->content) . '&width=100';
             $json = file_get_contents($url);
             $obj = json_decode($json);
             $response = Response::make( file_get_contents($obj->thumbnail_url), 200 );
