@@ -21,7 +21,7 @@
     {{-- STYLESHEETS --}}
     <link rel="stylesheet" href="/css/normalize.min.css">
     <link rel="stylesheet" href="/css/foundation.min.css">
-    <link rel="stylesheet" href="/css/app.css?v=@version">
+    <link rel="stylesheet" href="/css/app.min.css?v=@version">
 
 
     {{-- SCRIPTS --}}
@@ -79,7 +79,7 @@
 
         {{-- SCRIPTS --}}
         {{-- <script src="/js/foundation.min.js"></script> --}}
-        <script src="/js/foundation/foundation.js"></script>
+        <script src="/js/foundation/foundation.min.js"></script>
         <script src="/js/foundation/foundation.reveal.js"></script>
         <script src="/js/foundation/foundation.abide.js"></script>
         <script>
@@ -90,12 +90,12 @@
             });
         </script>
 
-        <script src="/js/cookie.js"></script>
-        <script src="/js/app.js?v=@version"></script>
+        <script src="/js/cookie.min.js"></script>
+        <script src="/js/app.min.js?v=@version"></script>
 
         @yield('scripts')
 
-        <script src="/js/help.js?v=@version"></script>
+        <script src="/js/help.min.js?v=@version"></script>
 
     </body>
 </html>
