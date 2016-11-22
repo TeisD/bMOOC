@@ -41,7 +41,7 @@ abstract class Types
 class BmoocController extends Controller {
 
     public function __construct() {
-        $this->middleware('auth', ['except' => ['index', 'feedback', 'about']]);
+        //$this->middleware('auth', ['except' => ['index', 'feedback', 'about']]);
         //$this->middleware('auth');
     }
 
