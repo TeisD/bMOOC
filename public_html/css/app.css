@@ -311,6 +311,9 @@ form input:not([type='checkbox']), form textarea, form select, form .ql_editor {
   color: #ffffff;
   margin-bottom: 1rem;
   margin-top: 0.2rem; }
+form input:disabled:hover, form button:disabled:hover {
+  background-color: #751e82;
+  cursor: default; }
 form input:focus, form textarea:focus, form select:focus {
   background: inherit;
   border-width: 2px;

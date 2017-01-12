@@ -1,5 +1,5 @@
 <h2>Feedback</h2>
-<p>Remarks, problems or suggestions? Please fill in the form below.</p>
+<p>Remarks, problems or suggestions? Please fill in the form below, or send an email to <a href="mailto:nancy.vansieleghem@luca-arts.be">nancy.vansieleghem@luca-arts.be</a></p>
 {{ Form::open(array('data-abide', 'id'=>'feedback_form', 'url'=>'/feedback','method'=>'POST', 'files'=>true)) }}
     <small class="mailstatus error full"></small>
 

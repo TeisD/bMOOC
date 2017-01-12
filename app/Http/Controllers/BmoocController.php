@@ -163,8 +163,8 @@ class BmoocController extends Controller {
 
         $data = $request->all();
 
-        if($data['email'] == "") $data['email'] = "teis.degreve@luca-arts.be";
-        if($data['name'] == "") $data['name'] = "Teis De Greve";
+        if($data['name'] == "") $data['name'] = "bMOOC";
+        if($data['email'] == "") $data['email'] = "noreply@bmooc.be";
 
         $validator = Validator::make($data,
             array(
@@ -176,12 +176,12 @@ class BmoocController extends Controller {
 
           if ($validator->fails())
           {
-              print("Oops. Something went wrong. Please try again or send your feedback to <a href=\"mailto:teis.degreve@luca-arts.be\">teis.degreve@luca-arts.be</a>");
+              print("Oops. Something went wrong. Please try again or send your feedback to <a href=\"mailto:nancy.vansieleghem@luca-arts.be\">nancy.vansieleghem@luca-arts.be</a>");
           } else {
 
             Mail::send('email.feedback', $data, function($m) use ($data) {
                 $m->from($data['email'], $data['name'])
-                    ->to('teis.degreve@luca-arts.be')
+                    ->to('nancy.vansieleghem@luca-arts.be')
                     ->subject('bMOOC Feedback');
             });
 

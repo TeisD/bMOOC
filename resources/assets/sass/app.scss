@@ -391,6 +391,10 @@ form{
         margin-bottom: 1rem;
         margin-top: 0.2rem;
     }
+    input:disabled:hover, button:disabled:hover{
+        background-color: $purple;
+        cursor: default;
+    }
     input:focus, textarea:focus, select:focus{
         background: inherit;
         border-width: 2px;

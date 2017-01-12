@@ -193,12 +193,15 @@ $(function(){
 /* FEEDBACK */
 $(function(){
     $('#feedback').submit(function(e){
+
         e.preventDefault();
 
         var name = $('#feedback #fb_name').val();
         var email = $('#feedback #fb_mail').val();
         var message = $('#feedback #fb_msg').val();
         var token = $('#feedback input[name="_token"]').val();
+
+        $('#feedback :submit').prop('disabled', true);
 
         $.ajax({
         type: "POST",
@@ -210,14 +213,17 @@ $(function(){
             $('#feedback .mailstatus').css('display', 'block');
             setTimeout(function() {
                 $('#feedback .mailstatus').slideUp()
-            }, 5000);
+                $('#feedback :submit').prop('disabled', false);
+            }, 6000);
         },
         fail: function(msg){
+            $('#feedback .mailstatus').removeClass('success');
             $('#feedback .mailstatus').html(msg);
             $('#feedback .mailstatus').css('display', 'block');
+            $('#feedback :submit').prop('disabled', false);
             setTimeout(function() {
                 $('#feedback .mailstatus').slideUp()
-            }, 5000);
+            }, 6000);
         }
     });
     })
