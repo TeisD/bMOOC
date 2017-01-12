@@ -5,6 +5,7 @@
             <h2>Sign in</h2>
 
             <p>Using bMOOC for the first time? <a href="/register" class="emphasis">Create an account</a></p>
+            <p>Forgot your password? <a href="/password/reset" class="emphasis">Reset your password</a></p>
 
             @if (count($errors))
                 @foreach($errors->all() as $error)
