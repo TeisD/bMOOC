@@ -55,7 +55,7 @@ return [
     |
     */
 
-    'from' => ['address' => 'noreply@bmooc.be', 'name' => 'bMOOC'],
+    'from' => ['address' => 'admin@bmooc.be', 'name' => 'bMOOC'],
 
     /*
     |--------------------------------------------------------------------------
