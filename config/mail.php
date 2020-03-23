@@ -29,7 +29,7 @@ return [
     |
     */
 
-    'host' => env('MAIL_HOST', 'smtp.sparkpostmail.com'),
+    'host' => env('MAIL_HOST', 'mail.bmooc.be'),
 
     /*
     |--------------------------------------------------------------------------
